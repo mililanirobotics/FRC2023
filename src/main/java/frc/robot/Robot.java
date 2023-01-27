@@ -7,9 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import FRC2023.EncoderDriveImported.src.main.java.frc.robot.Drive;
+
+import frc.robot.Apriltags;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,6 +28,7 @@ public class Robot extends TimedRobot {
   CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
 
   Limelight limeLight = new Limelight();
+  Apriltags apriltags = new Apriltags();
 
   /**
    * This function is run when the robot is first started up and should be used for any
