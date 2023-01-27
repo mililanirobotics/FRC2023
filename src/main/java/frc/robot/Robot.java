@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import FRC2023.EncoderDriveImported.src.main.java.frc.robot.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,6 +23,13 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  CANSparkMax leftFront = new CANSparkMax(12, MotorType.kBrushless);
+  CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
+  CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
+
+  Limelight limeLight = new Limelight();
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -29,6 +39,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    rightFront.setInverted(true);
+    rightBack.setInverted(true);
   }
 
   /**
@@ -41,6 +54,35 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {}
 
+  public void angleAlign() {
+    double speed = 0;
+    double k = 0.01;
+
+    if (limeLight.getHorizontalDegToTarget() < -1 || limeLight.getHorizontalDegToTarget() > 1) {
+      speed = limeLight.getHorizontalDegToTarget() * k;
+      if (Math.abs(speed) > 0.5) {
+        speed = Math.copySign(0.5, speed);
+      }
+      else if (Math.abs(speed) < 0.35) {
+        speed = Math.copySign(0.35, speed);
+      }
+      leftFront.set(-speed);
+      rightFront.set(speed);
+      leftBack.set(-speed);
+      rightBack.set(speed);
+    }
+  else {
+    leftFront.stopMotor();
+    rightFront.stopMotor();
+    leftBack.stopMotor();
+    rightBack.stopMotor();
+    }
+    
+  }
+
+  public void alignMovement() {
+    limeLight.estimateHorizontalDistance();
+  }
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -78,7 +120,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
