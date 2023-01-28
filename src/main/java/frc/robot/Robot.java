@@ -56,37 +56,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {}
-
-  public void angleAlign() {
-    double speed = 0;
-    double k = 0.01;
-
-    if (limeLight.getHorizontalDegToTarget() < -1 || limeLight.getHorizontalDegToTarget() > 1) {
-      speed = limeLight.getHorizontalDegToTarget() * k;
-      if (Math.abs(speed) > 0.5) {
-        speed = Math.copySign(0.5, speed);
-      }
-      else if (Math.abs(speed) < 0.35) {
-        speed = Math.copySign(0.35, speed);
-      }
-      leftFront.set(-speed);
-      rightFront.set(speed);
-      leftBack.set(-speed);
-      rightBack.set(speed);
-    }
-  else {
-    leftFront.stopMotor();
-    rightFront.stopMotor();
-    leftBack.stopMotor();
-    rightBack.stopMotor();
-    }
-    
-  }
-
-  public void alignMovement(double speed, string direction, double timeout) {
-    double distance = limeLight.estimateHorizontalDistance() - 16;
-    drive.encoderDrive(speed, distance, direction, timeout); 
-  }
+  
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
