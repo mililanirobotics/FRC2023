@@ -95,10 +95,15 @@ public final class Apriltags {
            //Determines if the distance to target is posible
 
            public void log() {
-               SmartDashboard.putNumber("X", getHorizontalDegToTarget());
-               SmartDashboard.putNumber("Y", getVerticalDegToTarget());
-               SmartDashboard.putNumber("Distance", estimateVerticalDistance());
-               SmartDashboard.putBoolean("Distance", isDistancePossible());
+            SmartDashboard.putNumber("X", getHorizontalDegToTarget());
+            SmartDashboard.putNumber("Y", getVerticalDegToTarget());
+            SmartDashboard.putNumber("Distance", estimateVerticalDistance());
+            SmartDashboard.putBoolean("Distance", isDistancePossible());
+            System.out.println ("Distance: " + estimateVerticalDistance());
+            System.out.println ("x" + getHorizontalDegToTarget());
+            System.out.println ("y" + getVerticalDegToTarget()); 
+            System.out.println ("Possible distance" + isDistancePossible());
+            SmartDashboard.updateValues();
            } 
        
        
