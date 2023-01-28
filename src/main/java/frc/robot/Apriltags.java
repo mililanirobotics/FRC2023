@@ -16,7 +16,7 @@ public final class Apriltags {
        
            public Apriltags()
            {
-               table = NetworkTableInstance.getDefault().getTable("Limelight");
+               table = NetworkTableInstance.getDefault().getTable("limelight");
            }
 
            public Apriltags(String name) {
