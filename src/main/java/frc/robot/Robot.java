@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Apriltags;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -29,6 +30,8 @@ public class Robot extends TimedRobot {
 
   Limelight limeLight = new Limelight();
   Apriltags apriltags = new Apriltags();
+  Drive drive = new Drive();
+  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -80,8 +83,9 @@ public class Robot extends TimedRobot {
     
   }
 
-  public void alignMovement() {
-    limeLight.estimateHorizontalDistance();
+  public void alignMovement(double speed, string direction, double timeout) {
+    double distance = limeLight.estimateHorizontalDistance() - 16;
+    drive.encoderDrive(speed, distance, direction, timeout); 
   }
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
