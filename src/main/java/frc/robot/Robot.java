@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  Apriltags apriltags = new Apriltags();
+  Apriltags apriltags = new Apriltags();  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -84,6 +84,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     apriltags.estimateVerticalDistance();
     apriltags.estimateHorizontalDistance(apriltags.estimateVerticalDistance());
+
+    apriltags.log();
   }
 
   /** This function is called once when the robot is disabled. */
