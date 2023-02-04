@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Apriltags;
 
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -20,18 +19,15 @@ import frc.robot.Apriltags;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final String kPipelineOne = "Pipeline One";
+  private static final String kPipelineTwo = "Pipeline Two";
   private String m_autoSelected;
+  private String m_pipelineSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
-  CANSparkMax leftFront = new CANSparkMax(12, MotorType.kBrushless);
-  CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
-  CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
-  CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
-
-  Limelight limeLight = new Limelight();
-  Apriltags apriltags = new Apriltags();
+  Apriltags aprilTags = new Apriltags();
   Drive drive = new Drive();
-  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,10 +37,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    SmartDashboard.putData("Auto choices", m_chooser); 
 
-    rightFront.setInverted(true);
-    rightBack.setInverted(true);
+    m_pipeline.setDefaultOption("Pipeline 1", kPipelineOne);
+    m_pipeline.addOption("Pipeline 2", kPipelineTwo);
+    SmartDashboard.putData("Pipeline choices", m_pipeline);
   }
 
   /**
@@ -57,36 +54,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {}
 
-  public void angleAlign() {
-    double speed = 0;
-    double k = 0.01;
-
-    if (limeLight.getHorizontalDegToTarget() < -1 || limeLight.getHorizontalDegToTarget() > 1) {
-      speed = limeLight.getHorizontalDegToTarget() * k;
-      if (Math.abs(speed) > 0.5) {
-        speed = Math.copySign(0.5, speed);
-      }
-      else if (Math.abs(speed) < 0.35) {
-        speed = Math.copySign(0.35, speed);
-      }
-      leftFront.set(-speed);
-      rightFront.set(speed);
-      leftBack.set(-speed);
-      rightBack.set(speed);
-    }
-  else {
-    leftFront.stopMotor();
-    rightFront.stopMotor();
-    leftBack.stopMotor();
-    rightBack.stopMotor();
-    }
-    
-  }
-
-  public void alignMovement(double speed, string direction, double timeout) {
-    double distance = limeLight.estimateHorizontalDistance() - 16;
-    drive.encoderDrive(speed, distance, direction, timeout); 
-  }
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -100,8 +67,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Pipeline selected: " + m_pipelineSelected);
   }
 
   /** This function is called periodically during autonomous. */
@@ -109,12 +77,24 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        // Put custom auto code here
+        aprilTags.log();
+        drive.angleAlign();
         break;
+
       case kDefaultAuto:
-      default:
-        // Put default auto code here
+        aprilTags.log();
+        drive.driveToAprilTag();
         break;
+    }
+    switch (m_pipelineSelected) {
+      case kPipelineOne:
+      aprilTags.setPipeline(0);
+      break;
+
+      case kPipelineTwo:
+
+      break;
+
     }
   }
 
@@ -125,7 +105,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
+    
   }
 
   /** This function is called once when the robot is disabled. */

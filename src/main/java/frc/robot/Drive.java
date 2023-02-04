@@ -40,6 +40,7 @@ public class Drive {
     Encoder rightEncoder = new Encoder(3, 4, false);
     boolean turnDrive = false;
     double currentAngle;
+    Apriltags aprilTags = new Apriltags();
 
   public Drive() {
     // rFrontEncoder.setInverted(true);
@@ -109,28 +110,73 @@ public class Drive {
         //This calculates at the start of every loop to determine which way the robot will turn
         if(error > 0) {
             //If error is positive, the robot turns right
-            frontLeft.set(speed);
-            frontRight.set(-speed);
-            backLeft.set(speed);
-            backRight.set(-speed);
+            leftFront.set(speed);
+            rightFront.set(-speed);
+            leftBack.set(speed);
+            rightBack.set(-speed);
         }
         else {
             //If error is negative, the robot turns left
-            frontLeft.set(-speed);
-            frontRight.set(speed);
-            backLeft.set(-speed);
-            backRight.set(speed);
+            leftFront.set(-speed);
+            rightFront.set(speed);
+            leftBack.set(-speed);
+            rightBack.set(speed);
         }
         }
         else {
-        frontLeft.stopMotor();
-        frontRight.stopMotor();
-        backLeft.stopMotor();
-        backRight.stopMotor();
+        leftFront.stopMotor();
+        rightFront.stopMotor();
+        leftBack.stopMotor();
+        rightBack.stopMotor();
         turnDrive = true;
         }
 
         //Stop all motors
+    }
+
+    public void angleAlign() {
+      double speed = 0;
+      double k = 0.01;
+      double angleOffset = aprilTags.getHorizontalDegToTarget();
+      
+      if (angleOffset < -1 || angleOffset > 1) {
+        speed = angleOffset * k;
+        if (Math.abs(speed) > 0.5) {
+          speed = Math.copySign(0.5, speed);
+        }
+        else if (Math.abs(speed) < 0.10) {
+          speed = Math.copySign(0.10, speed);
+        }
+        leftFront.set(speed);
+        rightFront.set(-speed);
+        leftBack.set(speed);
+        rightBack.set(-speed);
+      }
+      else {
+        leftFront.stopMotor();
+        rightFront.stopMotor();
+        leftBack.stopMotor();
+        rightBack.stopMotor();
+      }
+      
+    }
+
+    public void driveToAprilTag() {
+      double speed = 0.20;
+      double distance = aprilTags.estimateVerticalDistance() - 45;
+
+      if (distance > 1) {
+        leftFront.set(speed);
+        rightFront.set(speed);
+        leftBack.set(speed);
+        rightBack.set(speed);
+      }
+      else {
+        leftFront.stopMotor();
+        rightFront.stopMotor();
+        leftBack.stopMotor();
+        rightBack.stopMotor();
+      }
     }
 
     public double getAngle()
