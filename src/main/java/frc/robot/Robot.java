@@ -7,7 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Apriltags;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,8 +23,8 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
-  Apriltags apriltags = new Apriltags();  
+  Joystick joystick = new Joystick(0);
+  Claw claw = new Claw();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -32,6 +35,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    claw.armExtension.set(Value.kReverse);
   }
 
   /**
@@ -77,15 +81,15 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    apriltags.estimateVerticalDistance();
-    apriltags.estimateHorizontalDistance(apriltags.estimateVerticalDistance());
-
-    apriltags.log();
+    if (joystick.getRawButtonPressed(4) == true) {
+      claw.ArmExtension();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
