@@ -7,8 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.robot.Apriltags;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 
 /**
@@ -27,11 +29,11 @@ public class Robot extends TimedRobot {
   CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
   CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
   CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
-
-  Limelight limeLight = new Limelight();
-  Apriltags apriltags = new Apriltags();
+  
   Drive drive = new Drive();
   
+  Joystick joystick = new Joystick(0);
+  Claw claw = new Claw();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -42,9 +44,11 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-
+    
     rightFront.setInverted(true);
     rightBack.setInverted(true);
+    
+    claw.armExtension.set(Value.kReverse);
   }
 
   /**
@@ -90,12 +94,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
   }
 
   /** This function is called once when the robot is disabled. */
