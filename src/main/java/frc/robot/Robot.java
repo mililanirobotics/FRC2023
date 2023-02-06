@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -23,6 +24,14 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  CANSparkMax leftFront = new CANSparkMax(12, MotorType.kBrushless);
+  CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
+  CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
+  
+  Drive drive = new Drive();
+  
   Joystick joystick = new Joystick(0);
   Claw claw = new Claw();
 
@@ -35,6 +44,10 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    
+    rightFront.setInverted(true);
+    rightBack.setInverted(true);
+    
     claw.armExtension.set(Value.kReverse);
   }
 
@@ -47,7 +60,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {}
-
+  
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -87,9 +100,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawButtonPressed(4) == true) {
-      claw.ArmExtension();
-    }
   }
 
   /** This function is called once when the robot is disabled. */
