@@ -109,24 +109,24 @@ public class Drive {
         //This calculates at the start of every loop to determine which way the robot will turn
         if(error > 0) {
             //If error is positive, the robot turns right
-            frontLeft.set(speed);
-            frontRight.set(-speed);
-            backLeft.set(speed);
-            backRight.set(-speed);
+            leftFront.set(speed);
+            rightFront.set(-speed);
+            leftBack.set(speed);
+            rightBack.set(-speed);
         }
         else {
             //If error is negative, the robot turns left
-            frontLeft.set(-speed);
-            frontRight.set(speed);
-            backLeft.set(-speed);
-            backRight.set(speed);
+            leftFront.set(-speed);
+            rightFront.set(speed);
+            leftBack.set(-speed);
+            rightBack.set(speed);
         }
         }
         else {
-        frontLeft.stopMotor();
-        frontRight.stopMotor();
-        backLeft.stopMotor();
-        backRight.stopMotor();
+        leftFront.stopMotor();
+        rightFront.stopMotor();
+        leftBack.stopMotor();
+        rightBack.stopMotor();
         turnDrive = true;
         }
 
