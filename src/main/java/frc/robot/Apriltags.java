@@ -5,15 +5,19 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
+
 public final class Apriltags {
     public static final double kTurnToleranceDeg = 5;
-       public static final double kTurnRateToleranceDegPerS = 2; // degrees per second
-       public static final double kTargetHeight = 49; //Apriltags / reflectives height
-       public static final double kLensHeight = 23.5; // Probably not needed
+       public static final double kTurnRateToleranceDegPerS = 5; // degrees per second
+       public static final double kTargetHeight = 33; //Apriltags / reflectives height
+       public static final double kLensHeight = 23.5; // Camera lens height 
        public static final double kMountAngle = 1; // Camera lens angle
-    // public static final double kLensHeight = .737; 
+       public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
+       public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
+       public static final double bumperThickness = 3;
        private NetworkTable table;
-       
+       Drive drive = Robot.drive;
+      
            public Apriltags()
            {
                table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -60,13 +64,14 @@ public final class Apriltags {
             */
            public void setPipeline(int pipeline) {
                if (pipeline < 0) {
-                   pipeline = 0;
+                   pipeline = 1;
                    throw new IllegalArgumentException("Pipeline can not be less than zero");
                } else if(pipeline > 9) {
-                   pipeline = 1;
+                   pipeline = 2;
                    throw new IllegalArgumentException("Pipeline can not be greater than one");
                }
                table.getEntry("pipeline").setValue(pipeline);
+               table.getEntry("pipeline").setNumber(pipeline);
            }
        
            /**
@@ -79,7 +84,7 @@ public final class Apriltags {
            /**
             * @return distance from target in inches
            */
-           public double estimateVerticalDistance(){
+           public double estimateHorizontalDistance(){
                double veritcalTargetAngle = getVerticalDegToTarget();
                double height = kTargetHeight - kLensHeight;
                double angleInRadians = (kMountAngle + veritcalTargetAngle) * (Math.PI / 180);
@@ -89,7 +94,7 @@ public final class Apriltags {
                return horizontalDistance;
            }
        
-           public double estimateHorizontalDistance(double horizontalDistance){
+           public double estimateVerticalDistance(double horizontalDistance){
                double horizontalTargetAngle = getHorizontalDegToTarget();
                
                double verticalDistance = horizontalDistance * Math.tan(horizontalTargetAngle);
@@ -98,17 +103,62 @@ public final class Apriltags {
            }
        
            public boolean isDistancePossible(){
-               return((estimateVerticalDistance() < 2 && estimateVerticalDistance() > 2.5) ? true : false);
+                drive.angleAlign();
+                boolean distPossible = false;
+               if (getPipeline() == 0) {
+                    distPossible = ((estimateHorizontalDistance() < maxArmReach && estimateHorizontalDistance() > minArmReach) ? true : false);
+               }
+               if (getPipeline() == 1) {
+                    distPossible = (((estimateHorizontalDistance() + 17.375)  < maxArmReach && (estimateHorizontalDistance() + 17.375) > minArmReach) ? true : false);
+               }
+               return distPossible;
            }
+
+           public boolean isScoringPossible(){
+            return((estimateHorizontalDistance() < 28.6) ? true : false);
+           }
+        
            //Determines if the distance to target is posible
+
+        //    public double alignLongitude() {
+        //     setPipeline(1);
+        //     double distance = 0;
+        //     if (getHorizontalDegToTarget() < -1 || getHorizontalDegToTarget() > 1) {
+        //         if (getPipeline() == 1) {
+        //             drive.angleAlign();
+        //         }
+        //     } 
+        //     if (getHorizontalDegToTarget() < 1 && getHorizontalDegToTarget() > -1) {
+        //         double length1 = estimateVerticalDistance();
+        //         double offset1 = getHorizontalDegToTarget();
+
+        //         // drive.leftFront.stopMotor();
+        //         // drive.rightFront.stopMotor();
+        //         // drive.leftBack.stopMotor();
+        //         // drive.rightBack.stopMotor();
+        //         setPipeline(2);
+        //         double length2 = estimateVerticalDistance();
+        //         double offset2 = getHorizontalDegToTarget();
+
+        //         double theta = (offset2 - offset1) * (Math.PI/180);
+        //         double angle1 = Math.asin(length2 * (Math.sin(theta)/17));
+    
+        //         double angle2 = 180 - 90 - angle1;
+        //         distance = length1 * Math.tan(angle2);
+        //     }
+        //     return distance;
+        // }
 
            public void log() {
                SmartDashboard.putNumber("X offset degree", getHorizontalDegToTarget());
                SmartDashboard.putNumber("Y offset degree", getVerticalDegToTarget());
-               SmartDashboard.putNumber("X distance to target", estimateVerticalDistance());
-               SmartDashboard.putBoolean("distance possible?", isDistancePossible());
+               SmartDashboard.putNumber("X distance to target", estimateHorizontalDistance());
+            //    SmartDashboard.putBoolean("distance possible?", isDistancePossible());
                SmartDashboard.putBoolean("target found?", isTargetFound());  
+            //    SmartDashboard.putNumber("longitude to target", alignLongitude());
+               SmartDashboard.putNumber("pipeline", getPipeline());
+               SmartDashboard.putBoolean("Is scoring possible", isScoringPossible());
+
             } 
-       
        
 }

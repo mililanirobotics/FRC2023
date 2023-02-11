@@ -33,6 +33,7 @@ public class Drive {
     RelativeEncoder lBackEncoder = leftBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
     RelativeEncoder rBackEncoder = rightBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
     boolean eDriveDone = false;
+    boolean alignDone = false;
 
     // Gyro declrations and initializations
     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
@@ -40,6 +41,8 @@ public class Drive {
     Encoder rightEncoder = new Encoder(3, 4, false);
     boolean turnDrive = false;
     double currentAngle;
+
+    // Limelight 
     Apriltags aprilTags = new Apriltags();
 
   public Drive() {
@@ -84,6 +87,8 @@ public class Drive {
           rightBack.set(0);
           eDriveDone = true;
         }
+
+        double allEncoder = lFrontEncoder.getPosition() + rFrontEncoder.getPosition();
     
       }
 
@@ -136,16 +141,17 @@ public class Drive {
 
     public void angleAlign() {
       double speed = 0;
-      double k = 0.01;
+      double k = 0.03;
       double angleOffset = aprilTags.getHorizontalDegToTarget();
-      
+      alignDone = false;
+
       if (angleOffset < -1 || angleOffset > 1) {
         speed = angleOffset * k;
         if (Math.abs(speed) > 0.5) {
           speed = Math.copySign(0.5, speed);
         }
-        else if (Math.abs(speed) < 0.10) {
-          speed = Math.copySign(0.10, speed);
+        else if (Math.abs(speed) < 0.05) {
+          speed = Math.copySign(0.05, speed);
         }
         leftFront.set(speed);
         rightFront.set(-speed);
@@ -157,13 +163,13 @@ public class Drive {
         rightFront.stopMotor();
         leftBack.stopMotor();
         rightBack.stopMotor();
+        alignDone = true;
       }
-      
     }
 
     public void driveToAprilTag() {
       double speed = 0.20;
-      double distance = aprilTags.estimateVerticalDistance() - 45;
+      double distance = aprilTags.estimateHorizontalDistance() - 45;
 
       if (distance > 1) {
         leftFront.set(speed);
@@ -183,4 +189,24 @@ public class Drive {
     {
         return gyro.getAngle();
     }
+
+    // public void log() {
+    //   SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
+    //   SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
+    //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
+    // }
+
+    @Description(group = "com.example", name = "My Plugin", version = "1.2.3", summary = "")
+class MyPlugin extends Plugin {
+
+  private static final Theme myTheme = new Theme(MyPlugin.class, "My Theme Name", "/path/to/stylesheet", "/path/to/stylesheet", ...);
+
+  @Override
+  public List<Theme> getThemes() {
+    return ImmutableList.of(myTheme);
+  }
+
 }
+
+}
+  
