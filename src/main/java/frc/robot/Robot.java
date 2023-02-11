@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import frc.robot.Apriltags;
 
@@ -27,7 +29,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
   Apriltags aprilTags = new Apriltags();
-  Drive drive = new Drive();
+  public static Drive drive = new Drive();
+  Align align = new Align();
+  Joystick joystick = new Joystick(0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -78,12 +82,12 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kCustomAuto:
         aprilTags.log();
-        drive.angleAlign();
+        // drive.angleAlign();
         break;
 
       case kDefaultAuto:
         aprilTags.log();
-        drive.driveToAprilTag();
+        // drive.driveToAprilTag();
         break;
     }
     switch (m_pipelineSelected) {
@@ -105,7 +109,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    if (joystick.getRawButton(2)) {
+      aprilTags.log();
+    }
+    if (joystick.getRawButton(3)) {
+      drive.angleAlign();
+    }
+    if (joystick.getRawButton(4)) {
+      align.distanceAlign();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
