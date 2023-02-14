@@ -5,27 +5,18 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
-
 public final class Apriltags {
     public static final double kTurnToleranceDeg = 5;
-<<<<<<< HEAD
-       public static final double kTurnRateToleranceDegPerS = 2; // degrees per second
-       public static final double kTargetHeight = 31.625; //Apriltags / reflectives height
-       public static final double kLensHeight = 23.5; // Probably not needed
-       public static final double kMountAngle = 0; // Camera lens angle
-    // public static final double kLensHeight = .737; 
-=======
-       public static final double kTurnRateToleranceDegPerS = 5; // degrees per second
-       public static final double kTargetHeight = 33; //Apriltags / reflectives height
-       public static final double kLensHeight = 23.5; // Camera lens height 
-       public static final double kMountAngle = 1; // Camera lens angle
-       public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
-       public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
-       public static final double bumperThickness = 3;
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
+    public static final double kTurnRateToleranceDegPerS = 5; // degrees per second
+    public static final double kTargetHeight = 33; //Apriltags / reflectives height
+    public static final double kLensHeight = 23.5; // Camera lens height 
+    public static final double kMountAngle = 1; // Camera lens angle
+    public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
+    public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
+    public static final double bumperThickness = 3;
        private NetworkTable table;
        Drive drive = Robot.drive;
-      
+       
            public Apriltags()
            {
                table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -96,7 +87,7 @@ public final class Apriltags {
                double veritcalTargetAngle = getVerticalDegToTarget();
                double height = kTargetHeight - kLensHeight;
                double angleInRadians = (kMountAngle + veritcalTargetAngle) * (Math.PI / 180);
-                
+
                double horizontalDistance = height / Math.tan(angleInRadians);
                //Determines the distance with camera height minus target height devided by tangent of camera angle plus the vertical offset angle
                return horizontalDistance;
@@ -115,7 +106,7 @@ public final class Apriltags {
                 boolean distPossible = false;
                if (getPipeline() == 0) {
                     distPossible = ((estimateHorizontalDistance() < maxArmReach && estimateHorizontalDistance() > minArmReach) ? true : false);
-               }
+           }
                if (getPipeline() == 1) {
                     distPossible = (((estimateHorizontalDistance() + 17.375)  < maxArmReach && (estimateHorizontalDistance() + 17.375) > minArmReach) ? true : false);
                }
@@ -168,5 +159,6 @@ public final class Apriltags {
                SmartDashboard.putBoolean("Is scoring possible", isScoringPossible());
 
             } 
+       
        
 }

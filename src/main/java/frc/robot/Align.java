@@ -52,7 +52,8 @@ public class Align {
     //     Robot.drive.turnDrive(5000, -90, 20);
 
     // }
-
+    
+    // USE FOR ALLIGNMENT WITH MID AND HIGH CONE NODES
     public void align2() {
         aprilTags.setPipeline(1);
         Robot.drive.angleAlign();

@@ -17,33 +17,6 @@ import edu.wpi.first.wpilibj.Encoder;
 
 public class Drive {
 
-<<<<<<< HEAD
-  Apriltags aprilTags = new Apriltags();
-
-  // Encoder declarations and initializations 
-  // int PULSES_PER_ROTATION = 42;
-  int COUNTS_PER_ROTATION = 42;
-  double DRIVE_GEAR_REDUCTION = 8.6;
-  double WHEEL_DIAMETER = 4;
-  double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-  double COUNTS_PER_INCH = (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
-  CANSparkMax leftFront = new CANSparkMax(12, MotorType.kBrushless);
-  CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
-  CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
-  CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
-  RelativeEncoder lFrontEncoder = leftFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-  RelativeEncoder rFrontEncoder = rightFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-  RelativeEncoder lBackEncoder = leftBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-  RelativeEncoder rBackEncoder = rightBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-  boolean eDriveDone = false;
-
-  // Gyro declrations and initializations
-  ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-  Encoder leftEncoder = new Encoder(1, 2, false);
-  Encoder rightEncoder = new Encoder(3, 4, false);
-  boolean turnDrive = false;
-  double currentAngle;
-=======
     // Encoder declarations and initializations 
     // int PULSES_PER_ROTATION = 42;
     int COUNTS_PER_ROTATION = 42;
@@ -71,7 +44,6 @@ public class Drive {
 
     // Limelight 
     Apriltags aprilTags = new Apriltags();
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
 
   public Drive() {
     // rFrontEncoder.setInverted(true);
@@ -83,22 +55,6 @@ public class Drive {
   public void robotInit() {
 
   }
-
-  public void encoderDrive(double speed, double distance, String direction, double timeOut) {
-      int motorTarget = (int)(distance * COUNTS_PER_INCH);
-      eDriveDone = false;
-      
-      double timeStarted = System.currentTimeMillis();
-  
-<<<<<<< HEAD
-      lFrontEncoder.setPosition(0);
-      rFrontEncoder.setPosition(0);
-      lBackEncoder.setPosition(0);
-      rBackEncoder.setPosition(0);
-  
-      if (direction == "forward") {
-=======
-    }
 
     public void encoderDrive(double speed, double distance, String direction, double timeOut) {
         int motorTarget = (int)(distance * COUNTS_PER_INCH);
@@ -154,30 +110,30 @@ public class Drive {
         System.out.println("Error: " + error);
         //error between desiredAngle and our current angle is established
         if(error < -2 || error > 2) {
-        //While loop will continue as long as error is not inbetween the slack range of -3 to 3
-        error = desiredAngle - gyro.getAngle();
-        //This calculates at the start of every loop to determine which way the robot will turn
-        if(error > 0) {
-            //If error is positive, the robot turns right
-            leftFront.set(speed);
-            rightFront.set(-speed);
-            leftBack.set(speed);
-            rightBack.set(-speed);
+          //While loop will continue as long as error is not inbetween the slack range of -3 to 3
+          error = desiredAngle - gyro.getAngle();
+          //This calculates at the start of every loop to determine which way the robot will turn
+          if(error > 0) {
+              //If error is positive, the robot turns right
+              leftFront.set(speed);
+              rightFront.set(-speed);
+              leftBack.set(speed);
+              rightBack.set(-speed);
+          }
+          else {
+              //If error is negative, the robot turns left
+              leftFront.set(-speed);
+              rightFront.set(speed);
+              leftBack.set(-speed);
+              rightBack.set(speed);
+          }
         }
         else {
-            //If error is negative, the robot turns left
-            leftFront.set(-speed);
-            rightFront.set(speed);
-            leftBack.set(-speed);
-            rightBack.set(speed);
-        }
-        }
-        else {
-        leftFront.stopMotor();
-        rightFront.stopMotor();
-        leftBack.stopMotor();
-        rightBack.stopMotor();
-        turnDrive = true;
+          leftFront.stopMotor();
+          rightFront.stopMotor();
+          leftBack.stopMotor();
+          rightBack.stopMotor();
+          turnDrive = true;
         }
 
         //Stop all motors
@@ -216,7 +172,6 @@ public class Drive {
       double distance = aprilTags.estimateHorizontalDistance() - 45;
 
       if (distance > 1) {
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
         leftFront.set(speed);
         rightFront.set(speed);
         leftBack.set(speed);
@@ -239,104 +194,10 @@ public class Drive {
   
     }
 
-  //This method is called on during autonomous for turning
-  public void turnDrive(int timeOut, double turnDegrees, double speed) {
-      //set turnDegrees parameters for this method to negative to turn left
-      //timeOut parameter should be in milliseconds
-      double desiredAngle = currentAngle + turnDegrees;
-
-      //statement above calculates the position of the desired angle
-      //based on the robots current orientation
-      double timeStarted = System.currentTimeMillis();
-      //timeStarted is recorded for timeOut
-
-      double error = desiredAngle - gyro.getAngle();
-
-      System.out.println("Gyro Angle: " + gyro.getAngle());
-      System.out.println("Desired Angle: " + desiredAngle);
-      System.out.println("Error: " + error);
-      //error between desiredAngle and our current angle is established
-      if(error < -2 || error > 2) {
-      //While loop will continue as long as error is not inbetween the slack range of -3 to 3
-      error = desiredAngle - gyro.getAngle();
-      //This calculates at the start of every loop to determine which way the robot will turn
-      if(error > 0) {
-          //If error is positive, the robot turns right
-          leftFront.set(speed);
-          rightFront.set(-speed);
-          leftBack.set(speed);
-          rightBack.set(-speed);
-      }
-      else {
-          //If error is negative, the robot turns left
-          leftFront.set(-speed);
-          rightFront.set(speed);
-          leftBack.set(-speed);
-          rightBack.set(speed);
-      }
-      }
-      else {
-      leftFront.stopMotor();
-      rightFront.stopMotor();
-      leftBack.stopMotor();
-      rightBack.stopMotor();
-      turnDrive = true;
-      }
-
-      //Stop all motors
-  }
-
-  public void angleAlign() {
-    double speed = 0;
-    double k = 0.01;
-    double angleOffset = aprilTags.getHorizontalDegToTarget();
-    
-    if (angleOffset < -1 || angleOffset > 1) {
-      speed = angleOffset * k;
-      if (Math.abs(speed) > 0.5) {
-        speed = Math.copySign(0.5, speed);
-      }
-      else if (Math.abs(speed) < 0.10) {
-        speed = Math.copySign(0.10, speed);
-      }
-      leftFront.set(speed);
-      rightFront.set(-speed);
-      leftBack.set(speed);
-      rightBack.set(-speed);
-    }
-<<<<<<< HEAD
-    else {
-      leftFront.stopMotor();
-      rightFront.stopMotor();
-      leftBack.stopMotor();
-      rightBack.stopMotor();
-    }
-    
-  }
-
-  public void driveToAprilTag() {
-    double speed = 0.20;
-    double distance = aprilTags.estimateVerticalDistance() - 45;
-
-    if (distance > 1) {
-      leftFront.set(speed);
-      rightFront.set(speed);
-      leftBack.set(speed);
-      rightBack.set(speed);
-    }
-    else {
-      leftFront.stopMotor();
-      rightFront.stopMotor();
-      leftBack.stopMotor();
-      rightBack.stopMotor();
-    }
-  }
-
   public double getAngle()
   {
       return gyro.getAngle();
   }
-=======
 
     // public void log() {
     //   SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
@@ -354,7 +215,6 @@ class MyPlugin extends Plugin {
     return ImmutableList.of(myTheme);
   }
 
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
 }
 
 }
