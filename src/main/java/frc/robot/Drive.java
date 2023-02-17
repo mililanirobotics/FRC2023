@@ -167,32 +167,33 @@ public class Drive {
       }
     }
 
-    public void driveToAprilTag() {
-      double speed = 0.20;
-      double distance = aprilTags.estimateHorizontalDistance() - 45;
+    // public void driveToAprilTag(String direction, double timeOut) {
+    //   double speed = 0.20;
+    //   double distance = aprilTags.estimateHorizontalDistance() - 45;
+    //   double timeStarted = 
 
-      if (distance > 1) {
-        leftFront.set(speed);
-        rightFront.set(speed);
-        leftBack.set(speed);
-        rightBack.set(speed);  
-      }
-      else if (direction == "backward") {
-        leftFront.set(-speed);
-        rightFront.set(-speed);
-        leftBack.set(-speed);
-        rightBack.set(-speed);
-      }
+    //   if (distance > 1) {
+    //     leftFront.set(speed);
+    //     rightFront.set(speed);
+    //     leftBack.set(speed);
+    //     rightBack.set(speed);  
+    //   }
+    //   else if (distance < 1) {
+    //     leftFront.set(-speed);
+    //     rightFront.set(-speed);
+    //     leftBack.set(-speed);
+    //     rightBack.set(-speed);
+    //   }
       
-      if(Math.abs(lFrontEncoder.getPosition()) >= motorTarget || Math.abs(rFrontEncoder.getPosition()) >= motorTarget || Math.abs(lBackEncoder.getPosition()) >= motorTarget || Math.abs(rBackEncoder.getPosition()) >= motorTarget || System.currentTimeMillis() > (timeStarted + timeOut)) {
-        leftFront.set(0);
-        rightFront.set(0);
-        leftBack.set(0);
-        rightBack.set(0);
-        eDriveDone = true;
-      }
+    //   if(Math.abs(lFrontEncoder.getPosition()) >= motorTarget || Math.abs(rFrontEncoder.getPosition()) >= motorTarget || Math.abs(lBackEncoder.getPosition()) >= motorTarget || Math.abs(rBackEncoder.getPosition()) >= motorTarget || System.currentTimeMillis() > (timeStarted + timeOut)) {
+    //     leftFront.set(0);
+    //     rightFront.set(0);
+    //     leftBack.set(0);
+    //     rightBack.set(0);
+    //     eDriveDone = true;
+    //   }
   
-    }
+    // }
 
   public double getAngle()
   {
@@ -205,17 +206,7 @@ public class Drive {
     //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
     // }
 
-    @Description(group = "com.example", name = "My Plugin", version = "1.2.3", summary = "")
-class MyPlugin extends Plugin {
 
-  private static final Theme myTheme = new Theme(MyPlugin.class, "My Theme Name", "/path/to/stylesheet", "/path/to/stylesheet", ...);
-
-  @Override
-  public List<Theme> getThemes() {
-    return ImmutableList.of(myTheme);
-  }
-
-}
 
 }
   

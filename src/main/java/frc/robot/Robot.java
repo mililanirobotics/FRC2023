@@ -8,12 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-<<<<<<< HEAD
-
-
-=======
 import edu.wpi.first.wpilibj.Joystick;
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
 import frc.robot.Apriltags;
 
 /**
@@ -35,13 +30,7 @@ public class Robot extends TimedRobot {
   Joystick joystick = new Joystick(0);
   public static Drive drive = new Drive();
   Apriltags aprilTags = new Apriltags();
-<<<<<<< HEAD
-  public static Drive drive = new Drive();
   Align align = new Align();
-  Joystick joystick = new Joystick(0);
-=======
-
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -119,7 +108,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-<<<<<<< HEAD
     if (joystick.getRawButton(2)) {
       aprilTags.log();
     }
@@ -129,21 +117,6 @@ public class Robot extends TimedRobot {
     if (joystick.getRawButton(4)) {
       align.distanceAlign();
     }
-=======
-    if (joystick.getRawButton(1) == true) {
-      aprilTags.log();
-    }
-    if (joystick.getRawButtonPressed(2) == true) {
-      aprilTags.setPipeline(1);
-    }
-    if (joystick.getRawButtonPressed(3) == true) {
-      aprilTags.setPipeline(2);
-    }
-    if (joystick.getRawButton(4) == true) {
-      // aprilTags.alignLongitude();
-    }
-    
->>>>>>> c66fe4aea6e54eafa3b2a181c9508533fe4411a0
   }
 
   /** This function is called once when the robot is disabled. */

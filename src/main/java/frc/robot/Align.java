@@ -57,10 +57,10 @@ public class Align {
     public void align2() {
         aprilTags.setPipeline(1);
         Robot.drive.angleAlign();
-        double length1 = aprilTags.estimateVerticalDistance();
+        double length1 = aprilTags.estimateHorizontalDistance();
 
         aprilTags.setPipeline(2);
-        double length2 = aprilTags.estimateVerticalDistance();
+        double length2 = aprilTags.estimateHorizontalDistance();
 
         double offset = aprilTags.getHorizontalDegToTarget();
         double angle1 = Math.asin(Math.sin(offset * length2)/length1);
@@ -74,7 +74,7 @@ public class Align {
     }
 
     public void distanceAlign() {
-        double targetDistance = aprilTags.estimateVerticalDistance() - 50; // subtracting limelight's distance by claw's reach, subject to change
+        double targetDistance = aprilTags.estimateHorizontalDistance() - 50; // subtracting limelight's distance by claw's reach, subject to change
         double speed = 0;
         double k = 0.01;
         if (targetDistance < -2 || targetDistance > 2) {
