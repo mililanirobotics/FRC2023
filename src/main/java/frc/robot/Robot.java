@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   Joystick joystick = new Joystick(0);
   Claw claw = new Claw();
+  // PivotArm pivotArm = new PivotArm();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -70,7 +71,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        // Put custom auto code here
+        //pivotArm.AutoEncoderRotation(35);
         break;
       case kDefaultAuto:
       default:
