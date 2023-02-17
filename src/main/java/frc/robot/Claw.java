@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class Claw{
 
-    DoubleSolenoid armExtension = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-    // DoubleSolenoid clawLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3, 4);
-    // DoubleSolenoid clawRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 5, 6);
+    // DoubleSolenoid armExtension = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    DoubleSolenoid clawLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    DoubleSolenoid clawRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
     
     // CANSparkMax armMotor = new CANSparkMax(7, MotorType.kBrushless);
     // RelativeEncoder armMotorEncoder = armMotor.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
@@ -34,16 +34,16 @@ public class Claw{
     public void robotIntial() {
 
         //sets default states to the Solenoids
-        armExtension.set(kReverse);
-        // clawLeft.set(kReverse);
-        // clawRight.set(kReverse);
+        // armExtension.set(kReverse);
+        clawLeft.set(kReverse);
+        clawRight.set(kReverse);
 
     }
 
     // Arm Extension control
-    public void ArmExtension() {
-        armExtension.toggle();
-    }
+    // public void ArmExtension() {
+    //     armExtension.toggle();
+    // }
 
     // public void joystickControl() {
     //     //Arm Motor control
@@ -75,8 +75,8 @@ public class Claw{
     // }
     
     // // Claw Solenoid control
-    // public void clawToggle() { 
-    //     clawLeft.toggle();
-    //     clawRight.toggle();
-    // }
+    public void clawToggle() { 
+        clawLeft.toggle();
+        clawRight.toggle();
+    }
 }
