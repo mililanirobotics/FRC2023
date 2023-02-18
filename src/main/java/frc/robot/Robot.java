@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private static final String kPipelineOne = "Pipeline One";
-  private static final String kPipelineTwo = "Pipeline Two";
   private String m_autoSelected;
   private String m_pipelineSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -40,8 +38,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser); 
 
-    m_pipeline.setDefaultOption("Pipeline 1", kPipelineOne);
-    m_pipeline.addOption("Pipeline 2", kPipelineTwo);
+    m_pipeline.setDefaultOption("Pipeline 1", Apriltags.kPipelineOne);
+    m_pipeline.addOption("Pipeline 2", Apriltags.kPipelineTwo);
     SmartDashboard.putData("Pipeline choices", m_pipeline);
   }
 
@@ -78,25 +76,11 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        aprilTags.log();
-        // drive.angleAlign();
         break;
 
       case kDefaultAuto:
-        aprilTags.log();
-        // drive.driveToAprilTag();
         break;
     }
-    // switch (m_pipelineSelected) {
-    //   case kPipelineOne:
-    //   aprilTags.setPipeline(0);
-    //   break;
-
-    //   case kPipelineTwo:
-
-    //   break;
-
-    // }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -106,15 +90,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawButton(2)) {
-      aprilTags.log();
-    }
-    if (joystick.getRawButton(3)) {
-      align.angleAlign();
-    }
-    if (joystick.getRawButton(4)) {
-      align.distanceAlign();
-    }
   }
 
   /** This function is called once when the robot is disabled. */
