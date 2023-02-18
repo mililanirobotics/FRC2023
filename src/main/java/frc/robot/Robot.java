@@ -7,11 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,21 +17,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private static final String kDockAndEngage1 = "Dock and Engage Left";
-  private static final String kDockAndEngage2 = "Dock and Engage Middle";
-  private static final String kDockAndEngage3 = "Dock and Engage Right";
-  private static final String kScoring1 = "Scoring on the Left";
-  private static final String kScoring2 = "Scoring in the Middle";
-  private static final String kScoring3 = "Scoring on the Right";
+  
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  
-  Drive drive = new Drive();
-  PivotArm pivotArm = new PivotArm();
-
-  Joystick joystick = new Joystick(0);
-  Claw claw = new Claw();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -46,13 +30,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
-    m_chooser.addOption("Dock and Engage left", kDockAndEngage1);
     SmartDashboard.putData("Auto choices", m_chooser);
-    
-    drive.rightFront.setInverted(true);
-    drive.rightBack.setInverted(true);
-    
-    claw.armExtension.set(Value.kReverse);
   }
 
   /**
@@ -94,76 +72,6 @@ public class Robot extends TimedRobot {
       default:
         // Put default auto code here
         break;
-      case kDockAndEngage1: 
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(35);
-        claw.clawToggle();
-        drive.encoderDrive(0.4, 136.5, "Backward", 5000);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(1500, -90, 0.13);
-        drive.encoderDrive(0.3, 36, "Forward", 3000);
-        drive.turnDrive(1500, 90, 0.13);
-        drive.encoderDrive(0.3, 40, "Forward", 3000);
-        // Dock and Engage code
-        break;
-      case kDockAndEngage2:
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(30);
-        claw.clawToggle();
-        drive.encoderDrive(0.3, 20, "Backward", 1500);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(2000, 180, 0.13);
-        drive.encoderDrive(0.4, 35, "Forward", 3500);
-        // Dock and Engage code
-        break;
-      case kDockAndEngage3:
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(35);
-        claw.clawToggle();
-        drive.encoderDrive(0.4, 136.5, "Backward", 5000);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(1500, 90, 0.13);
-        drive.encoderDrive(0.3, 36, "Forward", 3000);
-        drive.turnDrive(1500, -90, 0.13);
-        drive.encoderDrive(0.3, 40, "Forward", 3000);
-        // Dock and Engage code
-        break;
-      case kScoring1:
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(35);
-        claw.clawToggle();
-        drive.encoderDrive(0.4, 136.5, "Backward", 5000);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(1500, -90, 0.13);
-        drive.encoderDrive(0.3, 24, "Forward", 3000);
-        drive.turnDrive(1500, -90, 0.13);
-        drive.encoderDrive(0.3, 36, "Forward", 3000);
-        break;
-      case kScoring2:
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(30);
-        claw.clawToggle();
-        drive.encoderDrive(0.3, 20, "Backward", 1500);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(-1500, -90, 0.13);
-        drive.encoderDrive(0.3, 30, "Forward", 3500);
-        drive.turnDrive(-1500, -90, 0.13);
-        drive.encoderDrive(0.3, 36, "Forward", 3000);
-        drive.turnDrive(1500, -90, 0.13);
-        drive.encoderDrive(0.3, 36, "Forward", 3000);
-        drive.turnDrive(1500, 90, 0.13);
-        drive.encoderDrive(0.3, 40, "Forward", 4000);
-        break;
-      case kScoring3:
-        drive.encoderDrive(0.3, 12, "Forward", 1000);
-        pivotArm.AutoEncoderRotation(35);
-        claw.clawToggle();
-        drive.encoderDrive(0.4, 136.5, "Backward", 5000);
-        pivotArm.AutoEncoderRotation(0);
-        drive.turnDrive(1500, 90, 0.13);
-        drive.encoderDrive(0.3, 20, "Forward", 2000);
-        drive.turnDrive(1500, 90, 0.13);
-        drive.encoderDrive(0.3, 40, "Forward", 3000);
     }
   }
 

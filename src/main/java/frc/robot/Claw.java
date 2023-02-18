@@ -2,15 +2,9 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
-import javax.crypto.KeyGenerator;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-
 
 public class Claw{
 
