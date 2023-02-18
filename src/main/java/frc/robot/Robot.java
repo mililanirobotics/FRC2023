@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,8 +18,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final String kPipelineOne = "Pipeline One";
+  private static final String kPipelineTwo = "Pipeline Two";
   private String m_autoSelected;
+  private String m_pipelineSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<String> m_pipeline = new SendableChooser<>();
+
+  Joystick joystick = new Joystick(0);
+  public static Drive drive = new Drive();
+  Apriltags aprilTags = new Apriltags();
+  public static Align align = new Align();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,7 +38,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    SmartDashboard.putData("Auto choices", m_chooser); 
+
+    m_pipeline.setDefaultOption("Pipeline 1", kPipelineOne);
+    m_pipeline.addOption("Pipeline 2", kPipelineTwo);
+    SmartDashboard.putData("Pipeline choices", m_pipeline);
   }
 
   /**
@@ -54,8 +68,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Pipeline selected: " + m_pipelineSelected);
   }
 
   /** This function is called periodically during autonomous. */
@@ -63,13 +78,25 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        // Put custom auto code here
+        aprilTags.log();
+        // drive.angleAlign();
         break;
+
       case kDefaultAuto:
-      default:
-        // Put default auto code here
+        aprilTags.log();
+        // drive.driveToAprilTag();
         break;
     }
+    // switch (m_pipelineSelected) {
+    //   case kPipelineOne:
+    //   aprilTags.setPipeline(0);
+    //   break;
+
+    //   case kPipelineTwo:
+
+    //   break;
+
+    // }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -78,7 +105,17 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (joystick.getRawButton(2)) {
+      aprilTags.log();
+    }
+    if (joystick.getRawButton(3)) {
+      align.angleAlign();
+    }
+    if (joystick.getRawButton(4)) {
+      align.distanceAlign();
+    }
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
