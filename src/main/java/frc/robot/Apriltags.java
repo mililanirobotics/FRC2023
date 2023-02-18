@@ -13,9 +13,13 @@ public final class Apriltags {
     public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
     public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
     public static final double bumperThickness = 3;
-       private NetworkTable table;
-       Drive drive = Robot.drive;
-       Align align = Robot.align;
+
+    static final String kPipelineOne = "Pipeline One";
+    static final String kPipelineTwo = "Pipeline Two";
+
+    private NetworkTable table;
+    Drive drive = Robot.drive;
+    Align align = Robot.align;
        
            public Apriltags()
            {
@@ -47,6 +51,18 @@ public final class Apriltags {
             double verticalDegOffset = table.getEntry("ty").getDouble(0);
             
             return verticalDegOffset;
+           }
+
+           public void switchPipeline(String m_pipelineSelected) {
+                switch(m_pipelineSelected) {
+                    case kPipelineOne:
+                    setPipeline(0);
+                    break;
+
+                    case kPipelineTwo:
+                    setPipeline(1);
+                    break;
+                }
            }
        
            /**
