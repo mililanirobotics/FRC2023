@@ -90,7 +90,7 @@ public class Drive {
 
         //statement above calculates the position of the desired angle
         //based on the robots current orientation
-        double timeStarted = System.currentTimeMillis();
+        //double timeStarted = System.currentTimeMillis();
         //timeStarted is recorded for timeOut
 
         double error = desiredAngle - gyro.getAngle();
