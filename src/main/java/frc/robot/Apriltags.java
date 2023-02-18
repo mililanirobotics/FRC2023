@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTableEntry;
 
 public final class Apriltags {
     public static final double kTurnToleranceDeg = 5;
@@ -16,20 +15,12 @@ public final class Apriltags {
     public static final double bumperThickness = 3;
        private NetworkTable table;
        Drive drive = Robot.drive;
+       Align align = Robot.align;
        
            public Apriltags()
            {
                table = NetworkTableInstance.getDefault().getTable("limelight");
            }
-
-           public Apriltags(String name) {
-               table = NetworkTableInstance.getDefault().getTable(name);
-           }
-       
-           public Apriltags(NetworkTable table) {
-               this.table = table;
-           }
-
    
            /**
             * @return whether or not the limelight has any valid targets
@@ -83,75 +74,48 @@ public final class Apriltags {
            /**
             * @return distance from target in inches
            */
-           public double estimateHorizontalDistance(){
-               double veritcalTargetAngle = getVerticalDegToTarget();
-               double height = kTargetHeight - kLensHeight;
-               double angleInRadians = (kMountAngle + veritcalTargetAngle) * (Math.PI / 180);
+           public double estimateDepthToTarget(){
+               double verticalTargetAngle = getVerticalDegToTarget();
+               double height = Math.abs(kTargetHeight - kLensHeight);
+               double angleInRadians = Math.toRadians(kMountAngle + verticalTargetAngle);
 
-               double horizontalDistance = height / Math.tan(angleInRadians);
+               double depthToTarget = height / Math.tan(angleInRadians);
                //Determines the distance with camera height minus target height devided by tangent of camera angle plus the vertical offset angle
+               return depthToTarget;
+           }
+       
+           public double estimateHorizontalDistance(double depthToTarget){
+               double horizontalTargetAngle = getHorizontalDegToTarget();
+               
+               double horizontalDistance = depthToTarget * Math.tan(horizontalTargetAngle);
+               //Determines the distance with vertical distance multiply by the tangent of horizontal target angle
                return horizontalDistance;
            }
        
-           public double estimateVerticalDistance(double horizontalDistance){
-               double horizontalTargetAngle = getHorizontalDegToTarget();
-               
-               double verticalDistance = horizontalDistance * Math.tan(horizontalTargetAngle);
-               //Determines the distance with vertical distance multiply by the tangent of horizontal target angle
-               return verticalDistance;
-           }
-       
            public boolean isDistancePossible(){
-                drive.angleAlign();
+                Robot.align.angleAlign();
                 boolean distPossible = false;
                if (getPipeline() == 0) {
-                    distPossible = ((estimateHorizontalDistance() < maxArmReach && estimateHorizontalDistance() > minArmReach) ? true : false);
-           }
+                    //AprilTags Pipeline
+                    distPossible = ((estimateDepthToTarget() + 17.375)  < maxArmReach && (estimateDepthToTarget() + 17.375) > minArmReach);
+                }
                if (getPipeline() == 1) {
-                    distPossible = (((estimateHorizontalDistance() + 17.375)  < maxArmReach && (estimateHorizontalDistance() + 17.375) > minArmReach) ? true : false);
-               }
+                    //ReflectiveTape Pipeline
+                    distPossible = (estimateDepthToTarget() < maxArmReach && estimateDepthToTarget() > minArmReach);          
+                }
                return distPossible;
            }
 
            public boolean isScoringPossible(){
-            return((estimateHorizontalDistance() < 28.6) ? true : false);
+            return(estimateDepthToTarget() < 28.6);
            }
         
            //Determines if the distance to target is posible
 
-        //    public double alignLongitude() {
-        //     setPipeline(1);
-        //     double distance = 0;
-        //     if (getHorizontalDegToTarget() < -1 || getHorizontalDegToTarget() > 1) {
-        //         if (getPipeline() == 1) {
-        //             drive.angleAlign();
-        //         }
-        //     } 
-        //     if (getHorizontalDegToTarget() < 1 && getHorizontalDegToTarget() > -1) {
-        //         double length1 = estimateVerticalDistance();
-        //         double offset1 = getHorizontalDegToTarget();
-
-        //         // drive.leftFront.stopMotor();
-        //         // drive.rightFront.stopMotor();
-        //         // drive.leftBack.stopMotor();
-        //         // drive.rightBack.stopMotor();
-        //         setPipeline(2);
-        //         double length2 = estimateVerticalDistance();
-        //         double offset2 = getHorizontalDegToTarget();
-
-        //         double theta = (offset2 - offset1) * (Math.PI/180);
-        //         double angle1 = Math.asin(length2 * (Math.sin(theta)/17));
-    
-        //         double angle2 = 180 - 90 - angle1;
-        //         distance = length1 * Math.tan(angle2);
-        //     }
-        //     return distance;
-        // }
-
            public void log() {
                SmartDashboard.putNumber("X offset degree", getHorizontalDegToTarget());
                SmartDashboard.putNumber("Y offset degree", getVerticalDegToTarget());
-               SmartDashboard.putNumber("X distance to target", estimateHorizontalDistance());
+               SmartDashboard.putNumber("X distance to target", estimateDepthToTarget());
             //    SmartDashboard.putBoolean("distance possible?", isDistancePossible());
                SmartDashboard.putBoolean("target found?", isTargetFound());  
             //    SmartDashboard.putNumber("longitude to target", alignLongitude());

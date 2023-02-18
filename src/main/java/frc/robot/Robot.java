@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
   Joystick joystick = new Joystick(0);
   public static Drive drive = new Drive();
   Apriltags aprilTags = new Apriltags();
-  Align align = new Align();
+  public static Align align = new Align();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
       aprilTags.log();
     }
     if (joystick.getRawButton(3)) {
-      drive.angleAlign();
+      align.angleAlign();
     }
     if (joystick.getRawButton(4)) {
       align.distanceAlign();

@@ -1,16 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import com.revrobotics.SparkMaxRelativeEncoder;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 
@@ -18,7 +11,6 @@ import edu.wpi.first.wpilibj.Encoder;
 public class Drive {
 
     // Encoder declarations and initializations 
-    // int PULSES_PER_ROTATION = 42;
     int COUNTS_PER_ROTATION = 42;
     double DRIVE_GEAR_REDUCTION = 8.6;
     double WHEEL_DIAMETER = 4;
@@ -87,16 +79,14 @@ public class Drive {
           rightBack.set(0);
           eDriveDone = true;
         }
-
-        double allEncoder = lFrontEncoder.getPosition() + rFrontEncoder.getPosition();
     
       }
 
     //This method is called on during autonomous for turning
-    public void turnDrive(int timeOut, double turnDegrees, double speed) {
+    public void turnDrive(double speed, double turnDegrees, int timeOut) {
         //set turnDegrees parameters for this method to negative to turn left
         //timeOut parameter should be in milliseconds
-        double desiredAngle = currentAngle + turnDegrees;
+        double desiredAngle = gyro.getAngle() + turnDegrees;
 
         //statement above calculates the position of the desired angle
         //based on the robots current orientation
@@ -110,7 +100,7 @@ public class Drive {
         System.out.println("Error: " + error);
         //error between desiredAngle and our current angle is established
         if(error < -2 || error > 2) {
-          //While loop will continue as long as error is not inbetween the slack range of -3 to 3
+          //Loop will continue as long as error is not inbetween the slack range of -2 to 2
           error = desiredAngle - gyro.getAngle();
           //This calculates at the start of every loop to determine which way the robot will turn
           if(error > 0) {
@@ -138,62 +128,6 @@ public class Drive {
 
         //Stop all motors
     }
-
-    public void angleAlign() {
-      double speed = 0;
-      double k = 0.03;
-      double angleOffset = aprilTags.getHorizontalDegToTarget();
-      alignDone = false;
-
-      if (angleOffset < -0.5 || angleOffset > 0.5) {
-        speed = angleOffset * k;
-        if (Math.abs(speed) > 0.1) {
-          speed = Math.copySign(0.1, speed);
-        }
-        else if (Math.abs(speed) < 0.075) {
-          speed = Math.copySign(0.075, speed);
-        }
-        leftFront.set(speed);
-        rightFront.set(-speed);
-        leftBack.set(speed);
-        rightBack.set(-speed);
-      }
-      else {
-        leftFront.stopMotor();
-        rightFront.stopMotor();
-        leftBack.stopMotor();
-        rightBack.stopMotor();
-        alignDone = true;
-      }
-    }
-
-    // public void driveToAprilTag(String direction, double timeOut) {
-    //   double speed = 0.20;
-    //   double distance = aprilTags.estimateHorizontalDistance() - 45;
-    //   double timeStarted = 
-
-    //   if (distance > 1) {
-    //     leftFront.set(speed);
-    //     rightFront.set(speed);
-    //     leftBack.set(speed);
-    //     rightBack.set(speed);  
-    //   }
-    //   else if (distance < 1) {
-    //     leftFront.set(-speed);
-    //     rightFront.set(-speed);
-    //     leftBack.set(-speed);
-    //     rightBack.set(-speed);
-    //   }
-      
-    //   if(Math.abs(lFrontEncoder.getPosition()) >= motorTarget || Math.abs(rFrontEncoder.getPosition()) >= motorTarget || Math.abs(lBackEncoder.getPosition()) >= motorTarget || Math.abs(rBackEncoder.getPosition()) >= motorTarget || System.currentTimeMillis() > (timeStarted + timeOut)) {
-    //     leftFront.set(0);
-    //     rightFront.set(0);
-    //     leftBack.set(0);
-    //     rightBack.set(0);
-    //     eDriveDone = true;
-    //   }
-  
-    // }
 
   public double getAngle()
   {
