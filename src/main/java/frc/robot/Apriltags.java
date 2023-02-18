@@ -8,9 +8,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 public final class Apriltags {
     public static final double kTurnToleranceDeg = 5;
     public static final double kTurnRateToleranceDegPerS = 5; // degrees per second
-    public static final double kTargetHeight = 33; //Apriltags / reflectives height
+    public static final double kTargetHeight = 9; //Apriltags / reflectives height
     public static final double kLensHeight = 23.5; // Camera lens height 
-    public static final double kMountAngle = 1; // Camera lens angle
+    public static final double kMountAngle = 0; // Camera lens angle
     public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
     public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
     public static final double bumperThickness = 3;

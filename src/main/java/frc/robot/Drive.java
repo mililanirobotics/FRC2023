@@ -145,13 +145,13 @@ public class Drive {
       double angleOffset = aprilTags.getHorizontalDegToTarget();
       alignDone = false;
 
-      if (angleOffset < -1 || angleOffset > 1) {
+      if (angleOffset < -0.5 || angleOffset > 0.5) {
         speed = angleOffset * k;
-        if (Math.abs(speed) > 0.5) {
-          speed = Math.copySign(0.5, speed);
+        if (Math.abs(speed) > 0.1) {
+          speed = Math.copySign(0.1, speed);
         }
-        else if (Math.abs(speed) < 0.05) {
-          speed = Math.copySign(0.05, speed);
+        else if (Math.abs(speed) < 0.075) {
+          speed = Math.copySign(0.075, speed);
         }
         leftFront.set(speed);
         rightFront.set(-speed);
