@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   Joystick joystick = new Joystick(0);
   Claw claw = new Claw();
+  PivotArm pivotArm = new PivotArm();
   // PivotArm pivotArm = new PivotArm();
 
   /**
@@ -36,7 +37,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    claw.armExtension.set(Value.kReverse);
+    // claw.armExtension.set(Value.kReverse);
   }
 
   /**
@@ -71,7 +72,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        //pivotArm.AutoEncoderRotation(35);
+        // pivotArm.AutoEncoderRotation(35);
+        // SmartDashboard.putNumber("Encoders", pivotArm.pivotEncoder.getPosition());
         break;
       case kDefaultAuto:
       default:
@@ -83,13 +85,19 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    claw.robotIntial();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawButtonPressed(4) == true) {
-      claw.ArmExtension();
+    // if (joystick.getRawButtonPressed(4) == true) {
+    //   claw.ArmExtension();
+    // }
+
+    if(joystick.getRawButtonPressed(1))
+    {
+      claw.clawToggle();
     }
   }
 
