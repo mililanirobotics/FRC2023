@@ -48,6 +48,13 @@ public class Drive {
 
   }
 
+    /**
+     * This method is called upon in autonomous for moving back and forth
+     * @param speed sets speed the robot will move at
+     * @param distance determines how far the robot will move (USE INCHES)
+     * @param direction determines which way the robot will move ("forward" or "backward")
+     * @param timeOut determines how long the method will run before being stopped forcefully (USE MILLISECONDS)
+     */
     public void encoderDrive(double speed, double distance, String direction, double timeOut) {
         int motorTarget = (int)(distance * COUNTS_PER_INCH);
         eDriveDone = false;
@@ -82,7 +89,12 @@ public class Drive {
     
       }
 
-    //This method is called on during autonomous for turning
+    /**
+     * This method is called on during autonomous for turning
+     * @param speed sets the speed the robot will turn at
+     * @param turnDegrees amount of degrees from the current orientation the robot will turn (POSITIVE = RIGHT, NEGATIVE = LEFT)
+     * @param timeOut determines how long the method will run before being forcefully stopped (USE MILLISECONDS)
+     */
     public void turnDrive(double speed, double turnDegrees, int timeOut) {
         //set turnDegrees parameters for this method to negative to turn left
         //timeOut parameter should be in milliseconds

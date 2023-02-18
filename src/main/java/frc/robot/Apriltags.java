@@ -92,6 +92,9 @@ public final class Apriltags {
                return horizontalDistance;
            }
        
+           /**
+            * @return wether or not the robot can score a gamepiece from it's current position
+            */
            public boolean isDistancePossible(){
                 Robot.align.angleAlign();
                 boolean distPossible = false;

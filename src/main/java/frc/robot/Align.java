@@ -12,12 +12,15 @@ public class Align {
     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
     boolean alignDone = false;
 
+    /**
+     * Moves the robot within a certain range from the apriltag or relfective tape based on estimate distance calculated from limelight angle offset
+     */
     public void distanceAlign() {
         double targetDistance = aprilTags.estimateDepthToTarget() - 50; // subtracting limelight's distance by claw's reach, subject to change
         double speed = 0;
-        double k = 0.01;
+        double kPAlignDistance = 0.01;
         if (targetDistance < -2 || targetDistance > 2) {
-            speed = targetDistance * k;
+            speed = targetDistance * kPAlignDistance;
             if (Math.abs(speed) > 0.15) {
                 speed = Math.copySign(0.15, speed);
             }
@@ -37,14 +40,17 @@ public class Align {
         }
     }
 
+    /**
+     * Turn the robot so the limelight's angle offset to the apriltag or relfective tape is as close to 0 as possible
+     */
     public void angleAlign() {
         double speed = 0;
-        double k = 0.03;
+        double kPAlignAngle = 0.03;
         double angleOffset = aprilTags.getHorizontalDegToTarget();
         alignDone = false;
   
         if (angleOffset < -0.5 || angleOffset > 0.5) {
-          speed = angleOffset * k;
+          speed = angleOffset * kPAlignAngle;
           if (Math.abs(speed) > 0.1) {
             speed = Math.copySign(0.1, speed);
           }
