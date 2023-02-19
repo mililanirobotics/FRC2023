@@ -8,26 +8,20 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Claw{
 
-    DoubleSolenoid armExtension = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-    DoubleSolenoid clawLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3, 4);
-    DoubleSolenoid clawRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 5, 6);
-    
+    DoubleSolenoid clawLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    DoubleSolenoid clawRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
+        
     Joystick joystick = new Joystick(0);
+    int armState = 0;
+    double armPosition = 0;
         
     public void robotIntial() {
 
         //sets default states to the Solenoids
-        armExtension.set(kReverse);
         clawLeft.set(kReverse);
         clawRight.set(kReverse);
 
     }
-
-    // Arm Extension control
-    public void ArmExtension() {
-        armExtension.toggle();
-    }
-
     
     // Claw Solenoid control
     public void clawToggle() { 

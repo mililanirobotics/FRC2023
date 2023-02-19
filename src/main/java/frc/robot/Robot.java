@@ -25,6 +25,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
   Joystick joystick = new Joystick(0);
+  Claw claw = new Claw();
+  PivotArm pivotArm = new PivotArm();
   public static Drive drive = new Drive();
   Apriltags aprilTags = new Apriltags();
   public static Align align = new Align();
