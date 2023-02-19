@@ -22,9 +22,9 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.4, 136.5, "Backward", 5000);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 36, "Forward", 3000);
-            drive.turnDrive(1500, 90, 0.13);
+            drive.turnDrive(0.13, 90, 1500);
             drive.encoderDrive(0.3, 40, "Forward", 3000);
             // Dock and Engage code
             break;
@@ -34,7 +34,7 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.3, 20, "Backward", 1500);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(2000, 180, 0.13);
+            drive.turnDrive(0.13, 180, 2000);
             drive.encoderDrive(0.4, 35, "Forward", 3500);
             // Dock and Engage code
             break;
@@ -44,9 +44,9 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.4, 136.5, "Backward", 5000);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(1500, 90, 0.13);
+            drive.turnDrive(0.13, 90, 1500);
             drive.encoderDrive(0.3, 36, "Forward", 3000);
-            drive.turnDrive(1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 40, "Forward", 3000);
             // Dock and Engage code
             break;
@@ -56,9 +56,9 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.4, 136.5, "Backward", 5000);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 24, "Forward", 3000);
-            drive.turnDrive(1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 36, "Forward", 3000);
             break;
           case kScoring2:
@@ -67,13 +67,13 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.3, 20, "Backward", 1500);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(-1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 30, "Forward", 3500);
-            drive.turnDrive(-1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 36, "Forward", 3000);
-            drive.turnDrive(1500, -90, 0.13);
+            drive.turnDrive(0.13, -90, 1500);
             drive.encoderDrive(0.3, 36, "Forward", 3000);
-            drive.turnDrive(1500, 90, 0.13);
+            drive.turnDrive(0.13, 90, 1500);
             drive.encoderDrive(0.3, 40, "Forward", 4000);
             break;
           case kScoring3:
@@ -82,9 +82,9 @@ public class Auto {
             claw.clawToggle();
             drive.encoderDrive(0.4, 136.5, "Backward", 5000);
             pivotArm.AutoEncoderRotation(0);
-            drive.turnDrive(1500, 90, 0.13);
+            drive.turnDrive(0.13, 90, 1500);
             drive.encoderDrive(0.3, 20, "Forward", 2000);
-            drive.turnDrive(1500, 90, 0.13);
+            drive.turnDrive(0.13, 90, 1500);
             drive.encoderDrive(0.3, 40, "Forward", 3000);
         }
     }
