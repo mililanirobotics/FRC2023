@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  
   private String m_autoSelected;
   private String m_pipelineSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -52,7 +53,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {}
-
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -73,6 +73,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
+  // Angle rotations for pivot arm may have to be changed 
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
@@ -85,7 +86,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
