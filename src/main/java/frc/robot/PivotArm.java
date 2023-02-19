@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
-
-
 public class PivotArm {
     int COUNTS_PER_ROTATION = 42;
     double speed = 0;
@@ -62,6 +60,7 @@ public class PivotArm {
         }
     }
     // Pivoting your elbow to meet the grids for scoring
+
     else if (angleRotation > 1) {
         if (error > 1 || error < -1) {
 
@@ -72,7 +71,6 @@ public class PivotArm {
             else if (Math.abs(speed) > 0.2) {
                 speed = Math.copySign(0.2, speed);
             }
-
             elbowPivot.set(speed);
 
             } 
@@ -117,6 +115,7 @@ public class PivotArm {
     }
 
     // // TeleOp method for automatically moving elbow pivot: Pending deletion
+
     public void EncoderRotation() {
 
     if (joystick.getRawButtonPressed(3)) {
@@ -142,16 +141,42 @@ public class PivotArm {
         else if (Math.abs(speed) > 0.2) {
             speed = Math.copySign(0.2, speed);
         }
-
         elbowPivot.set(speed);
-
         } 
     else {
-
         // Stalling the pivot motor may need to change its method
         elbowPivot.set(0);
-
         }
     }
 
-}
+    int armState;
+    double armPosition;
+    public void joystickControl() {
+        //Arm Motor control
+        if (joystick.getRawButton(1) == true) {
+            clawPivot.set(1);
+            armState = 0;
+        }
+        else if (joystick.getRawButton(2) == true) {
+            clawPivot.set(-1);
+            armState = 0;
+        }
+        else {
+            armState ++;
+            if (armState == 1) {
+                armPosition = pivotEncoder.getPosition();
+            }
+            armStall();
+        }
+    } 
+    
+    public void armStall() {
+        double error = armPosition - pivotEncoder.getPosition();
+        double speed = 0;
+        double k = 0.01;
+        if (error > 1 || error < -1) {
+            speed = error * k;
+        }
+        clawPivot.set(speed);
+    }
+ }
