@@ -2,13 +2,11 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 
@@ -119,41 +117,41 @@ public class PivotArm {
     }
 
     // // TeleOp method for automatically moving elbow pivot: Pending deletion
-    // public void EncoderRotation() {
+    public void EncoderRotation() {
 
-    // if (joystick.getRawButtonPressed(3)) {
-    //     // Placeholder angle for rotating arm to cube node
-    //     angleRotation = 30;
-    // }
-    // else if (joystick.getRawButtonPressed(4)) {
-    //     // Placeholder angle for rotating arm to cone node
-    //     angleRotation = 35;
-    // }
+    if (joystick.getRawButtonPressed(3)) {
+        // Placeholder angle for rotating arm to cube node
+        angleRotation = 30;
+    }
+    else if (joystick.getRawButtonPressed(4)) {
+        // Placeholder angle for rotating arm to cone node
+        angleRotation = 35;
+    }
 
-    // // W.I.P. motor target. angleRotation is (x degrees / 360)
-    // double motorTarget = (int) gearRatio * COUNTS_PER_ROTATION * angleRotation/360;
-    // double error = motorTarget - elbowEncoder.getPosition();
+    // W.I.P. motor target. angleRotation is (x degrees / 360)
+    double motorTarget = (int) gearRatio * COUNTS_PER_ROTATION * angleRotation/360;
+    double error = motorTarget - elbowEncoder.getPosition();
     
-    // // Pivoting the arm to target
-    // if (error > 1 || error < -1) {
+    // Pivoting the arm to target
+    if (error > 1 || error < -1) {
 
-    //     speed = error * k;
-    //     if (Math.abs(speed) > 0.5) {
-    //         speed = Math.copySign(0.5, speed);
-    //     }
-    //     else if (Math.abs(speed) > 0.2) {
-    //         speed = Math.copySign(0.2, speed);
-    //     }
+        speed = error * k;
+        if (Math.abs(speed) > 0.5) {
+            speed = Math.copySign(0.5, speed);
+        }
+        else if (Math.abs(speed) > 0.2) {
+            speed = Math.copySign(0.2, speed);
+        }
 
-    //     elbowPivot.set(speed);
+        elbowPivot.set(speed);
 
-    //     } 
-    // else {
+        } 
+    else {
 
-    //     // Stalling the pivot motor may need to change its method
-    //     elbowPivot.set(0);
+        // Stalling the pivot motor may need to change its method
+        elbowPivot.set(0);
 
-    //     }
-    // }
+        }
+    }
 
 }
