@@ -35,7 +35,7 @@ public class Drive {
     double currentAngle;
 
     // Limelight 
-    Apriltags aprilTags = new Apriltags();
+    Limelight aprilTags = new Limelight();
 
   public Drive() {
     // rFrontEncoder.setInverted(true);
