@@ -4,24 +4,22 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public final class Apriltags {
-    public static final double kTurnToleranceDeg = 5;
-    public static final double kTurnRateToleranceDegPerS = 5; // degrees per second
-    public static final double kTargetHeight = 9; //Apriltags / reflectives height
-    public static final double kLensHeight = 23.5; // Camera lens height 
-    public static final double kMountAngle = 0; // Camera lens angle
-    public static final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
-    public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
-    public static final double bumperThickness = 3;
-
-    static final String kPipelineOne = "Pipeline One";
-    static final String kPipelineTwo = "Pipeline Two";
+public final class Limelight {
+    final double kTurnToleranceDeg = 5;
+    final double kTurnRateToleranceDegPerS = 5; // degrees per second
+    final double kTargetHeight = 9; //Apriltags / reflectives height
+    final double kLensHeight = 23.5; // Camera lens height 
+    final double kMountAngle = 0; // Camera lens angle
+    final double maxArmReach = 10; //Maximum reach in inches the arm can stretch outside frame
+    final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
+    final double bumperThickness = 3;
 
     private NetworkTable table;
-    Drive drive = Robot.drive;
-    Align align = Robot.align;
+
+    Drive drive = new Drive();
+    Align align = new Align();
        
-           public Apriltags()
+           public Limelight()
            {
                table = NetworkTableInstance.getDefault().getTable("limelight");
            }
@@ -55,11 +53,11 @@ public final class Apriltags {
 
            public void switchPipeline(String m_pipelineSelected) {
                 switch(m_pipelineSelected) {
-                    case kPipelineOne:
+                    case "Pipeline Zero":
                     setPipeline(0);
                     break;
 
-                    case kPipelineTwo:
+                    case "Pipeline One":
                     setPipeline(1);
                     break;
                 }
@@ -70,10 +68,10 @@ public final class Apriltags {
             */
            public void setPipeline(int pipeline) {
                if (pipeline < 0) {
-                   pipeline = 1;
+                   pipeline = 0;
                    throw new IllegalArgumentException("Pipeline can not be less than zero");
                } else if(pipeline > 9) {
-                   pipeline = 2;
+                   pipeline = 1;
                    throw new IllegalArgumentException("Pipeline can not be greater than one");
                }
                table.getEntry("pipeline").setValue(pipeline);
@@ -112,7 +110,7 @@ public final class Apriltags {
             * @return wether or not the robot can score a gamepiece from it's current position
             */
            public boolean isDistancePossible(){
-                Robot.align.angleAlign();
+                align.angleAlign();
                 boolean distPossible = false;
                if (getPipeline() == 0) {
                     //AprilTags Pipeline
@@ -129,18 +127,14 @@ public final class Apriltags {
             return(estimateDepthToTarget() < 28.6);
            }
         
-           //Determines if the distance to target is posible
-
-           public void log() {
+           public void printLimelightData() {
                SmartDashboard.putNumber("X offset degree", getHorizontalDegToTarget());
                SmartDashboard.putNumber("Y offset degree", getVerticalDegToTarget());
-               SmartDashboard.putNumber("X distance to target", estimateDepthToTarget());
-            //    SmartDashboard.putBoolean("distance possible?", isDistancePossible());
+               SmartDashboard.putNumber("Depth to target", estimateDepthToTarget());
+               SmartDashboard.putNumber("Horizontal dist to target", estimateHorizontalDistance(estimateDepthToTarget()));
                SmartDashboard.putBoolean("target found?", isTargetFound());  
-            //    SmartDashboard.putNumber("longitude to target", alignLongitude());
                SmartDashboard.putNumber("pipeline", getPipeline());
                SmartDashboard.putBoolean("Is scoring possible", isScoringPossible());
-
             } 
        
        

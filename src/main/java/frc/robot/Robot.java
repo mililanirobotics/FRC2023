@@ -16,20 +16,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  
   private String m_autoSelected;
   private String m_pipelineSelected;
+
+  private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "My Auto";
+
+  private String kPipelineZero = "Pipeline Zero";
+  private String kPipelineOne = "kPipeline One";
+  
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
   Joystick joystick = new Joystick(0);
+  
+  Drive drive = new Drive();
   Claw claw = new Claw();
   PivotArm pivotArm = new PivotArm();
-  public static Drive drive = new Drive();
-  Apriltags aprilTags = new Apriltags();
-  public static Align align = new Align();
+  Align align = new Align();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,12 +41,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // autopath and pipeline options
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser); 
+    SmartDashboard.putData("Auto choices", m_chooser);
 
-    m_pipeline.setDefaultOption("Pipeline 1", Apriltags.kPipelineOne);
-    m_pipeline.addOption("Pipeline 2", Apriltags.kPipelineTwo);
+    m_pipeline.setDefaultOption("Pipeline 1", kPipelineZero);
+    m_pipeline.addOption("Pipeline 2", kPipelineOne);
     SmartDashboard.putData("Pipeline choices", m_pipeline);
   }
 
