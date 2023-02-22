@@ -1,4 +1,4 @@
-package frc.robot.commands.Drive;
+package frc.robot.commands;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -31,12 +31,7 @@ public class DriveCommand extends CommandBase {
             leftPower *= 0.5;
             rightPower *= 0.5;
         }
-
-        RobotContainer.leftEncoderWidget.setDouble(m_driveSubsystem.getLeftEncoder());
-        RobotContainer.rightEncoderWidget.setDouble(m_driveSubsystem.getRightEncoder());
-
-        System.out.println(m_driveSubsystem.getRightEncoder());
-
+        
         m_driveSubsystem.drive(leftPower, rightPower);
     }
 

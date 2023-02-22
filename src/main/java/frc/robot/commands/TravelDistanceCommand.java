@@ -1,4 +1,4 @@
-package frc.robot.commands.Drive;
+package frc.robot.commands;
 
 //constants
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -30,8 +30,7 @@ public class TravelDistanceCommand extends CommandBase {
     public void initialize() {
         m_driveSubsystem.resetEncoders();
         System.out.println("Initial Distance: "+initialDistance);
-        RobotContainer.motorTab.add("Initial Distance", initialDistance);
-        RobotContainer.motorTab.add("Travel Distance", travelDistance);
+
 
                         // speedSlider = Shuffleboard.getTab("Pre-match")
         //     .add("Max Speed", 1)
@@ -42,9 +41,6 @@ public class TravelDistanceCommand extends CommandBase {
 
     @Override
     public void execute() {
-        RobotContainer.rightEncoderWidget.setDouble(m_driveSubsystem.getRightEncoder());
-        RobotContainer.leftEncoderWidget.setDouble(m_driveSubsystem.getLeftEncoder());
-
         System.out.println("Current Position: "+m_driveSubsystem.getRightEncoder());
         System.out.println("Target Position: "+travelDistance);
 

@@ -36,14 +36,17 @@ public final class Constants {
     }
 
     public final class LimelightConstants {
-        public final static double kMountAngle = 39;
-        public final static double kMountHeight = 24; //limelight's height from ground (currently for kevin)
+        public final static double kMountAngle = 27; //Limelight's mount angle on the robot (currently for kevin)
+        public final static double kMountHeight = 29.75; //limelight's height from ground (currently for kevin)
+        public final static double kArmReach = 50; //How far the arm can reach when in scoring position (placeholder value)
 
         //pipeline numbers for the limelight (WIP)
-        public final static int kReflectivePipeline = 0;
+        public final static int kReflectivePipeline = 3;
         public final static int kAprilTagPipeline = 0;
         public final static int kAlignmentPipelineHigh = 0; //manipulates the limelight's FOV to only see the high reflective tape
         public final static int kAlignmnetPipelineMed = 0; //manipulates the limelight's FOV to only see the med reflective tape
+
+        public static final double kPAlignAngle = 0.03;
     }
 
     public final class PivotConstants {
@@ -113,4 +116,5 @@ public final class Constants {
         public final static int kLeftYJoystickPort = 1;
         public final static int kRightYJoystickPort = 5;
     }
+
 }

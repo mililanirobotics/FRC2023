@@ -19,7 +19,6 @@ public class AlignmentCommand extends CommandBase {
     public AlignmentCommand(int pipeline) {
         m_Limelightsubsystem = RobotContainer.limelightSubsystem;
         m_DriveSubsystem = RobotContainer.driveSubsystem;
-        offsetAngle = 0;
         speed = 0;
         this.pipeline = pipeline;
         addRequirements(m_DriveSubsystem, m_Limelightsubsystem);
@@ -32,25 +31,29 @@ public class AlignmentCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double offsetAngle = m_Limelightsubsystem.getHorizontalOffset();
+        offsetAngle = m_Limelightsubsystem.getHorizontalOffset();
   
-          speed = offsetAngle * LimelightConstants.kPAlignAngle;
-          if (Math.abs(speed) > 0.1) {
-            speed = Math.copySign(0.1, speed);
-          }
-          else if (Math.abs(speed) < 0.075) {
-            speed = Math.copySign(0.075, speed);
-          }
-          m_DriveSubsystem.drive(speed, -speed);
+        speed = offsetAngle * LimelightConstants.kPAlignAngle;
+        if (Math.abs(speed) > 0.1) {
+        speed = Math.copySign(0.1, speed);
+        }
+        else if (Math.abs(speed) < 0.075) {
+        speed = Math.copySign(0.075, speed);
+        }
+        m_DriveSubsystem.drive(speed, -speed);
+
+        System.out.println("Execute running");
     }    
     
     @Override
     public void end(boolean interrupted) {
+        System.out.println("Ending angle: "+offsetAngle);
+        System.out.println("Alignment has finished");
         m_DriveSubsystem.shutdown();
     }
 
     @Override
     public boolean isFinished() {
-        return(offsetAngle < -0.5 || offsetAngle > 0.5);
+        return Math.abs(offsetAngle) < 0.5;
     }
 }
