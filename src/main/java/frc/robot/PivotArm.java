@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
 
 public class PivotArm {
     int COUNTS_PER_ROTATION = 42;
@@ -111,4 +115,9 @@ public class PivotArm {
         }
         elbowPivot.set(speed);
     }
+
+    public void log() {
+        SmartDashboard.putNumber("Pivot Height", elbowEncoder.getPosition());
+        SmartDashboard.putNumber("Pivot Comparison", motorTarget.getPosition());
+      }
  }
