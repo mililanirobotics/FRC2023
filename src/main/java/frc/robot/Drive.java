@@ -146,11 +146,13 @@ public class Drive {
       return gyro.getAngle();
   }
 
-    // public void log() {
-    //   SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
-    //   SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
+    public void log() {
+      SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
+      SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
+      SmartDashboard.putNumber("Gyro desired position", desiredAngle());
+      Shuffleboard.putNumber("Gyro current position", gyro.getAngle());
     //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
-    // }
+    }
 
 
 
