@@ -47,8 +47,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(0, 18.25));
-    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(1, 24)); 
+    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(0, 17.75));
+    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(0, 17.75)); 
   }
 
   /**

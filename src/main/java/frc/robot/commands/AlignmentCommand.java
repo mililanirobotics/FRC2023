@@ -34,11 +34,11 @@ public class AlignmentCommand extends CommandBase {
         offsetAngle = m_Limelightsubsystem.getHorizontalOffset();
   
         speed = offsetAngle * LimelightConstants.kPAlignAngle;
-        if (Math.abs(speed) > 0.1) {
-        speed = Math.copySign(0.1, speed);
+        if (Math.abs(speed) > 0.35) {
+        speed = Math.copySign(0.35, speed);
         }
-        else if (Math.abs(speed) < 0.075) {
-        speed = Math.copySign(0.075, speed);
+        else if (Math.abs(speed) < 0.35) {
+        speed = Math.copySign(0.35, speed);
         }
         m_DriveSubsystem.drive(speed, -speed);
 

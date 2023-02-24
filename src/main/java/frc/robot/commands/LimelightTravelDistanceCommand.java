@@ -39,29 +39,26 @@ public class LimelightTravelDistanceCommand extends CommandBase{
         SmartDashboard.updateValues();
 
         double kPAlignDistance = 0.01;
-        if (travelDistance < -2 || travelDistance > 2) {
-            speed = travelDistance * kPAlignDistance;
-            if (Math.abs(speed) > 0.15) {
-                speed = Math.copySign(0.15, speed);
-            }
-            else if (Math.abs(speed) < 0.10) {
-                speed = Math.copySign(0.10, speed);
-            }
-            m_DriveSubsystem.drive(speed, -speed);
+        speed = travelDistance * kPAlignDistance;
+        if (Math.abs(speed) > 0.35) {
+            speed = Math.copySign(0.35, speed);
         }
-        else {
-            m_DriveSubsystem.shutdown();
+        else if (Math.abs(speed) < 0.35) {
+            speed = Math.copySign(0.35, speed);
         }
+        m_DriveSubsystem.drive(speed, speed);
     }
 
     @Override
     public void end(boolean interrupted) {
         System.out.println("Travelling to grid has finished");
+        System.out.println(m_LimelightSubsystem.getDepth(targetHeight));
+        System.out.println(travelDistance);
         m_DriveSubsystem.shutdown();
     }
 
     @Override
     public boolean isFinished() {
-        return(travelDistance < 2 || travelDistance > -2);
+        return Math.abs(travelDistance) < 1;
     }
 }

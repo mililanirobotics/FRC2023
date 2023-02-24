@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -64,7 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     //initializing the gyro
     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    AHRS navx = new AHRS(SPI.Port.kMXP);
+    AHRS navx = new AHRS(I2C.Port.kMXP);
 
     //initializing 3-axis accelorometer
     Accelerometer accelerometer = new BuiltInAccelerometer();

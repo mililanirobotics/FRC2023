@@ -36,9 +36,13 @@ public final class Constants {
     }
 
     public final class LimelightConstants {
-        public final static double kMountAngle = 27; //Limelight's mount angle on the robot (currently for kevin)
-        public final static double kMountHeight = 29.75; //limelight's height from ground (currently for kevin)
+        public final static double kMountAngle = 62; //Limelight's mount angle on the robot (currently for kevin)
+        public final static double kMountHeight = 29.5; //limelight's height from ground (currently for kevin)
         public final static double kArmReach = 50; //How far the arm can reach when in scoring position (placeholder value)
+
+        // Temporary notes for setting dual crosshair on limelight
+        public final static double MinDistance = 16; 
+        public final static double MaxDistance = 75.5;
 
         //pipeline numbers for the limelight (WIP)
         public final static int kReflectivePipeline = 3;

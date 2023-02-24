@@ -14,7 +14,7 @@ public class LimelightSubsystem extends SubsystemBase {
   
     public LimelightSubsystem() {
         this.table = NetworkTableInstance.getDefault().getTable("limelight");
-        setPipeline(1);
+        setPipeline(0);
     }
 
     /**
@@ -65,8 +65,8 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public double getDepth(double targetHeight) {
         double verticalAngle = (LimelightConstants.kMountAngle + getVerticalOffset()) * Math.PI / 180.0;
-        double height = Math.abs(targetHeight - LimelightConstants.kMountHeight); 
-        double depth = height / Math.tan(verticalAngle);
+        double height = Math.abs(LimelightConstants.kMountHeight - targetHeight); 
+        double depth = height * Math.tan(verticalAngle);
 
         return depth;
     }
