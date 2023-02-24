@@ -30,10 +30,12 @@ public class Robot extends TimedRobot {
 
   Joystick joystick = new Joystick(0);
   
-  Drive drive = new Drive();
+  // Drive drive = new Drive();
   Claw claw = new Claw();
-  PivotArm pivotArm = new PivotArm();
-  Align align = new Align();
+  // PivotArm pivotArm = new PivotArm();
+  // Align align = new Align();
+
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -94,11 +96,16 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    claw.clawInit();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if(joystick.getRawButtonPressed(3))
+    {
+      claw.clawToggle();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
