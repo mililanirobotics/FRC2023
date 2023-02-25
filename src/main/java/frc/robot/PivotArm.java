@@ -118,6 +118,6 @@ public class PivotArm {
 
     public void log() {
         SmartDashboard.putNumber("Pivot Height", elbowEncoder.getPosition());
-        SmartDashboard.putNumber("Pivot Comparison", motorTarget.getPosition());
+        // SmartDashboard.putNumber("Pivot Comparison", motorTarget.getPosition());
       }
  }

@@ -15,7 +15,7 @@ public final class Apriltags {
     public static final double minArmReach = 5; //Minimum reach in inches the arm can strecth outside frame
     public static final double bumperThickness = 3;
        private NetworkTable table;
-       Drive drive = Robot.drive;
+    //    Drive drive = Robot.drive;
        
            public Apriltags()
            {
@@ -102,7 +102,7 @@ public final class Apriltags {
            }
        
            public boolean isDistancePossible(){
-                drive.angleAlign();
+                // drive.angleAlign();
                 boolean distPossible = false;
                if (getPipeline() == 0) {
                     distPossible = ((estimateHorizontalDistance() < maxArmReach && estimateHorizontalDistance() > minArmReach) ? true : false);
@@ -121,9 +121,9 @@ public final class Apriltags {
             * To determine on Shuffleboard if auto alignment is ready for the driver
             * To be finished along with auto alignment functionality
             */
-           public boolean autoAlignPossible(){
-            return(((isScoringPossible() = true)) && (isTargetFound() = true) ? true : false);
-           }
+        //    public boolean autoAlignPossible(){
+        //     return(((isScoringPossible() = true)) && (isTargetFound() = true) ? true : false);
+        //    }
         
            //Determines if the distance to target is posible
 
@@ -165,7 +165,7 @@ public final class Apriltags {
             //    SmartDashboard.putNumber("longitude to target", alignLongitude());
                SmartDashboard.putNumber("pipeline", getPipeline());
                SmartDashboard.putBoolean("Is scoring possible?", isScoringPossible());
-               SmartDashboard.putBoolean("Is auto alignment possible?", autoAlignPossible());
+            //    SmartDashboard.putBoolean("Is auto alignment possible?", autoAlignPossible());
 
             } 
        
