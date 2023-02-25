@@ -14,9 +14,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArriveToGrid;
+import frc.robot.commands.CloseClawCommand;
+import frc.robot.commands.OpenClawCommand;
+import frc.robot.commands.ToggleClawCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,6 +33,7 @@ public class RobotContainer {
   //note: if you define commands here, it messed with the command scheduler
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final static LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+  public final static ClawSubsystem clawSubsystem = new ClawSubsystem();
 
 
   public final static GenericHID joystick = new GenericHID(JoystickConstants.kControllerPort);
@@ -49,6 +54,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
     new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
+    new JoystickButton(joystick, 3).onTrue(new CloseClawCommand());
+    new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
+    new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
   }
 
   /**

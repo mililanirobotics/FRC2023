@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -63,11 +65,11 @@ public final class Constants {
     }
     
     public final class ClawConstants {
-        public final static int kLeftClawForward = 1; //tbd
+        public final static int kLeftClawForward = 0; //tbd
         public final static int kLeftClawReverse = 1; //tbd
 
-        public final static int kRightClawForward = 1; //tbd
-        public final static int kRightClawReverse = 1; //tbd
+        public final static int kRightClawForward = 4; //tbd
+        public final static int kRightClawReverse = 5; //tbd
     }
 
     public static final class RobotConstants {
