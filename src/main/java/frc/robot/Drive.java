@@ -168,9 +168,15 @@ public class Drive {
     public void log() {
       SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
       SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
+<<<<<<< HEAD
     //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
       SmartDashboard.putNumber("Current gyro position", gyro.getAngle());
       // SmartDashboard.putNumber("Disred gyro position", desiredAngle());
+=======
+      SmartDashboard.putNumber("Gyro desired position", desiredAngle());
+      Shuffleboard.putNumber("Gyro current position", gyro.getAngle());
+    //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
+>>>>>>> 906b20d7813570293641f33d7a8a2c68360af20b
     }
 
 

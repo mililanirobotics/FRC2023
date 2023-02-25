@@ -120,7 +120,11 @@ public final class Apriltags {
            /**
             * To determine on Shuffleboard if auto alignment is ready for the driver
             * To be finished along with auto alignment functionality
+<<<<<<< HEAD
             */
+=======
+        //     */
+>>>>>>> 906b20d7813570293641f33d7a8a2c68360af20b
         //    public boolean autoAlignPossible(){
         //     return(((isScoringPossible() = true)) && (isTargetFound() = true) ? true : false);
         //    }
