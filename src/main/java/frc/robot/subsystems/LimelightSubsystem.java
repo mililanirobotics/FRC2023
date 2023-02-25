@@ -14,7 +14,7 @@ public class LimelightSubsystem extends SubsystemBase {
   
     public LimelightSubsystem() {
         this.table = NetworkTableInstance.getDefault().getTable("limelight");
-        setPipeline(0);
+        setPipeline(3);
     }
 
     /**
