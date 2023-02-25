@@ -22,6 +22,7 @@ public class CloseClawCommand extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("close");
         m_ClawSubsystem.leftClaw.set(Value.kForward);
         m_ClawSubsystem.rightClaw.set(Value.kForward);
     }

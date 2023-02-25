@@ -14,7 +14,7 @@ public class ToggleClawCommand extends CommandBase {
 
     public void ToggleClawCommand() {
         m_ClawSubsystem = RobotContainer.clawSubsystem;
-        intialClawState = m_ClawSubsystem.getClawState();
+        // intialClawState = m_ClawSubsystem.getClawState();
         addRequirements(m_ClawSubsystem);
     }
 
@@ -25,6 +25,7 @@ public class ToggleClawCommand extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("toggle");
         m_ClawSubsystem.leftClaw.toggle();
         m_ClawSubsystem.rightClaw.toggle();
     }

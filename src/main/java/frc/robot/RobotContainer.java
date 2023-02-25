@@ -55,8 +55,8 @@ public class RobotContainer {
     new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
     new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
     new JoystickButton(joystick, 3).onTrue(new CloseClawCommand());
-    new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
-    new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
+    // new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
+    // new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
   }
 
   /**
