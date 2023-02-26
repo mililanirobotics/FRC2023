@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,7 +13,6 @@ import frc.robot.Constants.JoystickConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArriveToGrid;
 import frc.robot.commands.CloseClawCommand;
@@ -55,8 +52,8 @@ public class RobotContainer {
     new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
     new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
     new JoystickButton(joystick, 3).onTrue(new CloseClawCommand());
-    // new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
-    // new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
+    new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
+    new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
   }
 
   /**
