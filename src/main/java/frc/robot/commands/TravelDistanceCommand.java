@@ -8,7 +8,6 @@ import frc.robot.RobotContainer;
 //subsystems used
 import frc.robot.subsystems.DriveSubsystem;
 
-
 public class TravelDistanceCommand extends CommandBase {
     private double distance;
     private double initialDistance;
