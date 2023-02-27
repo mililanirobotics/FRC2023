@@ -65,11 +65,11 @@ public final class Constants {
     }
     
     public final class ClawConstants {
-        public final static int kLeftClawForward = 1; //tbd
+        public final static int kLeftClawForward = 0; //tbd
         public final static int kLeftClawReverse = 1; //tbd
 
-        public final static int kRightClawForward = 1; //tbd
-        public final static int kRightClawReverse = 1; //tbd
+        public final static int kRightClawForward = 4; //tbd
+        public final static int kRightClawReverse = 5; //tbd
     }
 
     public static final class RobotConstants {

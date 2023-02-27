@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,6 +15,7 @@ import frc.robot.subsystems.BicepArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElbowPivotSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+<<<<<<< HEAD
 
 import frc.robot.commands.PivotElbowUpCommand;
 import frc.robot.commands.PivotElbowDownCommand;
@@ -25,10 +24,19 @@ import frc.robot.commands.RetractBicepCommand;
 import frc.robot.commands.AutoPivotElbowCommand;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+=======
+import frc.robot.subsystems.ClawSubsystem;
+>>>>>>> K-and-E-subsystems-and-commands
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.ArriveToGrid;
+<<<<<<< HEAD
 import frc.robot.commands.BicepArmToggleCommand;
+=======
+import frc.robot.commands.CloseClawCommand;
+import frc.robot.commands.OpenClawCommand;
+import frc.robot.commands.ToggleClawCommand;
+>>>>>>> K-and-E-subsystems-and-commands
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,8 +49,12 @@ public class RobotContainer {
   //note: if you define commands here, it messed with the command scheduler
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final static LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+<<<<<<< HEAD
   public final static ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem();
   public final static BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem();
+=======
+  public final static ClawSubsystem clawSubsystem = new ClawSubsystem();
+>>>>>>> K-and-E-subsystems-and-commands
 
 
   public final static GenericHID joystick = new GenericHID(JoystickConstants.kControllerPort);
@@ -63,12 +75,18 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
     new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
+<<<<<<< HEAD
     // new JoystickButton(joystick, 3).onTrue(new ExtendBicepCommand());
     // new JoystickButton(joystick, 4).onTrue(new RetractBicepCommand());
     // new JoystickButton(joystick, 5).onTrue(new BicepArmToggleCommand());
     new JoystickButton(joystick, 6).onTrue(new AutoPivotElbowCommand(10));
     new JoystickButton(joystick, 7).onTrue(new PivotElbowUpCommand(-0.35));
     new JoystickButton(joystick, 8).onTrue(new PivotElbowDownCommand(-0.35));
+=======
+    new JoystickButton(joystick, 3).onTrue(new CloseClawCommand());
+    new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
+    new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
+>>>>>>> K-and-E-subsystems-and-commands
   }
 
   /**

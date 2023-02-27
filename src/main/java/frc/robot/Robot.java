@@ -5,12 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //command imports
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ArriveToGrid;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -80,7 +78,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+  }
 
   @Override
   public void teleopInit() {
@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control to  */
   @Override
   public void teleopPeriodic() {
-    
+
   }
 
   @Override
