@@ -2,16 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.BicepArmSubsystem;
-
-import frc.robot.Constants.RobotConstants; 
+import frc.robot.subsystems.BicepArmSubsystem; 
 
 public class RetractBicepCommand extends CommandBase{
     BicepArmSubsystem m_BicepArmSubsystem;

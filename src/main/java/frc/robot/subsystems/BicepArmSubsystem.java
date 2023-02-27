@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.PivotConstants;
-import frc.robot.Constants.RobotConstants; 
+import frc.robot.Constants.PivotConstants; 
 
 public class BicepArmSubsystem extends SubsystemBase {
     public DoubleSolenoid bicepArm;
