@@ -54,12 +54,14 @@ public final class Constants {
     }
 
     public final class PivotConstants {
-        public final static int kPivot = 1; //tbdj
-        public final static boolean kPivotReverse = false; //tbd
+        public final static int kleftPivot = 1; //tbd
+        public final static int kRightPivot = 2; //tbd 
+        public final static boolean kPivotReverse = true; //tbd
         public final static boolean kPivotEncoderReverse = false; //tbd
+        public final static double kPPivotAngle = 0.01;
 
-        public final static int kArmForward = 1; //tbd (hte piston that controls the arm)
-        public final static int kArmReverse = 2; //tbd
+        public final static int kArmForward = 0; //tbd (the piston that controls the arm)
+        public final static int kArmReverse = 1; //tbd
     }
     
     public final class ClawConstants {
@@ -75,6 +77,7 @@ public final class Constants {
         public final static int kCountsPerRev = 42;
         
         public final static double kGearRatio = 7.005; //fitted for kevin
+        public final static double kArmGearRatio = 180; //Elbow Pivot's Gear Ratio for one full rotation
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
 
         //Proportional constant used to manipulate the drive speed when engaging
