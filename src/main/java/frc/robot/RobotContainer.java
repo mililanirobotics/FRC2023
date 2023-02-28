@@ -74,6 +74,9 @@ public class RobotContainer {
     new JoystickButton(joystick, 6).onTrue(new AutoPivotElbowCommand(10));
     new JoystickButton(joystick, 7).onTrue(new PivotElbowUpCommand(0.35));
     new JoystickButton(joystick, 8).onTrue(new PivotElbowDownCommand(-0.35));
+    new JoystickButton(joystick, 9).onTrue(new CloseClawCommand());
+    new JoystickButton(joystick, 10).onTrue(new OpenClawCommand());
+    new JoystickButton(joystick, 11).onTrue(new ToggleClawCommand()); 
   }
 
   /**
