@@ -24,11 +24,6 @@ public class SimpleAlignmentCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-
-    }
-
-    @Override
     public void execute() {
         offset = m_limelightSubsystem.getHorizontalOffset();
         double percentPower = offset * RobotConstants.kTurnP;

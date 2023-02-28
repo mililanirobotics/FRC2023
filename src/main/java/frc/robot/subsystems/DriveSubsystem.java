@@ -14,7 +14,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS.SerialDataType;
+
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -57,13 +61,14 @@ public class DriveSubsystem extends SubsystemBase {
     //private DifferentialDriveKinematics kinematics;
     public DifferentialDrive drive;
 
+
     //PID Controllers
     public PIDController engagePID = new PIDController(RobotConstants.kStationP, RobotConstants.kStationI, RobotConstants.kStationD);
     public PIDController drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
 
     //initializing the gyro
     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    AHRS navx = new AHRS(SerialPort.Port.kUSB);
+    AHRS navx = new AHRS(I2C.Port.kMXP);
 
     //initializing 3-axis accelorometer
     Accelerometer accelerometer = new BuiltInAccelerometer();
@@ -112,6 +117,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         //creating a timer object
         timer = new Timer();
+
+        navx.enableLogging(true);
 
         engagePID.setTolerance(Math.PI / 180);
 
@@ -181,7 +188,7 @@ public class DriveSubsystem extends SubsystemBase {
      * updates odometry with the robot's most recent position on the field
     */
     public void updateOdometry() {
-        odometry.update(gyro.getRotation2d(), getLeftEncoder(), getRightEncoder());
+        odometry.update(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
     }
 
     //=========================================================================== 
@@ -190,7 +197,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     //calibrates the gyro
     public void calibrateGyro() {
-        gyro.calibrate();
+        navx.calibrate();
     }
 
     /**
@@ -198,35 +205,50 @@ public class DriveSubsystem extends SubsystemBase {
      * Tells the driver that the gyro is connected via a print statement
     */
     public void zeroOutGyro() {
-        System.out.println("Gyro Connected: "+gyro.isConnected());
-        gyro.reset();
+        System.out.println("Gyro Connected: "+navx.isConnected());
+        navx.reset();
     }
 
     /**
-     * Gets the current yaw angle of the gyro
+     * Gets the current yaw angle from the navx gyro
     */
-    public double getAngle() {
-        return gyro.getAngle();
+    public double getYaw() {
+        return navx.getYaw();
     }
+
+    /**
+     * Gets the current pitch angle from the navx gyro
+    */
+    public double getPitch() {
+        return navx.getPitch();
+    }
+
+    /**
+     * Gets the current roll angle from the navx gyro
+    */
+    public double getRoll() {
+        return navx.getRoll();
+    }
+
 
     /**
      * Gets the current acceleration vector of the z-axis in g's
     */
     public double getZ() {
-        return accelerometer.getZ();
+        return navx.getRawAccelZ();
     }
 
     /**
      * Gets the current acceleration vector of the y-axis in g's
     */    public double getY() {
-        return accelerometer.getY();
+        return navx.getRawAccelY();
     }
 
     /**
      * Gets the current acceleration vector of the x-axis in g's
     */
     public double getX() {
-        return accelerometer.getX();
+        return navx.getRawAccelX();
     }
 
     //=========================================================================== 

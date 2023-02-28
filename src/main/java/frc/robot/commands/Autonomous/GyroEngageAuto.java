@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.GameConstants;
 
 public class GyroEngageAuto extends SequentialCommandGroup {
+    private double distance;
 
-    public GyroEngageAuto() {
+    public GyroEngageAuto(double distance) {
+        this.distance = distance;
         //moves onto the charging station
-        addCommands(new TravelDistanceCommand(GameConstants.kChargingStationDistance, 0.2));
+        addCommands(new TravelDistanceCommand(distance, 0.5));
         
-        //balances on the charging station
-        addCommands(new GyroEngageCommand());
+        // //balances on the charging station
+        // addCommands(new GyroEngageCommand());
     }
 }

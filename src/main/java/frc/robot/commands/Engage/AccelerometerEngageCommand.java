@@ -1,6 +1,5 @@
 package frc.robot.commands.Engage;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -79,26 +78,19 @@ public class AccelerometerEngageCommand extends CommandBase {
         }
 
         //checks to see if kevin is within the stopping distance
-        // if(Math.abs(currAngle) <= startingAngle - GameConstants.kStopAngle) {
+        // if(Math.abs(currAngle) <= startingAngle - GameConstants.kStopAngleRad) {
         //     percentPower = 0;
         // }
 
         m_driveSubsystem.drive(0.29, 0.29);
 
         //starts a timer to see if kevin remains balanced
-        if(Math.abs(error) < GameConstants.kChargingStationSlack && checkEncoders()) {
+        if(Math.abs(error) < GameConstants.kChargingStationSlackRad && checkEncoders()) {
             m_driveSubsystem.timer.start();
         }
         else {
             m_driveSubsystem.timer.reset();
         }
-
-        //used for debugging
-        Shuffleboard.getTab("Engage").add("Current Angle ", Math.atan(yAcceleration / zAcceleration));
-        Shuffleboard.getTab("Engage").add("Error", error);
-        Shuffleboard.getTab("Engage").add("Target Angle", GameConstants.kChargingStationSlack);
-        Shuffleboard.getTab("Engage").add("Power", percentPower);
-        Shuffleboard.getTab("Engage").add("Stopping angle", startingAngle - GameConstants.kStopAngle);
 
         System.out.println("Accelerometer Z: "+zAcceleration);
         System.out.println("Current Angle: "+Math.atan(yAcceleration / zAcceleration));

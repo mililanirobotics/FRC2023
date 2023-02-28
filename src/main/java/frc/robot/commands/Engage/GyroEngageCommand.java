@@ -13,8 +13,17 @@ import frc.robot.subsystems.DriveSubsystem;
 public class GyroEngageCommand extends CommandBase {
     //instance variables
     private DriveSubsystem m_driveSubsystem;
+    private double currentAngle;
     private double error;
     private double percentPower;
+    private int iteration;
+
+    
+    //encoder add-on  
+    // private double rightEncoderReading;
+    // private double leftEncoderReading;
+    // private double intervalStart;
+    // private double intervalEnd;
 
     //constructor
     public GyroEngageCommand() {
@@ -22,24 +31,49 @@ public class GyroEngageCommand extends CommandBase {
         addRequirements(m_driveSubsystem);
     }
 
+    //checks to see if the encoder readings are within the balancing range
+    // public boolean checkEncoders() {
+    //     return (rightEncoderReading > intervalStart && rightEncoderReading < intervalEnd)
+    //             && (leftEncoderReading > intervalStart && leftEncoderReading < intervalEnd);
+    // }
+
+    @Override
+    public void initialize() {  
+        iteration = 0;
+    }
+
     @Override
     public void execute() {
-        //gets the current angle of the gyro
-        //calculates the difference between the current angle and [-1, 1]
-        error = GameConstants.kChargingStationSlack - m_driveSubsystem.getAngle();
+        currentAngle = m_driveSubsystem.getPitch();
 
-        percentPower = error * RobotConstants.kStationP;
+        //error is based on how far the current angle is from 0, which is considered "balanced"
+        // error = -currentAngle;
 
-        //limits the power of the motors
-        if(Math.abs(percentPower) > 0.3) {
-            percentPower = Math.copySign(0.3, percentPower);
+        percentPower = m_driveSubsystem.engagePID.calculate(currentAngle, 0);
+        // percentPower = error * RobotConstants.kStationP;
+        if(percentPower < 0) {
+            percentPower *= 1.25;
+        }
+
+        if(Math.abs(percentPower) > 0.45) {
+            percentPower = 0.45;
         }
 
         m_driveSubsystem.drive(percentPower, percentPower);
 
-        //used for debugging
-        System.out.println("Current Angle: "+m_driveSubsystem.getAngle());
-        System.out.println("Error: "+error);
+        if(Math.abs(currentAngle) < GameConstants.kChargingStationSlack) {
+            iteration++;
+        }
+        else {
+            iteration = 0;
+        }
+
+        
+
+        //debugging statements
+        RobotContainer.pitchAngleWidget.setDouble(currentAngle);
+        RobotContainer.errorAngleWidget.setDouble(error);
+        RobotContainer.powerWidget.setDouble(percentPower);
     }
 
     @Override
@@ -50,11 +84,7 @@ public class GyroEngageCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        //finishes the method if the erorr is within the range of (-1, 1)
-        return Math.abs(error) < GameConstants.kChargingStationSlack; 
+        //finishes the method if the erorr is within the range of (-2, 2)
+        return iteration >= 50;
     }
-
-
-
-
 }

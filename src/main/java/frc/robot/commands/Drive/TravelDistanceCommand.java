@@ -7,7 +7,6 @@ import frc.robot.RobotContainer;
 
 //subsystems used
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 
 public class TravelDistanceCommand extends CommandBase {
     private double distance;
@@ -48,7 +47,7 @@ public class TravelDistanceCommand extends CommandBase {
         System.out.println("Current Position: "+m_driveSubsystem.getRightEncoder());
         System.out.println("Target Position: "+travelDistance);
 
-        percentPower = m_driveSubsystem.drivePID.calculate(0.5); //michael special
+        //percentPower = m_driveSubsystem.drivePID.calculate(0.5); //michael special
         System.out.println("Michael's creation: "+percentPower);
         m_driveSubsystem.drive(percentPower, percentPower);
     }
@@ -61,6 +60,6 @@ public class TravelDistanceCommand extends CommandBase {
 
     @Override 
     public boolean isFinished() {
-        return m_driveSubsystem.getRightEncoder() >= travelDistance && m_driveSubsystem.getRightEncoder() >= travelDistance;
+        return m_driveSubsystem.getLeftEncoder() >= travelDistance && m_driveSubsystem.getRightEncoder() >= travelDistance;
     }
 }

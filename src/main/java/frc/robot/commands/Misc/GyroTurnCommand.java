@@ -27,12 +27,12 @@ public class GyroTurnCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        targetAngle = m_driveSubsystem.getAngle() + turnDegrees;
+        targetAngle = m_driveSubsystem.getYaw() + turnDegrees;
     }
 
     @Override
     public void execute() {
-        error = targetAngle - m_driveSubsystem.getAngle();
+        error = targetAngle - m_driveSubsystem.getYaw();
 
         //scaling power based on the degree of error
         double power = error * RobotConstants.kTurnP;
@@ -53,7 +53,7 @@ public class GyroTurnCommand extends CommandBase {
 
         //debuggin statements
         System.out.println("Power: "+power);
-        System.out.println("Current angle: "+Math.round(m_driveSubsystem.getAngle()));
+        System.out.println("Current angle: "+Math.round(m_driveSubsystem.getYaw()));
     }
 
     @Override

@@ -71,9 +71,9 @@ public final class Constants {
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
 
         //Proportional constant used to manipulate the drive speed when engaging
-        public final static double kStationP = 20.76972; //proportion needed to run at 0.29 when robot is within 40% of error
-        public final static double kStationI = 4.77464829276; //calculated based on the idea that if we have 60% error and wanted to increase speed by 0.1 in 1 sec
-        public final static double kStationD = 0.001; //tbd
+        public final static double kStationP = 0.02; //proportion needed to run at 0.29 when robot is within 40% of error
+        public final static double kStationI = 0; //calculated based on the idea that if we have 60% error and wanted to increase speed by 0.1 in 1 sec
+        public final static double kStationD = 0; //tbd
 
         //PID constants for auto drive
         public final static double kDriveP = 0;
@@ -86,8 +86,11 @@ public final class Constants {
 
     public static final class GameConstants {
         //amount of slack the robot's pitch angle is allowed during engaging
-        public final static double kChargingStationSlack = 2 * Math.PI / 180.0;
-        public final static double kStopAngle = 3 * Math.PI / 180;
+        public final static double kChargingStationSlackRad = 2 * Math.PI / 180.0;
+        public final static double kChargingStationSlack = 2;
+
+        public final static double kStopAngleRad = 3 * Math.PI / 180;
+        public final static double kStopAngle = 3;
         
         //used when engaging the charging station; fixed distance the robot has to travel to get on
         public final static double kChargingStationDistance = 42;
