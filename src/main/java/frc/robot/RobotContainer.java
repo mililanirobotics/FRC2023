@@ -75,6 +75,8 @@ public class RobotContainer {
     new JoystickButton(joystick, 3).onTrue(new CloseClawCommand());
     new JoystickButton(joystick, 4).onTrue(new OpenClawCommand());
     new JoystickButton(joystick, 6).onTrue(new ToggleClawCommand()); 
+
+    new Trigger(() -> joystick.getRawAxis(1) >= 0.1).onTrue(new ToggleClawCommand());
   }
 
   /**
