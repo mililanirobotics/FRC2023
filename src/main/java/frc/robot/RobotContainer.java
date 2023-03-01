@@ -22,6 +22,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.commands.PivotElbowUpCommand;
 import frc.robot.commands.PivotElbowDownCommand;
 import frc.robot.commands.ExtendBicepCommand;
+import frc.robot.commands.NodeScoring;
 import frc.robot.commands.RetractBicepCommand;
 import frc.robot.commands.AutoPivotElbowCommand;
 
@@ -31,7 +32,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArriveToGrid;
 import frc.robot.commands.BicepArmToggleCommand;
 import frc.robot.commands.CloseClawCommand;
+import frc.robot.commands.DrivePayloadPosition;
 import frc.robot.commands.OpenClawCommand;
+import frc.robot.commands.PayloadIntake;
+import frc.robot.commands.NodeScoring;
 import frc.robot.commands.ToggleClawCommand;
 
 /**
@@ -55,7 +59,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the button bindings  
+    // Configure the buttonbindings  
     configureButtonBindings();
   }
 
@@ -68,9 +72,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
     new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
-    new JoystickButton(joystick, 3).onTrue(new ExtendBicepCommand());
-    new JoystickButton(joystick, 4).onTrue(new RetractBicepCommand());
-    new JoystickButton(joystick, 5).onTrue(new BicepArmToggleCommand());
+    new JoystickButton(joystick, 3).onTrue(new DrivePayloadPosition());
+    new JoystickButton(joystick, 4).onTrue(new PayloadIntake());
+    new JoystickButton(joystick, 5).onTrue(new NodeScoring(20));
     new JoystickButton(joystick, 6).onTrue(new AutoPivotElbowCommand(10));
     new JoystickButton(joystick, 7).onTrue(new PivotElbowUpCommand(0.35));
     new JoystickButton(joystick, 8).onTrue(new PivotElbowDownCommand(-0.35));

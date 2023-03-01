@@ -60,16 +60,16 @@ public final class Constants {
         public final static boolean kPivotEncoderReverse = false; //tbd
         public final static double kPPivotAngle = 0.01;
 
-        public final static int kArmForward = 0; //tbd (the piston that controls the arm)
-        public final static int kArmReverse = 1; //tbd
+        public final static int kArmForward = 4; //tbd (the piston that controls the arm)
+        public final static int kArmReverse = 5; //tbd
     }
     
     public final class ClawConstants {
-        public final static int kLeftClawForward = 0; //tbd
-        public final static int kLeftClawReverse = 1; //tbd
+        public final static int kLeftClawForward = 2; //tbd
+        public final static int kLeftClawReverse = 3; //tbd
 
-        public final static int kRightClawForward = 4; //tbd
-        public final static int kRightClawReverse = 5; //tbd
+        public final static int kRightClawForward = 0; //tbd
+        public final static int kRightClawReverse = 1; //tbd
     }
 
     public static final class RobotConstants {
