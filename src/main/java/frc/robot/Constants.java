@@ -60,16 +60,16 @@ public final class Constants {
         public final static boolean kPivotEncoderReverse = false; //tbd
         public final static double kPPivotAngle = 0.01;
 
-        public final static int kArmForward = 4; //tbd (the piston that controls the arm)
-        public final static int kArmReverse = 5; //tbd
+        public final static int kArmForward = 0; //tbd (the piston that controls the arm)
+        public final static int kArmReverse = 1; //tbd
     }
     
     public final class ClawConstants {
-        public final static int kLeftClawForward = 2; //tbd
-        public final static int kLeftClawReverse = 3; //tbd
+        public final static int kLeftClawForward = 0; //tbd
+        public final static int kLeftClawReverse = 1; //tbd
 
-        public final static int kRightClawForward = 0; //tbd
-        public final static int kRightClawReverse = 1; //tbd
+        public final static int kRightClawForward = 4; //tbd
+        public final static int kRightClawReverse = 5; //tbd
     }
 
     public static final class RobotConstants {
@@ -122,6 +122,16 @@ public final class Constants {
         public final static int kControllerPort = 0;
         public final static int kLeftYJoystickPort = 1;
         public final static int kRightYJoystickPort = 5;
+    }
+
+    public static final class AutonomousConstants {
+        public static final String kDockAndEngage1 = "Score then Dock and Engage Left";
+        public static final String kDockAndEngage2 = "Score then Dock and Engage Middle";
+        public static final String kDockAndEngage3 = "Score then Dock and Engage Right";
+        public static final String kScoring1 = "Scoring only Left";
+        public static final String kScoring2 = "Scoring only Middle";
+        public static final String kScoring3 = "Scoring only Right";
+
     }
 
 }

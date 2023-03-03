@@ -15,7 +15,7 @@ public class RetractBicepCommand extends CommandBase{
 
     @Override
     public void initialize() {
-        m_BicepArmSubsystem.bicepArm.set(Value.kReverse);
+        m_BicepArmSubsystem.retractBicep();
     }
 
     @Override

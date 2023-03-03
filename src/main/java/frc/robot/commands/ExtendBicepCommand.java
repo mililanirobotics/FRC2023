@@ -14,7 +14,7 @@ public class ExtendBicepCommand extends CommandBase{
     }
 
     public void initialize() {
-        m_BicepArmSubsystem.bicepArm.set(Value.kForward);
+        m_BicepArmSubsystem.extendBicep();
     }
 
     public void execute() {

@@ -18,7 +18,7 @@ public class BicepArmToggleCommand extends CommandBase{
 
     public void initialize() {
         initialBicepState = m_BicepArmSubsystem.bicepState();
-        m_BicepArmSubsystem.bicepArm.toggle();
+        m_BicepArmSubsystem.toggleBicep();
 
     }
 
