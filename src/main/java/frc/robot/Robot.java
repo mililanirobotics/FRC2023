@@ -30,8 +30,8 @@ public class Robot extends TimedRobot {
 
   Joystick joystick = new Joystick(0);
   
-  Drive drive = new Drive();
-  Claw claw = new Claw();
+  // Drive drive = new Drive();
+  // Claw claw = new Claw();
   PivotArm pivotArm = new PivotArm();
   Align align = new Align();
 
