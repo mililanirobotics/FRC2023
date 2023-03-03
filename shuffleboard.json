@@ -6,12 +6,51 @@
       "autoPopulatePrefix": "SmartDashboard/",
       "widgetPane": {
         "gridSize": 64.0,
-        "showGrid": false,
+        "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "4,1": {
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Pipeline choices",
+              "_title": "Pipeline choices",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto choices",
+              "_title": "Auto choices",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///FMSInfo/MatchNumber",
+              "_title": "/FMSInfo/MatchNumber",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,1": {
             "size": [
               1,
               1
@@ -26,6 +65,187 @@
               "Visuals/Precision": 2,
               "Visuals/Show tick marks": false
             }
+          },
+          "6,0": {
+            "size": [
+              5,
+              2
+            ],
+            "content": {
+              "_type": "Basic FMS Info",
+              "_title": "Basic FMS Info",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,5": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "Camera Stream",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "5,3": {
+            "size": [
+              6,
+              4
+            ],
+            "content": {
+              "_type": "Differential Drivebase",
+              "_title": "Differential Drivebase",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Wheels/Number of wheels": 4,
+              "Wheels/Wheel diameter": 80.0,
+              "Visuals/Show velocity vectors": true
+            }
+          },
+          "13,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Encoder",
+              "_title": "Encoder",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,1": {
+            "size": [
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Graph",
+              "_title": "Graph",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul"
+            }
+          },
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_PipelineName",
+              "_title": "limelight_PipelineName",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_Stream",
+              "_title": "limelight_Stream",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,2": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_Interface",
+              "_title": "limelight_Interface",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "15,4": {
+            "size": [
+              1,
+              2
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Drive speeds",
+              "_title": "Drive speeds",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "14,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Axis Selected",
+              "_title": "Axis Selected",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,4": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "List Layout",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Number Slider",
+                  "_title": "Voltage View",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Slider Settings/Min": -1.0,
+                  "Slider Settings/Max": 1.0,
+                  "Slider Settings/Block increment": 0.0625,
+                  "Visuals/Display value": true
+                }
+              ]
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Modes",
+              "_title": "Auto Modes",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -34,6 +254,103 @@
       "title": "LiveWindow",
       "autoPopulate": true,
       "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    },
+    {
+      "title": "Auto Testing",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "13,0": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto choices",
+              "_title": "Auto Choices",
+              "_glyph": 2,
+              "_showGlyph": true
+            }
+          },
+          "13,4": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Gyro",
+              "_title": "Gyro",
+              "_glyph": 139,
+              "_showGlyph": true,
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
+            }
+          },
+          "13,2": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "3-Axis Accelerometer",
+              "_title": "Accelerometer",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Accelerometer/Range": "k16G",
+              "Visuals/Show value": true,
+              "Visuals/Precision": 10,
+              "Visuals/Show tick marks": false
+            }
+          },
+          "9,5": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Encoder",
+              "_title": "Encoder",
+              "_glyph": 8,
+              "_showGlyph": true
+            }
+          },
+          "13,1": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Pipeline choices",
+              "_title": "SmartDashboard/Pipeline choices",
+              "_glyph": 81,
+              "_showGlyph": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "TeleOp Testing",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
       "widgetPane": {
         "gridSize": 64.0,
         "showGrid": true,
