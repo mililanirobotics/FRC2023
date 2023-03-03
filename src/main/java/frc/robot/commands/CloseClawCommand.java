@@ -15,8 +15,7 @@ public class CloseClawCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_ClawSubsystem.leftClaw.set(Value.kReverse);
-        m_ClawSubsystem.rightClaw.set(Value.kReverse);
+        m_ClawSubsystem.closeClaw();
     }
 
     @Override

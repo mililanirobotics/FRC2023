@@ -41,8 +41,8 @@ public class Robot extends TimedRobot {
     RobotContainer.driveSubsystem.zeroOutGyro();
     RobotContainer.driveSubsystem.calibrateGyro();
 
-    new CloseClawCommand();
-    new RetractBicepCommand();
+    CommandScheduler.getInstance().schedule(new CloseClawCommand());
+    CommandScheduler.getInstance().schedule(new RetractBicepCommand());
   }
 
   /**
@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    
     CommandScheduler.getInstance().run();
   }
 

@@ -9,8 +9,8 @@ import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 
 public class ClawSubsystem extends SubsystemBase {
-    public DoubleSolenoid leftClaw;
-    public DoubleSolenoid rightClaw;
+    private DoubleSolenoid leftClaw;
+    private DoubleSolenoid rightClaw;
 
     public ClawSubsystem() {
         //intializing solenoids
@@ -20,6 +20,24 @@ public class ClawSubsystem extends SubsystemBase {
         //setting default solenoid state
         leftClaw.set(kForward);
         rightClaw.set(kForward);
+    }
+
+    //closes the claw
+    public void closeClaw() {
+        leftClaw.set(kReverse);
+        rightClaw.set(kReverse);
+    }
+
+    //opens the claw
+    public void openClaw() {
+        leftClaw.set(kForward);
+        rightClaw.set(kForward);
+    }
+
+    //toggles the claw state
+    public void toggleClaw() {
+        leftClaw.toggle();
+        rightClaw.toggle();
     }
 
     //gets current claw state value

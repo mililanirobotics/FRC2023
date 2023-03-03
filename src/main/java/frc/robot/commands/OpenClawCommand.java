@@ -15,8 +15,7 @@ public class OpenClawCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_ClawSubsystem.leftClaw.set(Value.kForward);
-        m_ClawSubsystem.rightClaw.set(Value.kForward);
+        m_ClawSubsystem.openClaw();
     }
 
     @Override
@@ -31,6 +30,6 @@ public class OpenClawCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_ClawSubsystem.leftClaw.get() == Value.kForward;
+        return m_ClawSubsystem.getClawState() == Value.kForward;
     }
 }

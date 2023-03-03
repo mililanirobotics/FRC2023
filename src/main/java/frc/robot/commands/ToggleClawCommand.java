@@ -18,8 +18,7 @@ public class ToggleClawCommand extends CommandBase {
     @Override
     public void initialize() {
         intialClawState = m_ClawSubsystem.getClawState();
-        m_ClawSubsystem.leftClaw.toggle();
-        m_ClawSubsystem.rightClaw.toggle();
+        m_ClawSubsystem.toggleClaw();
     }
 
     @Override
