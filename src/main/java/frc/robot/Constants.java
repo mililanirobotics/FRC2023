@@ -73,11 +73,14 @@ public final class Constants {
     }
 
     public static final class RobotConstants {
-        public final static int kWheelDiameter = 4;
+        public final static int kWheelDiameter = 6;
         public final static int kCountsPerRev = 42;
         
         public final static double kGearRatio = 7.005; //fitted for kevin
-        public final static double kArmGearRatio = 180; //Elbow Pivot's Gear Ratio for one full rotation
+        public final static double kWristGearRatio = 2; //Wrist Pivot's gear Ratio
+        public final static double kElbowGarRatio = 45; //Elbow Pivot's gear Ratio
+        public final static double kArmGearRatio = 180; //Shoulder Pivot's Gear Ratio for one full rotation
+       
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
 
         //Proportional constant used to manipulate the drive speed when engaging
