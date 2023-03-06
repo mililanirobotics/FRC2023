@@ -85,11 +85,16 @@ public final class Constants {
         public final static double kStationI = 4.77464829276; //calculated based on the idea that if we have 60% error and wanted to increase speed by 0.1 in 1 sec
         public final static double kStationD = 0.001; //tbd
 
-        //PID constants for auto drive
-        public final static double kDriveP = 0;
-        public final static double kDriveI = 0;
-        public final static double kDriveD = 0;
+        //PID constants for turn drive
+        public final static double kTurnDriveP = 0.1;
+        public final static double kTurnDriveI = 0;
+        public final static double kTurnDriveD = 0;
         
+        //PID constants for encoder drive (Previous P: 0.0025, I: 0.00001, D: 0.00005)
+        public final static double kEncoderDriveP = 0.0025;
+        public final static double kEncoderDriveI = 0.00001;
+        public final static double kEncoderDriveD = 0.00015;
+
         //Proportoinal constant used to manipulate the drive speed when turning
         public final static double kTurnP = 0.005; //tbd
     }

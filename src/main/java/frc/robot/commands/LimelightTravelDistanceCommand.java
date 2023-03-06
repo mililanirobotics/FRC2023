@@ -6,19 +6,20 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class LimelightTravelDistanceCommand extends CommandBase{
     private LimelightSubsystem m_LimelightSubsystem;
     private DriveSubsystem m_DriveSubsystem;
-    private double speed;
+    private double percentPower;
     private double travelDistance;
     private double targetHeight;
 
 
-    public LimelightTravelDistanceCommand (double targetHeight) {
-        m_LimelightSubsystem = RobotContainer.limelightSubsystem;
-        m_DriveSubsystem = RobotContainer.driveSubsystem;
-        speed = 0;
+    public LimelightTravelDistanceCommand (double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem) {
+        m_LimelightSubsystem = limelightSubsystem;
+        m_DriveSubsystem = driveSubsystem;
+        percentPower = 0;
         this.targetHeight = targetHeight;
         addRequirements(m_LimelightSubsystem, m_DriveSubsystem);
     }
@@ -37,14 +38,9 @@ public class LimelightTravelDistanceCommand extends CommandBase{
         SmartDashboard.updateValues();
 
         double kPAlignDistance = 0.01;
-        speed = travelDistance * kPAlignDistance;
-        if (Math.abs(speed) > 0.35) {
-            speed = Math.copySign(0.35, speed);
-        }
-        else if (Math.abs(speed) < 0.35) {
-            speed = Math.copySign(0.35, speed);
-        }
-        m_DriveSubsystem.drive(speed, speed);
+        percentPower = RobotContainer.limitValue(travelDistance * kPAlignDistance, 0.35, 0.35);
+        
+        m_DriveSubsystem.drive(percentPower, percentPower);
     }
 
     @Override

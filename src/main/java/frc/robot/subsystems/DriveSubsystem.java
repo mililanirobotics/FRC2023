@@ -47,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     //PID Controllers
     public PIDController engagePID = new PIDController(RobotConstants.kStationP, RobotConstants.kStationI, RobotConstants.kStationD);
-    public PIDController drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
+    public PIDController drivePID = new PIDController(RobotConstants.kTurnDriveP, RobotConstants.kTurnDriveI, RobotConstants.kTurnDriveD);
 
     //initializing the gyro
     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
@@ -130,7 +130,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @param leftSpeed controls the speed of the left drive motors
     */
     public void drive(double leftPercentPower, double rightPercentPower) {
-        drive.tankDrive(leftPercentPower, rightPercentPower);
+        drive.tankDrive(leftPercentPower, rightPercentPower, true);
     }
 
     public void shutdown() {
@@ -171,6 +171,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void updateOdometry() {
         odometry.update(gyro.getRotation2d(), getLeftEncoder(), getRightEncoder());
     }
+
 
     //=========================================================================== 
     // gyro and accelorometer methods

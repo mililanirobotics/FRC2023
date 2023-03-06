@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.subsystems.BicepArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,6 +38,7 @@ import frc.robot.commands.OpenClawCommand;
 import frc.robot.commands.PayloadIntake;
 import frc.robot.commands.NodeScoring;
 import frc.robot.commands.ToggleClawCommand;
+import frc.robot.commands.TravelDistanceCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,10 +50,10 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   //note: if you define commands here, it messed with the command scheduler
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
-  public final static LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
-  public final static ClawSubsystem clawSubsystem = new ClawSubsystem();
-  public final static ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem();
-  public final static BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem();
+  public final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+  private final ClawSubsystem clawSubsystem = new ClawSubsystem();
+  private final ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem();
+  private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem();
 
 
   public final static GenericHID joystick = new GenericHID(JoystickConstants.kControllerPort);
@@ -59,7 +61,9 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the buttonbindings  
+    // Configure the buttonbindings 
+    CommandScheduler.getInstance().schedule(new CloseClawCommand(clawSubsystem));
+    CommandScheduler.getInstance().schedule(new RetractBicepCommand(bicepArmSubsystem));
     configureButtonBindings();
   }
 
@@ -70,17 +74,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75));
-    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75)); 
-    new JoystickButton(joystick, 3).onTrue(new DrivePayloadPosition());
-    new JoystickButton(joystick, 4).onTrue(new PayloadIntake());
-    new JoystickButton(joystick, 5).onTrue(new NodeScoring(20));
-    new JoystickButton(joystick, 6).onTrue(new AutoPivotElbowCommand(10));
-    new JoystickButton(joystick, 7).onTrue(new PivotElbowUpCommand(0.35));
-    new JoystickButton(joystick, 8).onTrue(new PivotElbowDownCommand(-0.35));
-    new JoystickButton(joystick, 9).onTrue(new CloseClawCommand());
-    new JoystickButton(joystick, 10).onTrue(new OpenClawCommand());
-    new JoystickButton(joystick, 11).onTrue(new ToggleClawCommand()); 
+    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75, limelightSubsystem, driveSubsystem));
+    new JoystickButton(joystick, 1).onTrue(new TravelDistanceCommand(50, .20, driveSubsystem));
+    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75, limelightSubsystem, driveSubsystem)); 
+    new JoystickButton(joystick, 3).onTrue(new DrivePayloadPosition(bicepArmSubsystem));
+    new JoystickButton(joystick, 4).onTrue(new PayloadIntake(bicepArmSubsystem, elbowPivotSubsystem));
+    new JoystickButton(joystick, 5).onTrue(new NodeScoring(20, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, driveSubsystem));
+    new JoystickButton(joystick, 6).onTrue(new AutoPivotElbowCommand(10, elbowPivotSubsystem));
+    new JoystickButton(joystick, 7).onTrue(new PivotElbowUpCommand(0.35, elbowPivotSubsystem));
+    new JoystickButton(joystick, 8).onTrue(new PivotElbowDownCommand(-0.35, elbowPivotSubsystem));
+    new JoystickButton(joystick, 9).onTrue(new CloseClawCommand(clawSubsystem));
+    new JoystickButton(joystick, 10).onTrue(new OpenClawCommand(clawSubsystem));
+    new JoystickButton(joystick, 11).onTrue(new ToggleClawCommand(clawSubsystem)); 
   }
 
   /**
@@ -92,4 +97,18 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return autoCommand.getSelected();
   }
+
+  public static double limitValue(double value, double upperLimit, double lowerLimit) {
+    return Math.max(lowerLimit, Math.min(value, upperLimit));
+  }
+
+  // public Command scoreNodeCommand(double angleRotation) {
+  //   return Commands.sequence(
+  //     new ExtendBicepCommand(bicepArmSubsystem),
+  //     new AutoPivotElbowCommand(angleRotation),
+  //     new OpenClawCommand(clawSubsystem),
+  //     new TravelDistanceCommand(26, 0.35),
+  //     new AutoPivotElbowCommand(0)
+  //   );
+  // }
 }

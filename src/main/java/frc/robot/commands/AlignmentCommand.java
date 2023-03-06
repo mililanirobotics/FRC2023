@@ -15,8 +15,8 @@ public class AlignmentCommand extends CommandBase {
     private int pipeline;
 
 
-    public AlignmentCommand(int pipeline) {
-        m_Limelightsubsystem = RobotContainer.limelightSubsystem;
+    public AlignmentCommand(int pipeline, LimelightSubsystem limelightSubsystem) {
+        m_Limelightsubsystem = limelightSubsystem;
         m_DriveSubsystem = RobotContainer.driveSubsystem;
         speed = 0;
         this.pipeline = pipeline;

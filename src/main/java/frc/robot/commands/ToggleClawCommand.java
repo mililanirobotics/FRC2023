@@ -2,15 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.ClawSubsystem;
 
 public class ToggleClawCommand extends CommandBase {
     private ClawSubsystem m_ClawSubsystem;
     private DoubleSolenoid.Value intialClawState;
 
-    public ToggleClawCommand() {
-        m_ClawSubsystem = RobotContainer.clawSubsystem;
+    public ToggleClawCommand(ClawSubsystem clawSubsystem) {
+        m_ClawSubsystem = clawSubsystem;
         // intialClawState = m_ClawSubsystem.getClawState();
         addRequirements(m_ClawSubsystem);
     }

@@ -8,8 +8,8 @@ import frc.robot.subsystems.ClawSubsystem;
 public class CloseClawCommand extends CommandBase {
     private ClawSubsystem m_ClawSubsystem;
 
-    public CloseClawCommand() {
-        m_ClawSubsystem = RobotContainer.clawSubsystem;
+    public CloseClawCommand(ClawSubsystem clawSubsystem) {
+        m_ClawSubsystem = clawSubsystem;
         addRequirements(m_ClawSubsystem);
     }
 

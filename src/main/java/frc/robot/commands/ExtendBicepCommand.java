@@ -3,14 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.BicepArmSubsystem; 
 
 public class ExtendBicepCommand extends CommandBase{
     BicepArmSubsystem m_BicepArmSubsystem;
 
-    public ExtendBicepCommand() {
-        m_BicepArmSubsystem = RobotContainer.bicepArmSubsystem;
+    public ExtendBicepCommand(BicepArmSubsystem bicepArmSubsystem) {
+        m_BicepArmSubsystem = bicepArmSubsystem;
     }
 
     public void initialize() {

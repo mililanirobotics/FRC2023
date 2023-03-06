@@ -19,8 +19,8 @@ public class GyroTurnCommand extends CommandBase {
     private double targetAngle;
     private double error;
 
-    public GyroTurnCommand(double turnDegrees) {
-        m_driveSubsystem = RobotContainer.driveSubsystem;
+    public GyroTurnCommand(double turnDegrees, DriveSubsystem driveSubsystem) {
+        m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);
         this.turnDegrees = turnDegrees;
     }

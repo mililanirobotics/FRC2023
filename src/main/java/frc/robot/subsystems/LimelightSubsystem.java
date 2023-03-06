@@ -7,9 +7,17 @@ import edu.wpi.first.networktables.NetworkTable;
 //constants
 import frc.robot.Constants.LimelightConstants; 
 
+// public enum Pipeline {
+//     APRIL_TAGS(0), REFLECTIVE_TAPE(1), DRIVER_VIEW(2);
+
+//     private int PipelineID;
+// }
+
 public class LimelightSubsystem extends SubsystemBase {
     private NetworkTable table;
-  
+
+    
+
     public LimelightSubsystem() {
         this.table = NetworkTableInstance.getDefault().getTable("limelight");
         setPipeline(3);

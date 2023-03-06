@@ -9,8 +9,8 @@ import frc.robot.subsystems.BicepArmSubsystem;
 public class RetractBicepCommand extends CommandBase{
     BicepArmSubsystem m_BicepArmSubsystem;
 
-    public RetractBicepCommand() {
-        m_BicepArmSubsystem = RobotContainer.bicepArmSubsystem;
+    public RetractBicepCommand(BicepArmSubsystem bicepArmSubsystem) {
+        m_BicepArmSubsystem = bicepArmSubsystem;
     }
 
     @Override

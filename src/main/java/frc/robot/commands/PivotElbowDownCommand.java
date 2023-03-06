@@ -11,8 +11,8 @@ public class PivotElbowDownCommand extends CommandBase{
     ElbowPivotSubsystem m_ElbowPivotSubsystem;
     private double speed; 
 
-    public PivotElbowDownCommand(double speed) {
-        m_ElbowPivotSubsystem = RobotContainer.elbowPivotSubsystem;
+    public PivotElbowDownCommand(double speed, ElbowPivotSubsystem elbowPivotSubsystem) {
+        m_ElbowPivotSubsystem = elbowPivotSubsystem;
         this.speed = speed;
     }
 

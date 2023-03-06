@@ -9,10 +9,10 @@ public class AutoPivotElbowCommand extends CommandBase {
     private ElbowPivotSubsystem m_ElbowPivotSubsystem;
     private double speed;
 
-    public AutoPivotElbowCommand(double angleRotation) {
+    public AutoPivotElbowCommand(double angleRotation, ElbowPivotSubsystem elbowPivotSubsystem) {
         speed = 0;
 
-        m_ElbowPivotSubsystem = RobotContainer.elbowPivotSubsystem;
+        m_ElbowPivotSubsystem = elbowPivotSubsystem;
         m_ElbowPivotSubsystem.angleRotation = angleRotation;
         
         addRequirements(m_ElbowPivotSubsystem);
@@ -29,16 +29,9 @@ public class AutoPivotElbowCommand extends CommandBase {
         System.out.println("Angle: " + m_ElbowPivotSubsystem.angleRotation);
         System.out.println("Speed: " + speed);
         
-        speed = m_ElbowPivotSubsystem.error() * PivotConstants.kPPivotAngle;
-            if (Math.abs(speed) > 0.5) {
-                speed = Math.copySign(0.5, speed);
-            }
-            else if (Math.abs(speed) < 0.35) {
-                speed = Math.copySign(0.35, speed);
-            }
-            m_ElbowPivotSubsystem.elbowPivot.set(speed);
-
-        
+        speed = RobotContainer.limitValue(m_ElbowPivotSubsystem.error() * PivotConstants.kPPivotAngle, 0.5, 0.35);
+        m_ElbowPivotSubsystem.elbowPivot.set(speed);
+   
     }
 
     @Override

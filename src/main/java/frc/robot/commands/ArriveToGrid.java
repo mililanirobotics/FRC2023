@@ -1,17 +1,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 
 public class ArriveToGrid extends SequentialCommandGroup{
 
     private int pipeline;
     private double targetHeight;
 
-    public ArriveToGrid(int pipeline, double targetHeight) {
+    public ArriveToGrid(int pipeline, double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem) {
         this.pipeline = pipeline;
         this.targetHeight = targetHeight;
 
-        addCommands(new AlignmentCommand(pipeline));
-        addCommands(new LimelightTravelDistanceCommand(targetHeight));
+        addCommands(new AlignmentCommand(pipeline, limelightSubsystem));
+        addCommands(new LimelightTravelDistanceCommand(targetHeight, limelightSubsystem, driveSubsystem));
     }
 }
