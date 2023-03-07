@@ -1,63 +1,82 @@
-// package frc.robot;
+package frc.robot;
 
-// import com.revrobotics.CANSparkMax;
-// import com.revrobotics.RelativeEncoder;
-// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-// import com.revrobotics.SparkMaxRelativeEncoder;
-// import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-// import edu.wpi.first.wpilibj.Encoder;
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxRelativeEncoder;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
-// public class Drive {
+public class Drive {
 
-//     // Encoder declarations and initializations 
-//     int COUNTS_PER_ROTATION = 42;
-//     double DRIVE_GEAR_REDUCTION = 8.6;
-//     double WHEEL_DIAMETER = 4;
-//     double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-//     double COUNTS_PER_INCH = (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
-//     CANSparkMax leftFront = new CANSparkMax(12, MotorType.kBrushless);
-//     CANSparkMax rightFront = new CANSparkMax(10, MotorType.kBrushless);
-//     CANSparkMax leftBack = new CANSparkMax(13, MotorType.kBrushless);
-//     CANSparkMax rightBack = new CANSparkMax(11, MotorType.kBrushless);
-//     RelativeEncoder lFrontEncoder = leftFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-//     RelativeEncoder rFrontEncoder = rightFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-//     RelativeEncoder lBackEncoder = leftBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-//     RelativeEncoder rBackEncoder = rightBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
-//     boolean eDriveDone = false;
-//     boolean alignDone = false;
+    // Encoder declarations and initializations 
+    int COUNTS_PER_ROTATION = 42;
+    double DRIVE_GEAR_REDUCTION = 8.6;
+    double WHEEL_DIAMETER = 4;
+    double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+    double COUNTS_PER_INCH = (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
+    public static CANSparkMax leftFront;
+    public static CANSparkMax rightFront;
+    public static CANSparkMax leftBack;
+    public static CANSparkMax rightBack;
+    RelativeEncoder lFrontEncoder;
+    RelativeEncoder rFrontEncoder;
+    RelativeEncoder lBackEncoder;
+    RelativeEncoder rBackEncoder;
+    boolean eDriveDone = false;
+    boolean alignDone = false;
 
-//     // Gyro declrations and initializations
-//     ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-//     Encoder leftEncoder = new Encoder(1, 2, false);
-//     Encoder rightEncoder = new Encoder(3, 4, false);
-//     boolean turnDrive = false;
-//     double currentAngle;
+    // Gyro declrations and initializations
+    AHRS gyro;
+    boolean turnDrive = false;
+    double currentAngle;
 
-//     // Limelight 
-//     Limelight aprilTags = new Limelight();
+    // Limelight 
+  //Limelight aprilTags = new Limelight();
 
-//   public Drive() {
-//     // rFrontEncoder.setInverted(true);
-//     rightFront.setInverted(true);
-//     // rBackEncoder.setInverted(true);
-//     rightBack.setInverted(true);
-//   }
+  private NetworkTable table;
 
-//   public void robotInit() {
+  public Drive() {
+    leftFront = new CANSparkMax(12, MotorType.kBrushless);
+    rightFront = new CANSparkMax(10, MotorType.kBrushless);
+    leftBack = new CANSparkMax(13, MotorType.kBrushless);
+    rightBack = new CANSparkMax(11, MotorType.kBrushless);
+    lFrontEncoder = leftFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
+    rFrontEncoder = rightFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
+    lBackEncoder = leftBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
+    rBackEncoder = rightBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, COUNTS_PER_ROTATION);
 
-//   }
+    gyro = new AHRS(SPI.Port.kMXP);
 
-//     /**
-//      * This method is called upon in autonomous for moving back and forth
-//      * @param speed sets speed the robot will move at
-//      * @param distance determines how far the robot will move (USE INCHES)
-//      * @param direction determines which way the robot will move ("forward" or "backward")
-//      * @param timeOut determines how long the method will run before being stopped forcefully (USE MILLISECONDS)
-//      */
-//     public void encoderDrive(double speed, double distance, String direction, double timeOut) {
-//         int motorTarget = (int)(distance * COUNTS_PER_INCH);
-//         eDriveDone = false;
+    rightFront.setInverted(true);
+    rFrontEncoder.setInverted(true);
+    rightBack.setInverted(true);
+    rBackEncoder.setInverted(true);
+  }
+
+  public void robotInit() {
+
+  }
+
+    /**
+     * This method is called upon in autonomous for moving back and forth
+     * @param speed sets speed the robot will move at
+     * @param distance determines how far the robot will move (USE INCHES)
+     * @param direction determines which way the robot will move ("forward" or "backward")
+     * @param timeOut determines how long the method will run before being stopped forcefully (USE MILLISECONDS)
+     */
+    public void encoderDrive(double speed, double distance, String direction, double timeOut) {
+        int motorTarget = (int)(distance * COUNTS_PER_INCH);
+        eDriveDone = false;
         
 //         double timeStarted = System.currentTimeMillis();
     
@@ -141,18 +160,17 @@
 //         //Stop all motors
 //     }
 
-//   public double getAngle()
-//   {
-//       return gyro.getAngle();
-//   }
+  public double getAngle()
+  {
+      return gyro.getAngle();
+  }
 
-//     // public void log() {
-//     //   SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
-//     //   SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
-//     //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
-//     // }
+    public void log() {
+      SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
+      SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
 
-
-
-// }
-  
+//   SmartDashboard.putNumber("timer", System.currentTimeMillis());
+      SmartDashboard.putNumber("Current gyro position", gyro.getAngle());
+      // SmartDashboard.putNumber("Desired gyro position", desiredAngle());
+    }
+}  

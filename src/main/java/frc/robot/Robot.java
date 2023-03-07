@@ -29,18 +29,20 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
   Joystick joystick = new Joystick(0);
-  
-  // Drive drive = new Drive();
-  // Claw claw = new Claw();
-  PivotArm pivotArm = new PivotArm();
-  Align align = new Align();
 
+  Drive drive = new Drive();
+    Claw claw = new Claw();
+    PivotArm pivotArm = new PivotArm();
+    Align align = new Align();
+ 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+     
+
     // autopath and pipeline options
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);

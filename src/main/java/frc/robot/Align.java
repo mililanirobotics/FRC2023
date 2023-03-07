@@ -5,19 +5,31 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
+
+// private NetworkTable table;
 
 /** Add your docs here. */
 public class Align {
   // Drive drive = new Drive();
   // Limelight aprilTags = new Limelight();
 
-  ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+
+  // ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+  AHRS gyrox;
   boolean alignDone = false;
 
   /**
    * Moves the robot within a certain range from the apriltag or relfective tape based on estimate distance calculated from limelight angle offset
    */
-  public void distanceAlign() {
+public void distanceAlign() {
       // double targetDistance = aprilTags.estimateDepthToTarget() - 50; // subtracting limelight's distance by claw's reach, subject to change
       double speed = 0;
       double kPAlignDistance = 0.01;
@@ -73,5 +85,39 @@ public class Align {
 
         // alignDone = true;
       }
+  
+  public void navx () {
+    gyrox = new AHRS(SPI.Port.kMXP);
+  }
+
+  public void desiredAngle (double turnDegrees) {
+    double desiredAngle = gyrox.getAngle() + turnDegrees;
+  }
+
+  public void log() {
+    SmartDashboard.putNumber("Current gyro position", gyrox.getAngle());
     
 
+  //     if (angleOffset < -0.5 || angleOffset > 0.5) {
+  //       speed = angleOffset * kPAlignAngle;
+  //       if (Math.abs(speed) > 0.1) {
+  //         speed = Math.copySign(0.1, speed);
+  //       }
+  //       else if (Math.abs(speed) < 0.075) {
+  //         speed = Math.copySign(0.075, speed);
+    //     }
+    //     drive.leftFront.set(speed);
+    //     drive.rightFront.set(-speed);
+    //     drive.leftBack.set(speed);
+    //     drive.rightBack.set(-speed);
+    //   }
+    //   else {
+    //     drive.leftFront.stopMotor();
+    //     drive.rightFront.stopMotor();
+    //     drive.leftBack.stopMotor();
+    //     drive.rightBack.stopMotor();
+
+    //     alignDone = true;
+    //   }
+    }
+}
