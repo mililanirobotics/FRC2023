@@ -1,10 +1,8 @@
 package frc.robot.commands.Drive;
 
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 //constants
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-
-
 //subsystems used
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -14,41 +12,30 @@ public class TravelDistanceCommand extends CommandBase {
     private double travelDistance;
     private double percentPower;
 
-    private DriveSubsystem m_driveSubsystem;    
+    private DriveSubsystem m_driveSubsystem;   
 
-    public TravelDistanceCommand(double distance, double percentPower) {
-        m_driveSubsystem = RobotContainer.driveSubsystem;
+    public TravelDistanceCommand(DriveSubsystem driveSubsystem, double distance, double percentPower, ShuffleboardTab motorTab) {
+        m_driveSubsystem = driveSubsystem;
         this.percentPower = percentPower;
         this.distance = m_driveSubsystem.convertDistance(distance);
         this.initialDistance = m_driveSubsystem.getRightEncoder(); //using one motor to represent all
         this.travelDistance = this.distance + this.initialDistance;
         addRequirements(m_driveSubsystem);
+
+        // motorTab.add("Initial Distance", initialDistance).withSize(2, 1).getEntry();
+        // motorTab.add("Target Distance", travelDistance).withSize(2, 1).getEntry();
     }
 
     @Override
     public void initialize() {
         m_driveSubsystem.resetEncoders();
-        System.out.println("Initial Distance: "+initialDistance);
-        RobotContainer.motorTab.add("Initial Distance", initialDistance);
-        RobotContainer.motorTab.add("Travel Distance", travelDistance);
-
-                        // speedSlider = Shuffleboard.getTab("Pre-match")
-        //     .add("Max Speed", 1)
-        //     .withWidget("Number Slider")
-        //     .withSize(2, 2)
-        //     .getEntry();
     }
 
     @Override
     public void execute() {
-        RobotContainer.rightEncoderWidget.setDouble(m_driveSubsystem.getRightEncoder());
-        RobotContainer.leftEncoderWidget.setDouble(m_driveSubsystem.getLeftEncoder());
+        m_driveSubsystem.printLeftEncoder(m_driveSubsystem.getLeftEncoder());
+        m_driveSubsystem.printRightEncoder(m_driveSubsystem.getRightEncoder());
 
-        System.out.println("Current Position: "+m_driveSubsystem.getRightEncoder());
-        System.out.println("Target Position: "+travelDistance);
-
-        //percentPower = m_driveSubsystem.drivePID.calculate(0.5); //michael special
-        System.out.println("Michael's creation: "+percentPower);
         m_driveSubsystem.drive(percentPower, percentPower);
     }
 

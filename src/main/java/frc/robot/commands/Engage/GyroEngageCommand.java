@@ -1,11 +1,13 @@
 package frc.robot.commands.Engage;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 //constants
 import frc.robot.Constants.GameConstants;
 import frc.robot.Constants.RobotConstants;
-import frc.robot.RobotContainer;
 
 //subsystems used
 import frc.robot.subsystems.DriveSubsystem;
@@ -13,29 +15,27 @@ import frc.robot.subsystems.DriveSubsystem;
 public class GyroEngageCommand extends CommandBase {
     //instance variables
     private DriveSubsystem m_driveSubsystem;
-    private double currentAngle;
     private double error;
-    private double percentPower;
     private int iteration;
 
-    
-    //encoder add-on  
-    // private double rightEncoderReading;
-    // private double leftEncoderReading;
-    // private double intervalStart;
-    // private double intervalEnd;
+    private PIDController engagePID;
+
+    private GenericEntry pitchAngleWidget;
+    private GenericEntry errorAngleWidget;
+    private GenericEntry powerWidget;
 
     //constructor
-    public GyroEngageCommand() {
-        m_driveSubsystem = RobotContainer.driveSubsystem;
+    public GyroEngageCommand(DriveSubsystem driveSubsystem, ShuffleboardTab engagementTab) {
+        engagePID = new PIDController(RobotConstants.kStationP, RobotConstants.kStationI, RobotConstants.kStationD);
+        engagePID.setTolerance(2);
+        m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);
-    }
 
-    //checks to see if the encoder readings are within the balancing range
-    // public boolean checkEncoders() {
-    //     return (rightEncoderReading > intervalStart && rightEncoderReading < intervalEnd)
-    //             && (leftEncoderReading > intervalStart && leftEncoderReading < intervalEnd);
-    // }
+        pitchAngleWidget = engagementTab.add("Pitch Angle", 0).withSize(2, 1).getEntry();
+        engagementTab.add("Target Angle", GameConstants.kChargingStationSlack).withSize(2, 1).getEntry();
+        errorAngleWidget =  engagementTab.add("Error", 0).withSize(2, 1).getEntry();  
+        powerWidget = engagementTab.add("Power", 0).withSize(2, 1).getEntry();  
+    }
 
     @Override
     public void initialize() {  
@@ -44,19 +44,15 @@ public class GyroEngageCommand extends CommandBase {
 
     @Override
     public void execute() {
-        currentAngle = m_driveSubsystem.getPitch();
+        double currentAngle = m_driveSubsystem.getPitch();
+        double percentPower = engagePID.calculate(currentAngle, 0);
 
-        //error is based on how far the current angle is from 0, which is considered "balanced"
-        // error = -currentAngle;
-
-        percentPower = m_driveSubsystem.engagePID.calculate(currentAngle, 0);
-        // percentPower = error * RobotConstants.kStationP;
         if(percentPower < 0) {
-            percentPower *= 1.25;
+            percentPower *= 1.2;
         }
 
-        if(Math.abs(percentPower) > 0.45) {
-            percentPower = 0.45;
+        if(Math.abs(percentPower) > 0.4) {
+            percentPower = 0.4  ;
         }
 
         m_driveSubsystem.drive(percentPower, percentPower);
@@ -68,12 +64,10 @@ public class GyroEngageCommand extends CommandBase {
             iteration = 0;
         }
 
-        
-
         //debugging statements
-        RobotContainer.pitchAngleWidget.setDouble(currentAngle);
-        RobotContainer.errorAngleWidget.setDouble(error);
-        RobotContainer.powerWidget.setDouble(percentPower);
+        pitchAngleWidget.setDouble(currentAngle);
+        errorAngleWidget.setDouble(error);
+        powerWidget.setDouble(percentPower);
     }
 
     @Override
@@ -84,7 +78,7 @@ public class GyroEngageCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        //finishes the method if the erorr is within the range of (-2, 2)
+        //finishes the method if the erorr is within the range of (-3, 3)
         return iteration >= 50;
     }
 }

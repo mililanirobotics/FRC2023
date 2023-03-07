@@ -66,28 +66,38 @@ public final class Constants {
     public static final class RobotConstants {
         public final static int kWheelDiameter = 4;
         public final static int kCountsPerRev = 42;
+        public final static double kDriveFreeSpeed = 5676; //Empirical free speed of drive motors (RPM)
         
         public final static double kGearRatio = 7.005; //fitted for kevin
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
 
-        //Proportional constant used to manipulate the drive speed when engaging
-        public final static double kStationP = 0.02; //proportion needed to run at 0.29 when robot is within 40% of error
-        public final static double kStationI = 0; //calculated based on the idea that if we have 60% error and wanted to increase speed by 0.1 in 1 sec
-        public final static double kStationD = 0; //tbd
+        //PID constants for the engagement command
+        public final static double kStationP = 0.02; 
+        public final static double kStationI = 0; 
+        public final static double kStationD = -0.0003; 
 
-        //PID constants for auto drive
-        public final static double kDriveP = 0;
-        public final static double kDriveI = 0;
-        public final static double kDriveD = 0;
+        //PID constants for turn drive
+        public final static double kTurnDriveP = 0.015;
+        public final static double kTurnDriveI = 0.0015;
+        public final static double kTurnDriveD = 0.0005;
         
-        //Proportoinal constant used to manipulate the drive speed when turning
+        //PID constants for alignment
         public final static double kTurnP = 0.005; //tbd
+
+        //PID and feedforward constants for drive
+        public final static double kDriveP = 0.0025;
+        public final static double kDriveI = 0.00001;
+        public final static double kDriveD = 0.00015;
+
+        public final static double kDriveS = 0.05;
+        public final static double kDriveV = 12 / kDriveFreeSpeed;
+        public final static double kDriveA = 0;
     }
 
     public static final class GameConstants {
         //amount of slack the robot's pitch angle is allowed during engaging
         public final static double kChargingStationSlackRad = 2 * Math.PI / 180.0;
-        public final static double kChargingStationSlack = 2;
+        public final static double kChargingStationSlack = 4;
 
         public final static double kStopAngleRad = 3 * Math.PI / 180;
         public final static double kStopAngle = 3;
@@ -96,19 +106,13 @@ public final class Constants {
         public final static double kChargingStationDistance = 42;
 
         //amount of slack the robot's yaw angle can be off by during alignment
-        public final static double kAlignmentSlack = 1;
+        public final static double kAlignmentSlack = 3;
+        public final static double kTurnSlack = 2;
 
         //vision constants
         public final static int kAprilTagHeight = 60;
         public final static double kReflectiveTapeHeight = 0; //tbd
         public final static int kPoleSpace = 17; //space between the med and high poles in inches
-
-        //currently for kevin
-        
-        //distance kevin stays engaged with the charging station in inches
-        public final static double kChargeStationRange = 35;
-        public final static double kChargeStationIntervalStart = 17;
-        public final static double kChargeStationIntervalEnd = 23;
     }
 
     public static final class JoystickConstants {

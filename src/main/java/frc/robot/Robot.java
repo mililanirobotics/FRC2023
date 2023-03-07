@@ -34,12 +34,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-
-    RobotContainer.driveSubsystem.setDefaultCommand(new DriveCommand());
-
-    RobotContainer.driveSubsystem.resetEncoders();
-    RobotContainer.driveSubsystem.zeroOutGyro();
-    RobotContainer.driveSubsystem.calibrateGyro();
   }
 
   /**

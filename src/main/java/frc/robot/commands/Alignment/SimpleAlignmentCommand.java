@@ -17,9 +17,9 @@ public class SimpleAlignmentCommand extends CommandBase {
     //key variables
     private double offset;
 
-    public SimpleAlignmentCommand() {
-        m_driveSubsystem = RobotContainer.driveSubsystem;
-        m_limelightSubsystem = RobotContainer.limelightSubsystem;
+    public SimpleAlignmentCommand(DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
+        m_driveSubsystem = driveSubsystem;
+        m_limelightSubsystem = limelightSubsystem;
         addRequirements(m_driveSubsystem, m_limelightSubsystem);
     }
 
