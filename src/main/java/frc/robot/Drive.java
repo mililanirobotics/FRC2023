@@ -78,87 +78,87 @@ public class Drive {
         int motorTarget = (int)(distance * COUNTS_PER_INCH);
         eDriveDone = false;
         
-        double timeStarted = System.currentTimeMillis();
+//         double timeStarted = System.currentTimeMillis();
     
-        lFrontEncoder.setPosition(0);
-        rFrontEncoder.setPosition(0);
-        lBackEncoder.setPosition(0);
-        rBackEncoder.setPosition(0);
+//         lFrontEncoder.setPosition(0);
+//         rFrontEncoder.setPosition(0);
+//         lBackEncoder.setPosition(0);
+//         rBackEncoder.setPosition(0);
     
-        if (direction == "forward") {
-          leftFront.set(speed);
-          rightFront.set(speed);
-          leftBack.set(speed);
-          rightBack.set(speed);  
-        }
-        else if (direction == "backward") {
-          leftFront.set(-speed);
-          rightFront.set(-speed);
-          leftBack.set(-speed);
-          rightBack.set(-speed);
-        }
+//         if (direction == "forward") {
+//           leftFront.set(speed);
+//           rightFront.set(speed);
+//           leftBack.set(speed);
+//           rightBack.set(speed);  
+//         }
+//         else if (direction == "backward") {
+//           leftFront.set(-speed);
+//           rightFront.set(-speed);
+//           leftBack.set(-speed);
+//           rightBack.set(-speed);
+//         }
         
-        // if(Math.abs(lFrontEncoder.getPosition()) >= motorTarget || Math.abs(rFrontEncoder.getPosition()) >= motorTarget || Math.abs(lBackEncoder.getPosition()) >= motorTarget || Math.abs(rBackEncoder.getPosition()) >= motorTarget || System.currentTimeMillis() > (timeStarted + timeOut)) {
-          leftFront.set(0);
-          rightFront.set(0);
-          leftBack.set(0);
-          rightBack.set(0);
-          eDriveDone = true;
-        }
+//         if(Math.abs(lFrontEncoder.getPosition()) >= motorTarget || Math.abs(rFrontEncoder.getPosition()) >= motorTarget || Math.abs(lBackEncoder.getPosition()) >= motorTarget || Math.abs(rBackEncoder.getPosition()) >= motorTarget || System.currentTimeMillis() > (timeStarted + timeOut)) {
+//           leftFront.set(0);
+//           rightFront.set(0);
+//           leftBack.set(0);
+//           rightBack.set(0);
+//           eDriveDone = true;
+//         }
     
-      
+//       }
 
-    /**
-     * This method is called on during autonomous for turning
-     * @param speed sets the speed the robot will turn at
-     * @param turnDegrees amount of degrees from the current orientation the robot will turn (POSITIVE = RIGHT, NEGATIVE = LEFT)
-     * @param timeOut determines how long the method will run before being forcefully stopped (USE MILLISECONDS)
-     */
-    public void turnDrive(double speed, double turnDegrees, int timeOut) {
-        //set turnDegrees parameters for this method to negative to turn left
-        //timeOut parameter should be in milliseconds
-        double desiredAngle = gyro.getAngle() + turnDegrees;
+//     /**
+//      * This method is called on during autonomous for turning
+//      * @param speed sets the speed the robot will turn at
+//      * @param turnDegrees amount of degrees from the current orientation the robot will turn (POSITIVE = RIGHT, NEGATIVE = LEFT)
+//      * @param timeOut determines how long the method will run before being forcefully stopped (USE MILLISECONDS)
+//      */
+//     public void turnDrive(double speed, double turnDegrees, int timeOut) {
+//         //set turnDegrees parameters for this method to negative to turn left
+//         //timeOut parameter should be in milliseconds
+//         double desiredAngle = gyro.getAngle() + turnDegrees;
 
-        //statement above calculates the position of the desired angle
-        //based on the robots current orientation
-        //double timeStarted = System.currentTimeMillis();
-        //timeStarted is recorded for timeOut
+//         //statement above calculates the position of the desired angle
+//         //based on the robots current orientation
+//         //double timeStarted = System.currentTimeMillis();
+//         //timeStarted is recorded for timeOut
 
-        double error = desiredAngle - gyro.getAngle();
+//         double error = desiredAngle - gyro.getAngle();
 
-        System.out.println("Gyro Angle: " + gyro.getAngle());
-        System.out.println("Desired Angle: " + desiredAngle);
-        System.out.println("Error: " + error);
-        //error between desiredAngle and our current angle is established
-        if(error < -2 || error > 2) {
-          //Loop will continue as long as error is not inbetween the slack range of -2 to 2
-          error = desiredAngle - gyro.getAngle();
-          //This calculates at the start of every loop to determine which way the robot will turn
-          if(error > 0) {
-              //If error is positive, the robot turns right
-              leftFront.set(speed);
-              rightFront.set(-speed);
-              leftBack.set(speed);
-              rightBack.set(-speed);
-          }
-          else {
-              //If error is negative, the robot turns left
-              leftFront.set(-speed);
-              rightFront.set(speed);
-              leftBack.set(-speed);
-              rightBack.set(speed);
-          }
-        }
-        else {
-          leftFront.stopMotor();
-          rightFront.stopMotor();
-          leftBack.stopMotor();
-          rightBack.stopMotor();
-          turnDrive = true;
-        }
+//         System.out.println("Gyro Angle: " + gyro.getAngle());
+//         System.out.println("Desired Angle: " + desiredAngle);
+//         System.out.println("Error: " + error);
+//         //error between desiredAngle and our current angle is established
+//         if(error < -2 || error > 2) {
+//           //Loop will continue as long as error is not inbetween the slack range of -2 to 2
+//           error = desiredAngle - gyro.getAngle();
+//           //This calculates at the start of every loop to determine which way the robot will turn
+//           if(error > 0) {
+//               //If error is positive, the robot turns right
+//               leftFront.set(speed);
+//               rightFront.set(-speed);
+//               leftBack.set(speed);
+//               rightBack.set(-speed);
+//           }
+//           else {
+//               //If error is negative, the robot turns left
+//               leftFront.set(-speed);
+//               rightFront.set(speed);
+//               leftBack.set(-speed);
+//               rightBack.set(speed);
+//           }
+//         }
+//         else {
+//           leftFront.stopMotor();
+//           rightFront.stopMotor();
+//           leftBack.stopMotor();
+//           rightBack.stopMotor();
+//           turnDrive = true;
+//         }
 
-        //Stop all motors
-    }
+//         //Stop all motors
+//     }
 
   public double getAngle()
   {
@@ -168,18 +168,9 @@ public class Drive {
     public void log() {
       SmartDashboard.putNumber("Left front encoder value", leftFront.getEncoder().getPosition());
       SmartDashboard.putNumber("Right front encoder value", rightFront.getEncoder().getPosition());
-<<<<<<< HEAD
-    //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
+
+//   SmartDashboard.putNumber("timer", System.currentTimeMillis());
       SmartDashboard.putNumber("Current gyro position", gyro.getAngle());
-      // SmartDashboard.putNumber("Disred gyro position", desiredAngle());
-=======
-      SmartDashboard.putNumber("Gyro desired position", desiredAngle());
-      Shuffleboard.putNumber("Gyro current position", gyro.getAngle());
-    //   SmartDashboard.putNumber("timer", System.currentTimeMillis());
->>>>>>> 906b20d7813570293641f33d7a8a2c68360af20b
+      // SmartDashboard.putNumber("Desired gyro position", desiredAngle());
     }
-
-
-
-}
-  
+}  
