@@ -110,7 +110,7 @@ public final class Limelight {
             * @return wether or not the robot can score a gamepiece from it's current position
             */
            public boolean isDistancePossible(){
-                align.angleAlign();
+                // align.angleAlign();
                 boolean distPossible = false;
                if (getPipeline() == 0) {
                     //AprilTags Pipeline
