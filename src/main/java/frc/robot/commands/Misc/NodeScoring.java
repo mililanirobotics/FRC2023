@@ -1,6 +1,10 @@
-package frc.robot.commands;
+package frc.robot.commands.Misc;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.Arm.AutoPivotElbowCommand;
+import frc.robot.commands.Arm.ExtendBicepCommand;
+import frc.robot.commands.Claw.OpenClawCommand;
+import frc.robot.commands.Drive.TravelDistanceCommand;
 import frc.robot.subsystems.BicepArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;

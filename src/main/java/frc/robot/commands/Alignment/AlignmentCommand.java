@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Alignment;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -31,7 +31,7 @@ public class AlignmentCommand extends CommandBase {
     @Override
     public void execute() {
         offsetAngle = m_Limelightsubsystem.getHorizontalOffset();
-  
+        
         speed = offsetAngle * LimelightConstants.kPAlignAngle;
         if (Math.abs(speed) > 0.35) {
         speed = Math.copySign(0.35, speed);

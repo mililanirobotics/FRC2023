@@ -90,10 +90,9 @@ public final class Constants {
         public final static double kStationD = -0.0003; 
 
         //PID constants for turn drive
-<<<<<<< HEAD
-        public final static double kTurnDriveP = 0.1;
-        public final static double kTurnDriveI = 0;
-        public final static double kTurnDriveD = 0;
+        public final static double kTurnDriveP = 0.015;
+        public final static double kTurnDriveI = 0.0015;
+        public final static double kTurnDriveD = 0.0005;
         
         //PID constants for encoder drive (Previous P: 0.0025, I: 0.00001, D: 0.00005)
         public final static double kEncoderDriveP = 0.0025;
@@ -101,13 +100,6 @@ public final class Constants {
         public final static double kEncoderDriveD = 0.00015;
 
         //Proportoinal constant used to manipulate the drive speed when turning
-=======
-        public final static double kTurnDriveP = 0.015;
-        public final static double kTurnDriveI = 0.0015;
-        public final static double kTurnDriveD = 0.0005;
-        
-        //PID constants for alignment
->>>>>>> subsystems-and-commands
         public final static double kTurnP = 0.005; //tbd
 
         //PID and feedforward constants for drive

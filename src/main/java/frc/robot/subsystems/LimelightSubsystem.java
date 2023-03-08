@@ -14,6 +14,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public enum Pipeline {
         APRIL_TAGS(0), REFLECTIVE_TAPE(1), DRIVER_VIEW(2);
+        
         private Pipeline(int PipelineID){
             this.PipelineID = PipelineID;
         }

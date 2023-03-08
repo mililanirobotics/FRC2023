@@ -1,5 +1,6 @@
-package frc.robot.commands;
+package frc.robot.commands.Arm;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElbowPivotSubsystem;
 
@@ -7,12 +8,14 @@ import frc.robot.RobotContainer;
 
 
 // Command will be changed to fit joystick axis later
-public class PivotElbowDownCommand extends CommandBase{
+public class PivotElbowUpCommand extends CommandBase{
     ElbowPivotSubsystem m_ElbowPivotSubsystem;
     private double speed; 
+    private GenericHID joystick;
 
-    public PivotElbowDownCommand(double speed, ElbowPivotSubsystem elbowPivotSubsystem) {
+    public PivotElbowUpCommand(double speed, ElbowPivotSubsystem elbowPivotSubsystem, GenericHID joystick) {
         m_ElbowPivotSubsystem = elbowPivotSubsystem;
+        this.joystick = joystick;
         this.speed = speed;
     }
 
@@ -29,7 +32,7 @@ public class PivotElbowDownCommand extends CommandBase{
     }
 
     public boolean isFinished() {
-        return RobotContainer.joystick.getRawButton(7) == false;
+        return joystick.getRawButton(7) == false;
     }
 }
 

@@ -14,8 +14,11 @@ public class SimpleAlignmentCommand extends CommandBase {
     //subsystems used
     private DriveSubsystem m_driveSubsystem;
     private LimelightSubsystem m_limelightSubsystem;
+
     //key variables
     private double offset;
+
+    //
 
     public SimpleAlignmentCommand(DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
         m_driveSubsystem = driveSubsystem;
