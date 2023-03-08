@@ -1,32 +1,42 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 //constants
 import frc.robot.Constants.JoystickConstants;
-import frc.robot.RobotContainer;
-
+import frc.robot.Constants.RobotConstants;
 //subsystems used
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveCommand extends CommandBase {
     private DriveSubsystem m_driveSubsystem;
+    private GenericHID joystick;
 
-    public DriveCommand() {
-        m_driveSubsystem = RobotContainer.driveSubsystem;
+    public DriveCommand(DriveSubsystem driveSubsystem, GenericHID joystick) {
+        this.joystick = joystick;
+        
+        m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);  
     }
 
     @Override
     public void execute() {
-        double leftPower = -RobotContainer.joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.driveScale;
-        double rightPower = -RobotContainer.joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.driveScale;
+        double leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        double rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
 
-        if(RobotContainer.joystick.getRawAxis(2) >= 0.5) {
+        if(joystick.getRawAxis(2) >= 0.5) {
             leftPower *= 0.5;
             rightPower *= 0.5;
         }
-        
+
+        //sending the current encoder readings to shuffleboard
+        m_driveSubsystem.printLeftEncoder(m_driveSubsystem.getLeftEncoder());
+        m_driveSubsystem.printRightEncoder(m_driveSubsystem.getRightEncoder());
+
+        //setting the current power of the drive
         m_driveSubsystem.drive(leftPower, rightPower);
     }
 

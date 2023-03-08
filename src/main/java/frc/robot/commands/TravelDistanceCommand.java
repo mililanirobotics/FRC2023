@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 //constants
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+//subsystems used
+import frc.robot.subsystems.DriveSubsystem;
 
 public class TravelDistanceCommand extends CommandBase {
     private double distance;
@@ -36,6 +39,9 @@ public class TravelDistanceCommand extends CommandBase {
         powerWidget = encoderDriveTab.add("Power", 0).withSize(4, 4).getEntry();
         encoderDriveTab.add("Encoder Drive PID", encoderDrivePID).withSize(4, 4);
         addRequirements(m_driveSubsystem);
+
+        // motorTab.add("Initial Distance", initialDistance).withSize(2, 1).getEntry();
+        // motorTab.add("Target Distance", travelDistance).withSize(2, 1).getEntry();
     }
 
     @Override
@@ -73,6 +79,6 @@ public class TravelDistanceCommand extends CommandBase {
 
     @Override 
     public boolean isFinished() {
-        return m_driveSubsystem.getRightEncoder() >= travelDistance && m_driveSubsystem.getRightEncoder() >= travelDistance;
+        return m_driveSubsystem.getLeftEncoder() >= travelDistance && m_driveSubsystem.getRightEncoder() >= travelDistance;
     }
 }

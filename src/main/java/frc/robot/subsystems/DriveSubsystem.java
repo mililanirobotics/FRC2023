@@ -1,19 +1,16 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Timer;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
@@ -25,48 +22,41 @@ import frc.robot.Constants.RobotConstants;
 
 public class DriveSubsystem extends SubsystemBase {
     //declaring drive motors and encoders
-    private CANSparkMax leftFront;
-    private CANSparkMax leftBack;
-    private CANSparkMax rightFront;
-    private CANSparkMax rightBack;
+    private final CANSparkMax leftFront;
+    private final CANSparkMax leftBack;
+    private final CANSparkMax rightFront;
+    private final CANSparkMax rightBack;
 
-    private MotorControllerGroup leftDrive;
-    private MotorControllerGroup rightDrive;
+    private final MotorControllerGroup leftDrive;
+    private final MotorControllerGroup rightDrive;
 
-    private RelativeEncoder rightBackEncoder;
-    private RelativeEncoder rightFrontEncoder;
-    private RelativeEncoder leftFrontEncoder;
-    private RelativeEncoder leftBackEncoder;
+    private final RelativeEncoder rightBackEncoder;
+    private final RelativeEncoder rightFrontEncoder;
+    private final RelativeEncoder leftFrontEncoder;
+    private final RelativeEncoder leftBackEncoder;
 
-    public Timer timer;
 
     //declaring differential drive Odometry and Kinematics objects
     private DifferentialDriveOdometry odometry;
     //private DifferentialDriveKinematics kinematics;
-    public DifferentialDrive drive;
+    private DifferentialDrive drive;
+    //feedforward and general drive PID
+    private SimpleMotorFeedforward feedforward;
+    private PIDController drivePID;
 
-    //PID Controllers
-    public PIDController engagePID = new PIDController(RobotConstants.kStationP, RobotConstants.kStationI, RobotConstants.kStationD);
-    public PIDController drivePID = new PIDController(RobotConstants.kTurnDriveP, RobotConstants.kTurnDriveI, RobotConstants.kTurnDriveD);
-
-    //initializing the gyro
-    ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    AHRS navx = new AHRS(I2C.Port.kMXP);
-
-    //initializing 3-axis accelorometer
-    Accelerometer accelerometer = new BuiltInAccelerometer();
+    //Declaring the gyro
+    private final AHRS navx;
 
     //Sendable chooser for drive speeds
-    SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
-    public double driveScale;
+    private SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
+    private double driveScale;
 
-    //Sendable chooser for which access the Accelerometer should access
-    SendableChooser<Boolean> axisChooser = new SendableChooser<Boolean>();
-    public boolean axisChoice;
-    
+    private GenericEntry leftEncoderWidget;
+    private GenericEntry rightEncoderWidget;
+
     //constructor
     //initializes all motors, motor controllers, drive trains, and dashboard options
-    public DriveSubsystem() {
+    public DriveSubsystem(ShuffleboardTab motorTab, ShuffleboardTab preMatchTab) {
         //initializing motors
         leftFront = new CANSparkMax(DriveConstants.kLeftFront, MotorType.kBrushless);
         leftBack = new CANSparkMax(DriveConstants.kLeftBack, MotorType.kBrushless);
@@ -98,25 +88,26 @@ public class DriveSubsystem extends SubsystemBase {
         //resetting encoders upon object creation
         resetEncoders(); 
 
-        //creating a timer object
-        timer = new Timer();
-
-        engagePID.setTolerance(Math.PI / 180);
+        //creating and enabling navx
+        navx = new AHRS(I2C.Port.kMXP);
+        navx.enableLogging(true);
 
         //creating odometry and differential drive (tank drive) objects
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftEncoder(), getRightEncoder());
+        odometry = new DifferentialDriveOdometry(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
         drive = new DifferentialDrive(leftDrive, rightDrive);
+
+        drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
+        feedforward = new SimpleMotorFeedforward(RobotConstants.kDriveS, RobotConstants.kDriveV , RobotConstants.kDriveA);
+
+        //shuffleboard widgets
+        leftEncoderWidget = motorTab.add("Left Encoder", 0).withSize(2, 1).getEntry();
+        rightEncoderWidget = motorTab.add("Right Encoder", 0).withSize(2, 1).getEntry(); 
 
         //setting options for the user to choose the drive speed
         driveSpeeds.setDefaultOption("100%", 1.0);
         driveSpeeds.addOption("50%", 0.5);
         driveSpeeds.addOption("35%", 0.35);
-        // RobotContainer.preMatchTab.add("Max Speed", driveSpeeds);
-
-        //setting options for the user to choose which axis the accelerometer refers to
-        axisChooser.setDefaultOption("Z-axis", true);
-        axisChooser.addOption("Y-axis", false);
-        // RobotContainer.preMatchTab.add("Axis Selected", axisChooser);
+        preMatchTab.add("Max Speed", driveSpeeds);
     }
 
     //=========================================================================== 
@@ -133,8 +124,33 @@ public class DriveSubsystem extends SubsystemBase {
         drive.tankDrive(leftPercentPower, rightPercentPower, true);
     }
 
+    /**
+     * Drives the robot using tank drive controls (maintains a constant speed no matter the voltage)
+     * Uses feedforward along with a PID controller in order to maintain a constant velocity
+     * @param leftVelocity
+     * @param rightVelocity
+     */
+    public void drivePID(double leftVelocity, double rightVelocity) {
+        double calculatedLeftSpeed = feedforward.calculate(leftVelocity) 
+            + drivePID.calculate(leftFrontEncoder.getVelocity(), leftVelocity);
+
+        double calculatedRightSpeed = feedforward.calculate(rightVelocity) 
+            + drivePID.calculate(rightFrontEncoder.getVelocity(), rightVelocity);
+
+        leftDrive.setVoltage(Math.pow(calculatedLeftSpeed, 2));
+        rightDrive.setVoltage(Math.pow(calculatedRightSpeed, 2));
+    }
+
     public void shutdown() {
         drive.tankDrive(0, 0);
+    }
+
+    /**
+     * Returns the current speed scaler selected on shuffleboard
+     * @return The current speed scaler selected
+     */
+    public double getDriveSpeed() {
+        return driveScale;
     }
 
     /**
@@ -169,7 +185,7 @@ public class DriveSubsystem extends SubsystemBase {
      * updates odometry with the robot's most recent position on the field
     */
     public void updateOdometry() {
-        odometry.update(gyro.getRotation2d(), getLeftEncoder(), getRightEncoder());
+        odometry.update(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
     }
 
 
@@ -179,7 +195,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     //calibrates the gyro
     public void calibrateGyro() {
-        gyro.calibrate();
+        navx.calibrate();
     }
 
     /**
@@ -187,35 +203,70 @@ public class DriveSubsystem extends SubsystemBase {
      * Tells the driver that the gyro is connected via a print statement
     */
     public void zeroOutGyro() {
-        System.out.println("Gyro Connected: "+gyro.isConnected());
-        gyro.reset();
+        System.out.println("Gyro Connected: "+navx.isConnected());
+        navx.reset();
     }
 
     /**
-     * Gets the current yaw angle of the gyro
+     * Gets the current yaw angle from the navx gyro
     */
-    public double getAngle() {
-        return gyro.getAngle();
+    public double getYaw() {
+        return navx.getYaw();
     }
+
+    /**
+     * Gets the current pitch angle from the navx gyro
+    */
+    public double getPitch() {
+        return navx.getPitch();
+    }
+
+    /**
+     * Gets the current roll angle from the navx gyro
+    */
+    public double getRoll() {
+        return navx.getRoll();
+    }
+
 
     /**
      * Gets the current acceleration vector of the z-axis in g's
     */
     public double getZ() {
-        return accelerometer.getZ();
+        return navx.getRawAccelZ();
     }
 
     /**
      * Gets the current acceleration vector of the y-axis in g's
     */    public double getY() {
-        return accelerometer.getY();
+        return navx.getRawAccelY();
     }
 
     /**
      * Gets the current acceleration vector of the x-axis in g's
     */
     public double getX() {
-        return accelerometer.getX();
+        return navx.getRawAccelX();
+    }
+
+    //=========================================================================== 
+    // widget methods
+    //===========================================================================
+
+    /**
+     * Updates the value of the left encoder widget on shuffleboard
+     * @param leftEncoderReading The current reading of the left encoder
+     */
+    public void printLeftEncoder(double leftEncoderReading) {
+        leftEncoderWidget.setDouble(leftEncoderReading);
+    }
+
+    /**
+     * Updates the value of the right encoder widget on shuffleboard
+     * @param rightEncoderReading The current reading of the right encoder
+     */
+    public void printRightEncoder(double rightEncoderReading) {
+        rightEncoderWidget.setDouble(rightEncoderReading);
     }
 
     //=========================================================================== 
@@ -226,7 +277,6 @@ public class DriveSubsystem extends SubsystemBase {
     public void periodic() {
         updateOdometry();
         driveScale = driveSpeeds.getSelected();
-        axisChoice = axisChooser.getSelected();
     }
 
 }
