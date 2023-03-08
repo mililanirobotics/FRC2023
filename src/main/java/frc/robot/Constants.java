@@ -36,39 +36,52 @@ public final class Constants {
     }
 
     public final class LimelightConstants {
-        public final static double kMountAngle = 39;
-        public final static double kMountHeight = 24; //limelight's height from ground (currently for kevin)
+        public final static double kMountAngle = 62; //Limelight's mount angle on the robot (currently for kevin)
+        public final static double kMountHeight = 29.5; //limelight's height from ground (currently for kevin)
+        public final static double kArmReach = 50; //How far the arm can reach when in scoring position (placeholder value)
+
+        // Temporary notes for setting dual crosshair on limelight
+        public final static double MinDistance = 16; 
+        public final static double MaxDistance = 75.5;
 
         //pipeline numbers for the limelight (WIP)
-        public final static int kReflectivePipeline = 0;
+        public final static int kReflectivePipeline = 3;
         public final static int kAprilTagPipeline = 0;
         public final static int kAlignmentPipelineHigh = 0; //manipulates the limelight's FOV to only see the high reflective tape
         public final static int kAlignmnetPipelineMed = 0; //manipulates the limelight's FOV to only see the med reflective tape
+
+        public static final double kPAlignAngle = 0.03;
     }
 
     public final class PivotConstants {
-        public final static int kPivot = 1; //tbdj
-        public final static boolean kPivotReverse = false; //tbd
+        public final static int kleftPivot = 1; //tbd
+        public final static int kRightPivot = 2; //tbd 
+        public final static boolean kPivotReverse = true; //tbd
         public final static boolean kPivotEncoderReverse = false; //tbd
+        public final static double kPPivotAngle = 0.01;
 
-        public final static int kArmForward = 1; //tbd (hte piston that controls the arm)
-        public final static int kArmReverse = 2; //tbd
+        public final static int kArmForward = 0; //tbd (the piston that controls the arm)
+        public final static int kArmReverse = 1; //tbd
     }
     
     public final class ClawConstants {
-        public final static int kLeftClawForward = 1; //tbd
+        public final static int kLeftClawForward = 0; //tbd
         public final static int kLeftClawReverse = 1; //tbd
 
-        public final static int kRightClawForward = 1; //tbd
-        public final static int kRightClawReverse = 1; //tbd
+        public final static int kRightClawForward = 4; //tbd
+        public final static int kRightClawReverse = 5; //tbd
     }
 
     public static final class RobotConstants {
-        public final static int kWheelDiameter = 4;
+        public final static int kWheelDiameter = 6;
         public final static int kCountsPerRev = 42;
         public final static double kDriveFreeSpeed = 5676; //Empirical free speed of drive motors (RPM)
         
         public final static double kGearRatio = 7.005; //fitted for kevin
+        public final static double kWristGearRatio = 2; //Wrist Pivot's gear Ratio
+        public final static double kElbowGarRatio = 45; //Elbow Pivot's gear Ratio
+        public final static double kArmGearRatio = 180; //Shoulder Pivot's Gear Ratio for one full rotation
+       
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
 
         //PID constants for the engagement command
@@ -77,11 +90,24 @@ public final class Constants {
         public final static double kStationD = -0.0003; 
 
         //PID constants for turn drive
+<<<<<<< HEAD
+        public final static double kTurnDriveP = 0.1;
+        public final static double kTurnDriveI = 0;
+        public final static double kTurnDriveD = 0;
+        
+        //PID constants for encoder drive (Previous P: 0.0025, I: 0.00001, D: 0.00005)
+        public final static double kEncoderDriveP = 0.0025;
+        public final static double kEncoderDriveI = 0.00001;
+        public final static double kEncoderDriveD = 0.00015;
+
+        //Proportoinal constant used to manipulate the drive speed when turning
+=======
         public final static double kTurnDriveP = 0.015;
         public final static double kTurnDriveI = 0.0015;
         public final static double kTurnDriveD = 0.0005;
         
         //PID constants for alignment
+>>>>>>> subsystems-and-commands
         public final static double kTurnP = 0.005; //tbd
 
         //PID and feedforward constants for drive
@@ -120,4 +146,15 @@ public final class Constants {
         public final static int kLeftYJoystickPort = 1;
         public final static int kRightYJoystickPort = 5;
     }
+
+    public static final class AutonomousConstants {
+        public static final String kDockAndEngage1 = "Score then Dock and Engage Left";
+        public static final String kDockAndEngage2 = "Score then Dock and Engage Middle";
+        public static final String kDockAndEngage3 = "Score then Dock and Engage Right";
+        public static final String kScoring1 = "Scoring only Left";
+        public static final String kScoring2 = "Scoring only Middle";
+        public static final String kScoring3 = "Scoring only Right";
+
+    }
+
 }

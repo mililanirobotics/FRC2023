@@ -8,20 +8,14 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SerialPort;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxRelativeEncoder;
-import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants; 
 
@@ -54,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final AHRS navx;
 
     //Sendable chooser for drive speeds
-    SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
+    private SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
     private double driveScale;
 
     private GenericEntry leftEncoderWidget;
@@ -127,7 +121,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @param leftSpeed controls the speed of the left drive motors
     */
     public void drive(double leftPercentPower, double rightPercentPower) {
-        drive.tankDrive(leftPercentPower, rightPercentPower);
+        drive.tankDrive(leftPercentPower, rightPercentPower, true);
     }
 
     /**
@@ -193,6 +187,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void updateOdometry() {
         odometry.update(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
     }
+
 
     //=========================================================================== 
     // gyro and accelorometer methods
