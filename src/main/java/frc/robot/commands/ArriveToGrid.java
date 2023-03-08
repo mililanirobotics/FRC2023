@@ -6,10 +6,10 @@ import frc.robot.subsystems.LimelightSubsystem;
 
 public class ArriveToGrid extends SequentialCommandGroup{
 
-    private int pipeline;
+    private LimelightSubsystem.Pipeline pipeline;
     private double targetHeight;
 
-    public ArriveToGrid(int pipeline, double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem) {
+    public ArriveToGrid(LimelightSubsystem.Pipeline pipeline, double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem) {
         this.pipeline = pipeline;
         this.targetHeight = targetHeight;
 

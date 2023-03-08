@@ -7,20 +7,24 @@ import edu.wpi.first.networktables.NetworkTable;
 //constants
 import frc.robot.Constants.LimelightConstants; 
 
-// public enum Pipeline {
-//     APRIL_TAGS(0), REFLECTIVE_TAPE(1), DRIVER_VIEW(2);
 
-//     private int PipelineID;
-// }
 
 public class LimelightSubsystem extends SubsystemBase {
     private NetworkTable table;
 
+    public enum Pipeline {
+        APRIL_TAGS(0), REFLECTIVE_TAPE(1), DRIVER_VIEW(2);
+        private Pipeline(int PipelineID){
+            this.PipelineID = PipelineID;
+        }
+
+        private int PipelineID;
+    }
     
 
     public LimelightSubsystem() {
         this.table = NetworkTableInstance.getDefault().getTable("limelight");
-        setPipeline(3);
+        setPipeline(Pipeline.DRIVER_VIEW);
     }
 
     /**
@@ -53,16 +57,8 @@ public class LimelightSubsystem extends SubsystemBase {
      * Sets the current pipeline on the limelight to the desired one
      * @param pipeline sets the limelight's current pipeline
      */
-    public void setPipeline(int pipeline) {
-        if(pipeline < 0) {
-            pipeline = 0;
-            throw new IllegalArgumentException("Pipeline can't be less than zero");
-        }
-        else if(pipeline > 9) {
-            pipeline = 1;
-            throw new IllegalArgumentException("Pipeline can't be greater than one");
-        }
-        table.getEntry("pipeline").setValue(pipeline);
+    public void setPipeline(Pipeline pipeline) {
+        table.getEntry("pipeline").setValue(pipeline.PipelineID);
     }
 
     /**

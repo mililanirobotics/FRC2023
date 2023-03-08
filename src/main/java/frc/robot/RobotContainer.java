@@ -19,7 +19,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ElbowPivotSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-
+import frc.robot.subsystems.LimelightSubsystem.Pipeline;
 import frc.robot.commands.PivotElbowUpCommand;
 import frc.robot.commands.PivotElbowDownCommand;
 import frc.robot.commands.ExtendBicepCommand;
@@ -74,9 +74,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(3, 17.75, limelightSubsystem, driveSubsystem));
+    new JoystickButton(joystick, 1).onTrue(new ArriveToGrid(Pipeline.APRIL_TAGS, 17.75, limelightSubsystem, driveSubsystem));
     new JoystickButton(joystick, 1).onTrue(new TravelDistanceCommand(50, .20, driveSubsystem));
-    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(3, 17.75, limelightSubsystem, driveSubsystem)); 
+    new JoystickButton(joystick, 2).onTrue(new ArriveToGrid(Pipeline.REFLECTIVE_TAPE, 24, limelightSubsystem, driveSubsystem)); 
     new JoystickButton(joystick, 3).onTrue(new DrivePayloadPosition(bicepArmSubsystem));
     new JoystickButton(joystick, 4).onTrue(new PayloadIntake(bicepArmSubsystem, elbowPivotSubsystem));
     new JoystickButton(joystick, 5).onTrue(new NodeScoring(20, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, driveSubsystem));
