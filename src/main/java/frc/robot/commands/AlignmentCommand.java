@@ -12,10 +12,10 @@ public class AlignmentCommand extends CommandBase {
     private DriveSubsystem m_DriveSubsystem;
     private double offsetAngle;
     private double speed;
-    private int pipeline;
+    private LimelightSubsystem.Pipeline pipeline;
 
 
-    public AlignmentCommand(int pipeline, LimelightSubsystem limelightSubsystem) {
+    public AlignmentCommand(LimelightSubsystem.Pipeline pipeline, LimelightSubsystem limelightSubsystem) {
         m_Limelightsubsystem = limelightSubsystem;
         m_DriveSubsystem = RobotContainer.driveSubsystem;
         speed = 0;
