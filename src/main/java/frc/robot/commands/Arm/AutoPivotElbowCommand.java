@@ -1,46 +1,53 @@
 package frc.robot.commands.Arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.PivotConstants;
+//subsystems and commands
 import frc.robot.subsystems.ElbowPivotSubsystem;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+//general imports
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.RobotContainer;
+//constants
+import frc.robot.Constants.RobotConstants;
 
 public class AutoPivotElbowCommand extends CommandBase {
-    private ElbowPivotSubsystem m_ElbowPivotSubsystem;
-    private double speed;
+    //declaring subsystems
+    private ElbowPivotSubsystem m_elbowPivotSubsystem;
+    //declaring PID controller and the angle that will act as the setpoint
+    private PIDController pivotPID;
+    private double angleInCounts;
 
+    //constructor
     public AutoPivotElbowCommand(double angleRotation, ElbowPivotSubsystem elbowPivotSubsystem) {
-        speed = 0;
-
-        m_ElbowPivotSubsystem = elbowPivotSubsystem;
-        m_ElbowPivotSubsystem.angleRotation = angleRotation;
+        //initializing subsystems, PID controller, and angle of rotation
+        m_elbowPivotSubsystem = elbowPivotSubsystem;
+        angleInCounts = m_elbowPivotSubsystem.convertAngle(angleRotation);
+        pivotPID = new PIDController(RobotConstants.kPivotP, RobotConstants.kPivotI, RobotConstants.kPivotD);
         
-        addRequirements(m_ElbowPivotSubsystem);
-    }
-
-    @Override
-    public void initialize() {
-        m_ElbowPivotSubsystem.resetEncoders();
+        addRequirements(m_elbowPivotSubsystem);
     }
 
     @Override
     public void execute() {
-        System.out.println("Error: " + m_ElbowPivotSubsystem.error());
-        System.out.println("Angle: " + m_ElbowPivotSubsystem.angleRotation);
+        //calculating speed based on the error from the target encoder value 
+        double speed = pivotPID.calculate(m_elbowPivotSubsystem.getRightElbowEncoder(), angleInCounts);
+        speed = RobotContainer.limitSpeed(speed, 0.35, 0.5);
+
+        //setting the elbow pivot speed 
+        m_elbowPivotSubsystem.setPivotSpeed(speed);
+
+        //debugging statements (in counts)
+        System.out.println("Error (in counts): " + (angleInCounts - m_elbowPivotSubsystem.getRightElbowEncoder()));
+        System.out.println("Angle (in counts): " + angleInCounts);
         System.out.println("Speed: " + speed);
-        
-        speed = RobotContainer.limitValue(m_ElbowPivotSubsystem.error() * PivotConstants.kPPivotAngle, 0.5, 0.35);
-        m_ElbowPivotSubsystem.elbowPivot.set(speed);
-   
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_ElbowPivotSubsystem.shutdown();
+        m_elbowPivotSubsystem.shutdown();
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_ElbowPivotSubsystem.error()) < 1;
+        return m_elbowPivotSubsystem.getRightElbowEncoder() >= angleInCounts;
     }
 }

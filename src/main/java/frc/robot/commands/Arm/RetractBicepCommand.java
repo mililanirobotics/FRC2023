@@ -1,14 +1,16 @@
 package frc.robot.commands.Arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import frc.robot.RobotContainer;
+//subsystems and commands
 import frc.robot.subsystems.BicepArmSubsystem; 
+import edu.wpi.first.wpilibj2.command.CommandBase;
+//general imports
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class RetractBicepCommand extends CommandBase{
-    BicepArmSubsystem m_BicepArmSubsystem;
+public class RetractBicepCommand extends CommandBase {
+    //declaring subsystems
+    private BicepArmSubsystem m_BicepArmSubsystem;
 
+    //constructor
     public RetractBicepCommand(BicepArmSubsystem bicepArmSubsystem) {
         m_BicepArmSubsystem = bicepArmSubsystem;
     }
@@ -19,13 +21,8 @@ public class RetractBicepCommand extends CommandBase{
     }
 
     @Override
-    public void execute() {
-        System.out.println("Reverse");
-    }
-
-    @Override
     public void end(boolean interrupted) {
-
+        System.out.println("Bicep extended outside the frame");
     }
     
     @Override 

@@ -1,58 +1,68 @@
 package frc.robot.commands.Alignment;
 
+//subsystems and commands imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+//general imports
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.RobotContainer;
+//constants
+import frc.robot.Constants.GameConstants;
+import frc.robot.Constants.RobotConstants;
+
 
 public class AlignmentCommand extends CommandBase {
-    
-    private LimelightSubsystem m_Limelightsubsystem;
-    private DriveSubsystem m_DriveSubsystem;
+    //subsystems
+    private LimelightSubsystem m_limelightSubsystem;
+    private DriveSubsystem m_driveSubsystem;
+    //values being measured in multiple parts of the program
     private double offsetAngle;
-    private double speed;
+    //enum that designates which pipeline the limelight will use
     private LimelightSubsystem.Pipeline pipeline;
+    //PID loop used
+    private PIDController alignmentPID;
+    
+    //constructor 
+    public AlignmentCommand(LimelightSubsystem.Pipeline pipeline, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
+        m_limelightSubsystem = limelightSubsystem;
+        m_driveSubsystem = driveSubsystem;
 
-
-    public AlignmentCommand(LimelightSubsystem.Pipeline pipeline, LimelightSubsystem limelightSubsystem) {
-        m_Limelightsubsystem = limelightSubsystem;
-        m_DriveSubsystem = RobotContainer.driveSubsystem;
-        speed = 0;
+        alignmentPID = new PIDController(RobotConstants.kTurnP, RobotConstants.kTurnI, RobotConstants.kTurnD);
         this.pipeline = pipeline;
-        addRequirements(m_DriveSubsystem, m_Limelightsubsystem);
+
+        addRequirements(m_driveSubsystem, m_limelightSubsystem);
     }
 
     @Override
     public void initialize() {
-        m_Limelightsubsystem.setPipeline(pipeline);
+        //setting the pipeline
+        m_limelightSubsystem.setPipeline(pipeline);
     }
 
     @Override
     public void execute() {
-        offsetAngle = m_Limelightsubsystem.getHorizontalOffset();
+        //gets the current horizontal offset and uses the PID controller to calculate a speed (setpoint is 0 degrees)
+        offsetAngle = m_limelightSubsystem.getHorizontalOffset();
+        double speed = alignmentPID.calculate(offsetAngle, 0);
         
-        speed = offsetAngle * LimelightConstants.kPAlignAngle;
-        if (Math.abs(speed) > 0.35) {
-        speed = Math.copySign(0.35, speed);
-        }
-        else if (Math.abs(speed) < 0.35) {
-        speed = Math.copySign(0.35, speed);
-        }
-        m_DriveSubsystem.drive(speed, -speed);
-
-        System.out.println("Execute running");
+        //minimum speed is 0.3 and the maximum is 0.45
+        speed = RobotContainer.limitSpeed(speed, 0.3, 0.45);
+        
+        //setting the power
+        m_driveSubsystem.drive(speed, -speed);  
     }    
     
     @Override
     public void end(boolean interrupted) {
         System.out.println("Ending angle: "+offsetAngle);
-        System.out.println("Alignment has finished");
-        m_DriveSubsystem.shutdown();
+        System.out.println("Alignment command has finished");
+        m_driveSubsystem.shutdown();
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(offsetAngle) < 0.5;
+        //ends the command if the offset angle is within the allowed interval [-2, 2]
+        return Math.abs(offsetAngle) < GameConstants.kAlignmentSlack;
     }
 }

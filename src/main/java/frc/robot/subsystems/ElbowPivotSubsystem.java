@@ -1,41 +1,49 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+//subsystems and commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+//general imports
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder;
-
-
 //constants
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.RobotConstants; 
 
 public class ElbowPivotSubsystem extends SubsystemBase {
-    public CANSparkMax leftElbowPivot;
-    // private CANSparkMax rightElbowPivot;
-    public MotorControllerGroup elbowPivot;
+    //declaring the motors, motor controller groups, and encoders that control the elbow pivot
+    private CANSparkMax leftElbowPivot;
+    private CANSparkMax rightElbowPivot;
+
+    private MotorControllerGroup elbowPivot;
 
     private RelativeEncoder leftElbowEncoder;
-
-    public double angleRotation;
+    private RelativeEncoder rightElbowEncoder;
 
     public ElbowPivotSubsystem() {
+        //initializing pivot motors
         leftElbowPivot = new CANSparkMax(PivotConstants.kleftPivot, MotorType.kBrushless);
-        // rightElbowPivot = new CANSparkMax(PivotConstants.kRightPivot, MotorType.kBrushless);
+        rightElbowPivot = new CANSparkMax(PivotConstants.kRightPivot, MotorType.kBrushless);
 
-        // rightElbowPivot.setInverted(true);
+        //reversing the pivot motors if necessary 
+        leftElbowPivot.setInverted(PivotConstants.kLeftPivotReverse);
+        rightElbowPivot.setInverted(PivotConstants.kRightPivotReverse);
 
-        elbowPivot = new MotorControllerGroup(leftElbowPivot); //, rightElbowPivot);
+        //initializes a motor controller group that controls the entire pivot
+        elbowPivot = new MotorControllerGroup(leftElbowPivot, rightElbowPivot);
 
+        //initializing elbow encoders
         leftElbowEncoder = leftElbowPivot.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, RobotConstants.kCountsPerRev);
+        rightElbowEncoder = rightElbowPivot.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, RobotConstants.kCountsPerRev);
 
-        leftElbowEncoder.setPositionConversionFactor(RobotConstants.kArmGearRatio * RobotConstants.kCountsPerRev * angleRotation/360);
+        //setting the conversion factor of the motors to fit the counts per revolution (42)
+        leftElbowEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
+        rightElbowEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
 
+        //resetting the encoders upon object initialization 
         resetEncoders();
-
     }
 
     /**
@@ -43,27 +51,46 @@ public class ElbowPivotSubsystem extends SubsystemBase {
     */
     public void resetEncoders() {
         leftElbowEncoder.setPosition(0);
+        rightElbowEncoder.setPosition(0);
+    }
+
+    /**
+     * Returns the current counts of the left elbow encoder
+     * @return The current counts of the left elbow encoder
+     */
+    public double getLeftElbowEncoder() {
+        return leftElbowEncoder.getPosition();
+    }
+
+    /**
+     * Returns the current counts of the right elbow encoder
+     * @return The current counts of the right elbow encoder
+     */
+    public double getRightElbowEncoder() {
+        return rightElbowEncoder.getPosition();
     }
    
     /**
      * Returns the pivot enocder's target in counts
+     * @param angleRotation The angle the pivot is attempting to turn 
+     * @return Returns the converted angle in terms of counts
      */
-    public double motorTarget() {
-        return RobotConstants.kArmGearRatio * RobotConstants.kCountsPerRev * angleRotation/360;
+    public double convertAngle(double angleRotation) {
+        return RobotConstants.kArmGearRatio * (angleRotation / 360);
     }
 
     /**
-     * Returns how far off the pivot is from motorTarget
+     * Sets the speed of the pivot motors
+     * @param speed The desired speed
      */
-    public double error() {
-        return motorTarget() - leftElbowEncoder.getPosition();
+    public void setPivotSpeed(double speed) {
+        elbowPivot.set(speed);
     }
 
-    // Stops all motor movement
+    /**
+     * Sets all of the pivot motors to 0 power
+     */
     public void shutdown() {
         elbowPivot.set(0);
     }
-
-    
-
 }

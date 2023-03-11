@@ -1,23 +1,27 @@
 package frc.robot.commands.Drive;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
+//subsystems and commands
+import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
+//general imports
+import edu.wpi.first.wpilibj.GenericHID;
 //constants
 import frc.robot.Constants.JoystickConstants;
-import frc.robot.Constants.RobotConstants;
-//subsystems used
-import frc.robot.subsystems.DriveSubsystem;
 
+//constructor
 public class DriveCommand extends CommandBase {
+    //declaring subsystems
     private DriveSubsystem m_driveSubsystem;
+
+    //declaring the joystick used
     private GenericHID joystick;
 
+    //constructor
     public DriveCommand(DriveSubsystem driveSubsystem, GenericHID joystick) {
+        //initializing the joystick used
         this.joystick = joystick;
         
+        //initializing subsystems
         m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);  
     }
@@ -27,7 +31,7 @@ public class DriveCommand extends CommandBase {
         double leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
         double rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
 
-        if(joystick.getRawAxis(2) >= 0.5) {
+        if(joystick.getRawAxis(JoystickConstants.kLeftTriggerPort) >= 0.5) {
             leftPower *= 0.5;
             rightPower *= 0.5;
         }

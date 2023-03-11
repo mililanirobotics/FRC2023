@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+//subsystems and commands
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+//general imports
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.kauailabs.navx.frc.AHRS;
@@ -12,16 +14,14 @@ import edu.wpi.first.wpilibj.I2C;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+//constants
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants; 
 
-
 public class DriveSubsystem extends SubsystemBase {
-    //declaring drive motors and encoders
+    //declaring drive motors, motor controller groups, and encoders that control the drive
     private final CANSparkMax leftFront;
     private final CANSparkMax leftBack;
     private final CANSparkMax rightFront;
@@ -35,24 +35,26 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder leftFrontEncoder;
     private final RelativeEncoder leftBackEncoder;
 
-
-    //declaring differential drive Odometry and Kinematics objects
-    private DifferentialDriveOdometry odometry;
-    //private DifferentialDriveKinematics kinematics;
     private DifferentialDrive drive;
+
     //feedforward and general drive PID
     private SimpleMotorFeedforward feedforward;
     private PIDController drivePID;
+    private PIDController encoderDrivePID;
 
-    //Declaring the gyro
+    //declaring the gyro
     private final AHRS navx;
 
-    //Sendable chooser for drive speeds
+    //sendable chooser for adjustable drive speeds
     private SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
     private double driveScale;
 
+    //widgets to track the current encoder readings of the drive
     private GenericEntry leftEncoderWidget;
     private GenericEntry rightEncoderWidget;
+    //widget to track the current power of the motors
+    private GenericEntry leftDrivePower;
+    private GenericEntry rightDrivePower;
 
     //constructor
     //initializes all motors, motor controllers, drive trains, and dashboard options
@@ -66,8 +68,8 @@ public class DriveSubsystem extends SubsystemBase {
         //inverting the correct motors
         leftFront.setInverted(DriveConstants.kLeftFrontReverse);
         leftBack.setInverted(DriveConstants.kLeftBackReverse);
-        rightFront.setInverted(DriveConstants.kRightReverse);
-        rightBack.setInverted(DriveConstants.kRightReverse);
+        rightFront.setInverted(DriveConstants.kRightFrontReverse);
+        rightBack.setInverted(DriveConstants.kRightBackReverse);
 
         //creating two motor controller groups, one for each side
         leftDrive = new MotorControllerGroup(leftFront, leftBack);
@@ -81,29 +83,32 @@ public class DriveSubsystem extends SubsystemBase {
 
         //setting conversion factor of distance to counts
         leftFrontEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
-        leftBackEncoder.setPositionConversionFactor(RobotConstants.kGearRatio * RobotConstants.kWheelCircumference / RobotConstants.kCountsPerRev);
+        leftBackEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
         rightFrontEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
-        rightBackEncoder.setPositionConversionFactor(RobotConstants.kGearRatio * RobotConstants.kWheelCircumference / RobotConstants.kCountsPerRev);
+        rightBackEncoder.setPositionConversionFactor(RobotConstants.kCountsPerRev);
 
         //resetting encoders upon object creation
         resetEncoders(); 
 
-        //creating and enabling navx
+        //initializing and enabling navx
         navx = new AHRS(I2C.Port.kMXP);
         navx.enableLogging(true);
 
-        //creating odometry and differential drive (tank drive) objects
-        odometry = new DifferentialDriveOdometry(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
+        //initializing differential drive (tank drive) object
         drive = new DifferentialDrive(leftDrive, rightDrive);
 
+        //initializing the PID and feedforward used for the drive (in the subsystem because it's used in multiple classes)
         drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
         feedforward = new SimpleMotorFeedforward(RobotConstants.kDriveS, RobotConstants.kDriveV , RobotConstants.kDriveA);
+        encoderDrivePID = new PIDController(RobotConstants.kEncoderDriveP, RobotConstants.kEncoderDriveI, RobotConstants.kEncoderDriveD);
 
-        //shuffleboard widgets
+        //adding shuffleboard widgets to the "motor tab"
         leftEncoderWidget = motorTab.add("Left Encoder", 0).withSize(2, 1).getEntry();
         rightEncoderWidget = motorTab.add("Right Encoder", 0).withSize(2, 1).getEntry(); 
+        leftDrivePower = motorTab.add("Left Drive Power", 0).withSize(2, 1).getEntry();
+        rightDrivePower = motorTab.add("Right Drive Power", 0).withSize(2, 1).getEntry();
 
-        //setting options for the user to choose the drive speed
+        //adding the various drive speed multiplyers to shuffleboard
         driveSpeeds.setDefaultOption("100%", 1.0);
         driveSpeeds.addOption("50%", 0.5);
         driveSpeeds.addOption("35%", 0.35);
@@ -116,7 +121,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     /**
      * Drives the robot using tank drive controls
-     *
      * @param rightSpeed controls the speed of the right drive motors
      * @param leftSpeed controls the speed of the left drive motors
     */
@@ -141,6 +145,21 @@ public class DriveSubsystem extends SubsystemBase {
         rightDrive.setVoltage(Math.pow(calculatedRightSpeed, 2));
     }
 
+    /**
+     * Returns the calculate speed of your drive motors during encoder drive
+     * Based on the error from your setpoint (in counts)
+     * The PID controller is inside the drive subsystem because it's used in all encoder drive applications
+     * @param currentValue The current value of your encoder
+     * @param setpoint The value your encoder is trying to approach
+     * @return The adjusted speed from the PID controller
+     */
+    public double encoderPIDSpeed(double currentValue, double setpoint) {
+        return encoderDrivePID.calculate(currentValue, setpoint);
+    }
+
+    /**
+     * Sets all of the drive motors to 0 power
+     */
     public void shutdown() {
         drive.tankDrive(0, 0);
     }
@@ -154,7 +173,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * resets all of the drive encoder values
+     * Resets all of the drive encoder values
     */
     public void resetEncoders() {
         leftFrontEncoder.setPosition(0);
@@ -164,30 +183,29 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * returns distance traveled in inches by the left motor
+     * Returns current counts of the left drive encoder
+     * @return The current counts of the left drive encoder
     */
     public double getLeftEncoder() {
         return leftFrontEncoder.getPosition();
     }
 
     /**
-     * returns distance traveled in inches by the right motor
+     * Returns current counts of the right drive encoder
+     * @return The current counts of the right drive encoder
     */
     public double getRightEncoder() {
         return rightFrontEncoder.getPosition();
     }
 
+    /**
+     * Converts the inputed inches into counts for the encoder to read
+     * @param inches The total amount of inches that will be converted
+     * @return The total amount of counts the encoder should read 
+     */
     public double convertDistance(double inches) {
         return inches * 23.4192;
     }
-
-    /**
-     * updates odometry with the robot's most recent position on the field
-    */
-    public void updateOdometry() {
-        odometry.update(navx.getRotation2d(), getLeftEncoder(), getRightEncoder());
-    }
-
 
     //=========================================================================== 
     // gyro and accelorometer methods
@@ -269,13 +287,28 @@ public class DriveSubsystem extends SubsystemBase {
         rightEncoderWidget.setDouble(rightEncoderReading);
     }
 
+    /**
+     * Updates the value of the left drive power widget on shuffleboard
+     * @param power The current percent power of the left drive motor
+     */
+    public void printLeftPower(double power) {
+        leftDrivePower.setDouble(power);
+    }
+
+    /**
+     * Updates the value of the right drive power widget on shuffleboard
+     * @param power The current percent power of the right drive motor
+     */
+    public void printRightPower(double power) {
+        rightDrivePower.setDouble(power);
+    }
+
     //=========================================================================== 
     // periodic method
     //===========================================================================
 
     @Override
     public void periodic() {
-        updateOdometry();
         driveScale = driveSpeeds.getSelected();
     }
 

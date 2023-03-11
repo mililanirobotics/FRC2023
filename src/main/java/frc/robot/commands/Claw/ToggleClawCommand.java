@@ -1,16 +1,22 @@
 package frc.robot.commands.Claw;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+//subsystems and commands
 import frc.robot.subsystems.ClawSubsystem;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+//general imports
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ToggleClawCommand extends CommandBase {
+    //declaring subsystems
     private ClawSubsystem m_ClawSubsystem;
+
+    //declaring the initial position of the claw's solenoid
     private DoubleSolenoid.Value intialClawState;
 
+    //constructor
     public ToggleClawCommand(ClawSubsystem clawSubsystem) {
+        //initializing subsystems
         m_ClawSubsystem = clawSubsystem;
-        // intialClawState = m_ClawSubsystem.getClawState();
         addRequirements(m_ClawSubsystem);
     }
 
@@ -21,13 +27,8 @@ public class ToggleClawCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        System.out.println("toggle");
-    }
-
-    @Override
     public void end(boolean interrupted) {
-
+        System.out.println("Claw state toggled");
     }
 
     @Override

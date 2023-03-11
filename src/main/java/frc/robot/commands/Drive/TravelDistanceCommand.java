@@ -1,74 +1,64 @@
 package frc.robot.commands.Drive;
 
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-//constants
+//subsystems and commands
+import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.RobotConstants;
-
-//subsystems used
-import frc.robot.subsystems.DriveSubsystem;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+//general imports
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-//subsystems used
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.RobotContainer;
+import edu.wpi.first.networktables.GenericEntry;
 
 public class TravelDistanceCommand extends CommandBase {
+    //declaring subsystems
+    private DriveSubsystem m_driveSubsystem; 
+
+    //declaring the measured variables
     private double distance;
     private double initialDistance;
     private double travelDistance;
-    private double percentPower;
 
-    private DriveSubsystem m_driveSubsystem; 
-    private ShuffleboardTab encoderDriveTab = Shuffleboard.getTab("Encoder Drive");
-  
-
+    //declaring shuffleboard tabs
     private GenericEntry powerWidget;
-    private PIDController encoderDrivePID = new PIDController(RobotConstants.kEncoderDriveP, RobotConstants.kEncoderDriveI, RobotConstants.kEncoderDriveD);
+    private GenericEntry distanceWidget;
 
-    public TravelDistanceCommand(double distance, double percentPower, DriveSubsystem driveSubsystem) {
-        m_driveSubsystem = driveSubsystem;
-        this.percentPower = percentPower;
+    //constructor
+    public TravelDistanceCommand(double distance, DriveSubsystem driveSubsystem, ShuffleboardTab motorTab) {
+        //initializing the recorded data
         this.distance = m_driveSubsystem.convertDistance(distance);
         this.initialDistance = m_driveSubsystem.getRightEncoder(); //using one motor to represent all
         this.travelDistance = this.distance + this.initialDistance;
-        powerWidget = encoderDriveTab.add("Power", 0).withSize(4, 4).getEntry();
-        encoderDriveTab.add("Encoder Drive PID", encoderDrivePID).withSize(4, 4);
+
+        //initializing subsystems
+        m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);
 
-        // motorTab.add("Initial Distance", initialDistance).withSize(2, 1).getEntry();
-        // motorTab.add("Target Distance", travelDistance).withSize(2, 1).getEntry();
+        //initializing shuffleboard widgets
+        powerWidget = motorTab.add("Power", 0).withSize(4, 4).getEntry();
+        distanceWidget = motorTab.add("Current Distance", 0).withSize(2, 1).getEntry();
+
+        //displays the data on shuffleboard
+        motorTab.add("Initial Distance", initialDistance).withSize(2, 1).getEntry();
+        motorTab.add("Target Distance", travelDistance).withSize(2, 1).getEntry();
     }
 
     @Override
     public void initialize() {
         m_driveSubsystem.resetEncoders();
         System.out.println("Initial Distance: "+initialDistance);
-
-
-                        // speedSlider = Shuffleboard.getTab("Pre-match")
-        //     .add("Max Speed", 1)
-        //     .withWidget("Number Slider")
-        //     .withSize(2, 2)
-        //     .getEntry();
-
     }
 
     @Override
     public void execute() {
-        System.out.println("Current Position: "+m_driveSubsystem.getRightEncoder());
-        System.out.println("Target Position: "+travelDistance);
+        //calculates the adjusted percent power based on hte encoder drive PID controller
+        double percentPower = m_driveSubsystem.encoderPIDSpeed(m_driveSubsystem.getRightEncoder(), travelDistance);
+        percentPower = RobotContainer.limitSpeed(percentPower, 0.3, 0.5); 
 
-        percentPower = encoderDrivePID.calculate(m_driveSubsystem.getRightEncoder(), travelDistance);
-        percentPower = RobotContainer.limitValue(percentPower, 0.5, 0.2); // Will change percent power to grab from PID controllers.
-
+        //setting the power of the motors
         m_driveSubsystem.drive(percentPower, percentPower);
 
+        //updating widgets
         powerWidget.setDouble(percentPower);
+        distanceWidget.setDouble(distance);
     }
 
     @Override

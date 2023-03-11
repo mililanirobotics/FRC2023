@@ -1,13 +1,18 @@
 package frc.robot.commands.Claw;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+//subsystems and commands
 import frc.robot.subsystems.ClawSubsystem;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+//general imports
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class OpenClawCommand extends CommandBase {
+    //declaring subsystems
     private ClawSubsystem m_ClawSubsystem;
 
+    //constructor
     public OpenClawCommand(ClawSubsystem clawSubsystem) {
+        //initializing subsystems
         m_ClawSubsystem = clawSubsystem;
         addRequirements(m_ClawSubsystem);
     }
@@ -18,13 +23,8 @@ public class OpenClawCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        System.out.println("open");
-    }
-
-    @Override
     public void end(boolean interrupted) {
-
+        System.out.println("Claw opened");
     }
 
     @Override
