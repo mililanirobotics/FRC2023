@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -29,13 +30,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_pipeline = new SendableChooser<>();
 
   Joystick joystick = new Joystick(0);
-  
-  // Drive drive = new Drive();
+
   Claw claw = new Claw();
-  // PivotArm pivotArm = new PivotArm();
-  // Align align = new Align();
-
-
+  PivotArm pivotArm = new PivotArm();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -96,7 +93,8 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    claw.clawInit();
+    // claw.clawInit();
+    // pivotArm.bicepInit();
   }
 
   /** This function is called periodically during operator control. */
@@ -106,6 +104,13 @@ public class Robot extends TimedRobot {
     {
       claw.clawToggle();
     }
+
+    if(joystick.getRawButtonPressed(4))
+    {
+      pivotArm.bicepToggle();
+    }
+
+
   }
 
   /** This function is called once when the robot is disabled. */

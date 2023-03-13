@@ -7,18 +7,15 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Claw{
 
-    DoubleSolenoid clawLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-    DoubleSolenoid clawRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
-        
+    DoubleSolenoid claw = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+
+
     public void clawInit() {
-        //sets default states to the Solenoids
-        clawLeft.set(kReverse);
-        clawRight.set(kReverse);
+        claw.set(kForward);
     }
     
     // Claw Solenoid control
     public void clawToggle() { 
-        clawLeft.toggle();
-        clawRight.toggle();
+        claw.toggle();
     }
 }
