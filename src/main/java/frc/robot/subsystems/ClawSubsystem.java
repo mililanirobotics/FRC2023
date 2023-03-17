@@ -12,18 +12,15 @@ import frc.robot.Constants.ClawConstants;
 
 public class ClawSubsystem extends SubsystemBase {
     //double solenoids that control the claw
-    private DoubleSolenoid leftClaw;
-    private DoubleSolenoid rightClaw;
+    private DoubleSolenoid claw;
 
     //constructor
     public ClawSubsystem() {
         //intializing solenoids
-        leftClaw = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kLeftClawForwardChannel, ClawConstants.kLeftClawReverseChannel);
-        rightClaw = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kRightClawForwardChannel, ClawConstants.kRightClawReverseChannel);
+        claw = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawForwardChannel, ClawConstants.kClawReverseChannel);
 
         //setting default solenoid state to kForward (claw open)
-        leftClaw.set(kForward);
-        rightClaw.set(kForward);
+        claw.set(kForward);
     }
 
      /**
@@ -31,7 +28,7 @@ public class ClawSubsystem extends SubsystemBase {
      * @return The current state of the claw pistons
      */
     public DoubleSolenoid.Value getClawState() {
-        Value clawState = leftClaw.get();
+        Value clawState = claw.get();
         return clawState;
     }
 
@@ -39,23 +36,20 @@ public class ClawSubsystem extends SubsystemBase {
      * Closes the claw (retracts both pistons)
      */
     public void closeClaw() {
-        leftClaw.set(kReverse);
-        rightClaw.set(kReverse);
+        claw.set(kForward);
     }
 
     /**
      * Opens the claw (extends both pistons)
      */
     public void openClaw() {
-        leftClaw.set(kForward);
-        rightClaw.set(kForward);
+        claw.set(kReverse);
     }
 
     /**
      * Toggles the claw's current state (both pisons)
      */
     public void toggleClaw() {
-        leftClaw.toggle();
-        rightClaw.toggle();
+        claw.toggle();
     }
 }

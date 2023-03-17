@@ -1,38 +1,45 @@
 package frc.robot.commands.Claw;
 
+import frc.robot.subsystems.BicepArmSubsystem;
 //subsystems and commands
 import frc.robot.subsystems.ClawSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 //general imports
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class ToggleClawCommand extends CommandBase {
     //declaring subsystems
-    private ClawSubsystem m_ClawSubsystem;
+    private ClawSubsystem m_clawSubsystem;
+    private BicepArmSubsystem m_bicepSubsystem;
 
     //declaring the initial position of the claw's solenoid
     private DoubleSolenoid.Value intialClawState;
 
     //constructor
-    public ToggleClawCommand(ClawSubsystem clawSubsystem) {
+    public ToggleClawCommand(ClawSubsystem clawSubsystem, BicepArmSubsystem bicepSubsystem) {
         //initializing subsystems
-        m_ClawSubsystem = clawSubsystem;
-        addRequirements(m_ClawSubsystem);
+        m_bicepSubsystem = bicepSubsystem;
+        m_clawSubsystem = clawSubsystem;
+        addRequirements(m_clawSubsystem);
     }
 
     @Override
     public void initialize() {
-        intialClawState = m_ClawSubsystem.getClawState();
-        m_ClawSubsystem.toggleClaw();
+        if(m_bicepSubsystem.bicepState() == Value.kForward) {
+            intialClawState = m_clawSubsystem.getClawState();
+            m_clawSubsystem.toggleClaw();
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("Bicep State: "+m_bicepSubsystem.bicepState());
         System.out.println("Claw state toggled");
     }
 
     @Override
     public boolean isFinished() {
-        return m_ClawSubsystem.getClawState() != intialClawState;
+        return m_clawSubsystem.getClawState() != intialClawState || m_bicepSubsystem.bicepState() == Value.kForward;
     }
 }

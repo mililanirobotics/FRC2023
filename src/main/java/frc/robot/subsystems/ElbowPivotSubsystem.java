@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 //subsystems and commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //general imports
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,7 +24,10 @@ public class ElbowPivotSubsystem extends SubsystemBase {
     private RelativeEncoder leftElbowEncoder;
     private RelativeEncoder rightElbowEncoder;
 
-    public ElbowPivotSubsystem() {
+    private GenericEntry leftEncoderWidget;
+    private GenericEntry rightEncoderWidget;
+
+    public ElbowPivotSubsystem(ShuffleboardTab armTab) {
         //initializing pivot motors
         leftElbowPivot = new CANSparkMax(PivotConstants.kleftPivot, MotorType.kBrushless);
         rightElbowPivot = new CANSparkMax(PivotConstants.kRightPivot, MotorType.kBrushless);
@@ -44,6 +49,9 @@ public class ElbowPivotSubsystem extends SubsystemBase {
 
         //resetting the encoders upon object initialization 
         resetEncoders();
+
+        leftEncoderWidget = armTab.add("Left Encoder Reading", 0).withSize(2, 1).getEntry();
+        rightEncoderWidget = armTab.add("Right Encoder Reading", 0).withSize(2, 1).getEntry();
     }
 
     /**
@@ -76,21 +84,32 @@ public class ElbowPivotSubsystem extends SubsystemBase {
      * @return Returns the converted angle in terms of counts
      */
     public double convertAngle(double angleRotation) {
-        return RobotConstants.kArmGearRatio * (angleRotation / 360);
+        return RobotConstants.kCountsPerRev * (RobotConstants.kArmGearRatio * (angleRotation / 360.0));
     }
 
     /**
      * Sets the speed of the pivot motors
      * @param speed The desired speed
      */
-    public void setPivotSpeed(double speed) {
-        elbowPivot.set(speed);
+    public void setPivotSpeed(double percentPower) {
+        elbowPivot.setVoltage(percentPower * 12);
     }
+ 
 
     /**
      * Sets all of the pivot motors to 0 power
      */
     public void shutdown() {
         elbowPivot.set(0);
+    }
+
+    /**
+     * Updates the encoder readings on shuffleboard
+     * @param leftEncoder The current left encoder eading
+     * @param rightEncoder The current right encoder reading
+     */
+    public void printEncoders(double leftEncoder, double rightEncoder) {
+        leftEncoderWidget.setDouble(leftEncoder);
+        rightEncoderWidget.setDouble(rightEncoder);
     }
 }

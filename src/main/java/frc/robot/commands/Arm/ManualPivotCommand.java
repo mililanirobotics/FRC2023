@@ -25,7 +25,15 @@ public class ManualPivotCommand extends CommandBase {
     @Override
     public void execute() {
         double speed = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort);
+        speed = Math.copySign(0.3, speed);
         m_elbowPivotSubsystem.setPivotSpeed(speed);
+
+        //manual reset for the encoders to set a start point
+        if(joystick.getRawButton(JoystickConstants.kBackButtonPort)) {
+            m_elbowPivotSubsystem.resetEncoders();
+        }
+
+        m_elbowPivotSubsystem.printEncoders(m_elbowPivotSubsystem.getLeftElbowEncoder(), m_elbowPivotSubsystem.getRightElbowEncoder());
     }
 
     @Override

@@ -28,6 +28,14 @@ public class BicepArmSubsystem extends SubsystemBase {
     }
 
     /**
+     * Returns whether or not the bicep is extended inside or outside the frame
+     * @return If the bicep piston is in the kForward state
+     */
+    public boolean outsideFrame() {
+        return bicepState() == Value.kForward;
+    }
+
+    /**
      * Retracts the bicep piston (extends outside of frame)
      */
     public void retractBicep() {

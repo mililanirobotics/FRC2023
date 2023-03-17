@@ -6,6 +6,8 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 //general imports
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.RobotContainer;
 //constants
 import frc.robot.Constants.GameConstants;
@@ -22,16 +24,25 @@ public class AlignmentCommand extends CommandBase {
     private LimelightSubsystem.Pipeline pipeline;
     //PID loop used
     private PIDController alignmentPID;
+    //widgets
+    private static GenericEntry offsetWidget;
     
     //constructor 
-    public AlignmentCommand(LimelightSubsystem.Pipeline pipeline, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
+    public AlignmentCommand(LimelightSubsystem.Pipeline pipeline, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem, ShuffleboardTab limelightTab) {
+        //initializing subsystems
         m_limelightSubsystem = limelightSubsystem;
         m_driveSubsystem = driveSubsystem;
 
+        //initializing PID controller and the pipeline that'll be used
         alignmentPID = new PIDController(RobotConstants.kTurnP, RobotConstants.kTurnI, RobotConstants.kTurnD);
         this.pipeline = pipeline;
 
         addRequirements(m_driveSubsystem, m_limelightSubsystem);
+
+        if(offsetWidget == null) {
+            //initializing the offset widget
+            offsetWidget = limelightTab.add("Tx Offset", 0).withSize(2, 1).getEntry();
+        }
     }
 
     @Override
@@ -50,7 +61,13 @@ public class AlignmentCommand extends CommandBase {
         speed = RobotContainer.limitSpeed(speed, 0.3, 0.45);
         
         //setting the power
-        m_driveSubsystem.drive(speed, -speed);  
+        m_driveSubsystem.drive(-speed, speed);  
+
+        //displaying the current horizontal offset and speed of the motors
+        offsetWidget.setDouble(offsetAngle);
+        
+        m_driveSubsystem.printLeftPower(speed);
+        m_driveSubsystem.printRightPower(speed);
     }    
     
     @Override

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 import com.revrobotics.RelativeEncoder;
@@ -24,8 +23,8 @@ public class DriveSubsystem extends SubsystemBase {
     //declaring drive motors, motor controller groups, and encoders that control the drive
     private final CANSparkMax leftFront;
     private final CANSparkMax leftBack;
-    private final CANSparkMax rightFront;
-    private final CANSparkMax rightBack;
+    public final CANSparkMax rightFront;
+    public final CANSparkMax rightBack;
 
     private final MotorControllerGroup leftDrive;
     private final MotorControllerGroup rightDrive;
@@ -34,8 +33,6 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder rightFrontEncoder;
     private final RelativeEncoder leftFrontEncoder;
     private final RelativeEncoder leftBackEncoder;
-
-    private DifferentialDrive drive;
 
     //feedforward and general drive PID
     private SimpleMotorFeedforward feedforward;
@@ -46,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final AHRS navx;
 
     //sendable chooser for adjustable drive speeds
-    private SendableChooser<Double> driveSpeeds = new SendableChooser<Double>();
+    private SendableChooser<Double> driveSpeeds;
     private double driveScale;
 
     //widgets to track the current encoder readings of the drive
@@ -71,9 +68,15 @@ public class DriveSubsystem extends SubsystemBase {
         rightFront.setInverted(DriveConstants.kRightFrontReverse);
         rightBack.setInverted(DriveConstants.kRightBackReverse);
 
+        leftFront.setSmartCurrentLimit(70, 20);
+        leftBack.setSmartCurrentLimit(70, 20);
+        rightFront.setSmartCurrentLimit(70, 20);
+        rightBack.setSmartCurrentLimit(70, 20);
+
         //creating two motor controller groups, one for each side
         leftDrive = new MotorControllerGroup(leftFront, leftBack);
         rightDrive = new MotorControllerGroup(rightFront, rightBack);
+        
 
         //initializing encoders
         leftFrontEncoder = leftFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, RobotConstants.kCountsPerRev);
@@ -95,8 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
         navx.enableLogging(true);
 
         //initializing differential drive (tank drive) object
-        drive = new DifferentialDrive(leftDrive, rightDrive);
-
+    
         //initializing the PID and feedforward used for the drive (in the subsystem because it's used in multiple classes)
         drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
         feedforward = new SimpleMotorFeedforward(RobotConstants.kDriveS, RobotConstants.kDriveV , RobotConstants.kDriveA);
@@ -109,9 +111,11 @@ public class DriveSubsystem extends SubsystemBase {
         rightDrivePower = motorTab.add("Right Drive Power", 0).withSize(2, 1).getEntry();
 
         //adding the various drive speed multiplyers to shuffleboard
+        driveSpeeds = new SendableChooser<Double>();
+
         driveSpeeds.setDefaultOption("100%", 1.0);
         driveSpeeds.addOption("50%", 0.5);
-        driveSpeeds.addOption("35%", 0.35);
+        driveSpeeds.addOption("60%", 0.6);
         preMatchTab.add("Max Speed", driveSpeeds);
     }
 
@@ -125,7 +129,12 @@ public class DriveSubsystem extends SubsystemBase {
      * @param leftSpeed controls the speed of the left drive motors
     */
     public void drive(double leftPercentPower, double rightPercentPower) {
-        drive.tankDrive(leftPercentPower, rightPercentPower, true);
+        leftDrive.setVoltage(leftPercentPower * 12);
+        rightDrive.setVoltage(rightPercentPower * 12);
+        // leftDrive.set(speedGod.calculate(leftPercentPower));
+        // rightDrive.set(speedRamper2.calculate(rightPercentPower));
+        // leftDrive.set(leftPercentPower);
+        // rightDrive.set(rightPercentPower);
     }
 
     /**
@@ -158,10 +167,27 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Returns the position error of the PID controller
+     * @return The current error from the setpoint (position)
+     */
+    public double getPositionError() {
+        return encoderDrivePID.getPositionError();
+    }
+
+    /**
+     * Returns the velocity error of the PID controller
+     * @return The current error from the setpoint (velocity)
+     */
+    public double getVelocityError() {
+        return encoderDrivePID.getVelocityError();
+    }
+
+    /**
      * Sets all of the drive motors to 0 power
      */
     public void shutdown() {
-        drive.tankDrive(0, 0);
+        leftBack.setVoltage(0);
+        rightBack.setVoltage(0);
     }
 
     /**
@@ -204,7 +230,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return The total amount of counts the encoder should read 
      */
     public double convertDistance(double inches) {
-        return inches * 23.4192;
+        return inches * ((RobotConstants.kCountsPerRev * RobotConstants.kGearRatio) / (RobotConstants.kWheelCircumference));
     }
 
     //=========================================================================== 

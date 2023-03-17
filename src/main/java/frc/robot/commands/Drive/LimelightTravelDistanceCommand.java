@@ -22,7 +22,7 @@ public class LimelightTravelDistanceCommand extends CommandBase {
     private double targetHeight;
 
     //declaring shuffleboard tabs
-    private GenericEntry travelDistanceWidget;
+    private static GenericEntry travelDistanceWidget;
     
     //constructor
     public LimelightTravelDistanceCommand(double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem, ShuffleboardTab motorTab) {
@@ -33,7 +33,9 @@ public class LimelightTravelDistanceCommand extends CommandBase {
         this.targetHeight = targetHeight;
         addRequirements(m_limelightSubsystem, m_driveSubsystem);
 
-        travelDistanceWidget = motorTab.add("Limelight travel distance", 0).withSize(2, 1).getEntry();
+        if(travelDistanceWidget == null) {
+            travelDistanceWidget = motorTab.add("Limelight travel distance", 0).withSize(2, 1).getEntry();
+        }
     }
 
     @Override

@@ -23,14 +23,15 @@ public class GyroEngageCommand extends CommandBase {
     private PIDController engagePID;
 
     //declaring shuffleboard widgets
-    private GenericEntry pitchAngleWidget;
-    private GenericEntry errorAngleWidget;
-    private GenericEntry powerWidget;
+    private static GenericEntry pitchAngleWidget;
+    private static GenericEntry errorAngleWidget;
+    private static GenericEntry powerWidget;
 
     //constructor
     public GyroEngageCommand(DriveSubsystem driveSubsystem, ShuffleboardTab engagementTab) {
         //initializes PID controller
         engagePID = new PIDController(RobotConstants.kStationP, RobotConstants.kStationI, RobotConstants.kStationD);
+        engagePID.enableContinuousInput(-180, 180);
         engagePID.setTolerance(2);
 
         //initializes subsystems
@@ -38,31 +39,30 @@ public class GyroEngageCommand extends CommandBase {
         addRequirements(m_driveSubsystem);
 
         //initializes widgets
-        pitchAngleWidget = engagementTab.add("Pitch Angle", 0).withSize(2, 1).getEntry();
-        engagementTab.add("Target Angle", GameConstants.kChargingStationSlack).withSize(2, 1).getEntry();
-        errorAngleWidget =  engagementTab.add("Error", 0).withSize(2, 1).getEntry();  
-        powerWidget = engagementTab.add("Power", 0).withSize(2, 1).getEntry();  
+        if(pitchAngleWidget == null) {
+            pitchAngleWidget = engagementTab.add("Pitch Angle", 0).withSize(2, 1).getEntry();
+            engagementTab.add("Target Angle", GameConstants.kChargingStationSlack).withSize(2, 1).getEntry();
+            errorAngleWidget =  engagementTab.add("Error", 0).withSize(2, 1).getEntry();  
+            powerWidget = engagementTab.add("Power", 0).withSize(2, 1).getEntry();  
+        }
     }
 
     @Override
     public void initialize() {  
+        System.out.println("Yes");
         iteration = 0; //acts as a timer
     }
 
     @Override
     public void execute() {
         //gets the current angle and uses it to calculate an adjusted speed using the PID controller
-        double currentAngle = m_driveSubsystem.getPitch();
+        double currentAngle = m_driveSubsystem.getPitch() + 2;
         double percentPower = engagePID.calculate(currentAngle, 0);
-
-        //increases the speed when going backwards to overcome friction and gravity
-        if(percentPower < 0) {
-            percentPower *= 1.2;
-        }
+        
 
         //limits the motor's power to a max of 0.4
         if(Math.abs(percentPower) > 0.4) {
-            percentPower = 0.4;
+            percentPower = Math.copySign(0.4, percentPower);
         }
 
         //setting the power of the motors

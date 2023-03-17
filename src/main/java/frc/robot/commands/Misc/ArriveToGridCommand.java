@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 //constructor
 public class ArriveToGridCommand extends SequentialCommandGroup {
-    public ArriveToGridCommand(LimelightSubsystem.Pipeline pipeline, double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem, ShuffleboardTab motorTab) {
-        addCommands(new AlignmentCommand(pipeline, driveSubsystem, limelightSubsystem));
+    public ArriveToGridCommand(LimelightSubsystem.Pipeline pipeline, double targetHeight, LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem, ShuffleboardTab motorTab, ShuffleboardTab limelightTab) {
+        addCommands(new AlignmentCommand(pipeline, driveSubsystem, limelightSubsystem, limelightTab));
         addCommands(new LimelightTravelDistanceCommand(targetHeight, limelightSubsystem, driveSubsystem, motorTab));
     }
 }

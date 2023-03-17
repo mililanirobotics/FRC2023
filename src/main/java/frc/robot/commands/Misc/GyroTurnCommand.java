@@ -24,8 +24,8 @@ public class GyroTurnCommand extends CommandBase {
     private PIDController turnDrivePID;
 
     //declaring widgets
-    private GenericEntry powerWidget;
-    private GenericEntry yawWidget;
+    private static GenericEntry powerWidget;
+    private static GenericEntry yawWidget;
 
     public GyroTurnCommand(DriveSubsystem driveSubsystem, double turnDegrees, ShuffleboardTab motorTab) {
         //initializing measured values
@@ -33,15 +33,18 @@ public class GyroTurnCommand extends CommandBase {
 
         //initializing PID controller
         turnDrivePID = new PIDController(RobotConstants.kTurnDriveP, RobotConstants.kTurnDriveI, RobotConstants.kTurnDriveD);
+        turnDrivePID.enableContinuousInput(-180, 180);
 
         //initializing subsystems
         m_driveSubsystem = driveSubsystem;
         addRequirements(m_driveSubsystem);
 
-        //initializing widgets
-        powerWidget = motorTab.add("Power", 0).withSize(2, 1).getEntry();
-        yawWidget = motorTab.add("Yaw", 0).withSize(2, 1).getEntry();
-        motorTab.add("Target Yaw", turnDegrees).withSize(2, 1).getEntry();
+        if(yawWidget == null) {
+            //initializing widgets
+            powerWidget = motorTab.add("Power", 0).withSize(2, 1).getEntry();
+            yawWidget = motorTab.add("Yaw", 0).withSize(2, 1).getEntry();
+            motorTab.add("Target Yaw", turnDegrees).withSize(2, 1).getEntry();
+        }
     }
 
     @Override
@@ -64,6 +67,7 @@ public class GyroTurnCommand extends CommandBase {
         m_driveSubsystem.drive(percentPower, -percentPower);
 
         //debuggin statements
+        System.out.println("Running");
         powerWidget.setDouble(percentPower);
         yawWidget.setDouble(currentYaw);
     }

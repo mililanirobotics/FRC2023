@@ -16,6 +16,9 @@ public class DriveCommand extends CommandBase {
     //declaring the joystick used
     private GenericHID joystick;
 
+    private double leftPower;
+    private double rightPower;
+
     //constructor
     public DriveCommand(DriveSubsystem driveSubsystem, GenericHID joystick) {
         //initializing the joystick used
@@ -28,8 +31,22 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
-        double rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        if(Math.abs(joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort))  >= 0.1) {
+            leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        }   
+        else {
+            leftPower = 0;
+        }
+
+        if(Math.abs(joystick.getRawAxis(JoystickConstants.kRightYJoystickPort)) >= 0.1) {
+            rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        }
+        else {
+            rightPower = 0;
+        }
+
+        // double leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        // double rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
 
         if(joystick.getRawAxis(JoystickConstants.kLeftTriggerPort) >= 0.5) {
             leftPower *= 0.5;
