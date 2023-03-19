@@ -16,17 +16,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Claw.CloseClawCommand;
 import frc.robot.commands.Claw.ToggleClawCommand;
 import frc.robot.commands.Alignment.AlignmentCommand;
 import frc.robot.commands.Arm.AutoPivotElbowCommand;
-import frc.robot.commands.Arm.BicepArmToggleCommand;
 import frc.robot.commands.Arm.ExtendBicepCommand;
-import frc.robot.commands.Arm.IntakePositionCommand;
 import frc.robot.commands.Arm.ManualPivotCommand;
+import frc.robot.commands.Arm.PivotDegreesCommand;
 import frc.robot.commands.Arm.RetractBicepCommand;
 import frc.robot.commands.Drive.DriveCommand;
 import frc.robot.commands.Drive.TravelDistanceCommand;
@@ -34,15 +33,13 @@ import frc.robot.commands.Engage.GyroEngageCommand;
 import frc.robot.commands.Misc.ArriveToGridCommand;
 import frc.robot.commands.Misc.GyroTurnCommand;
 import frc.robot.commands.Misc.NodeScoringCommand;
-
-import javax.sound.midi.Sequence;
-
 //general imports
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -53,10 +50,6 @@ import frc.robot.Constants.GameConstants;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.Constants.PivotConstants;
 
-
-
-
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -65,7 +58,8 @@ import frc.robot.Constants.PivotConstants;
  */
 public class RobotContainer {
   //initializing the gamepads used
-  private final GenericHID primaryJoystick = new GenericHID(JoystickConstants.kPrimaryPort);
+  private final GenericHID primaryLeftStick = new GenericHID(JoystickConstants.kPrimaryLeftStickPort);
+  private final GenericHID primaryRightStick = new GenericHID(JoystickConstants.kPrimaryRightStickPort);
   private final GenericHID secondaryJoystick = new GenericHID(JoystickConstants.kSecondaryPort);
 
   //allows the user to select which auto path they would like to use
@@ -83,7 +77,7 @@ public class RobotContainer {
   private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
   private final ClawSubsystem clawSubsystem = new ClawSubsystem();
   private final ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem(armTab);
-  private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem();
+  private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem(armTab);
   
   //constructor
   public RobotContainer() {
@@ -91,20 +85,28 @@ public class RobotContainer {
     configureButtonBindings();
 
     //closes the claw and pulls the arm into the frame upon initialization (starting position)
-    // CommandScheduler.getInstance().schedule(new RetractBicepCommand(bicepArmSubsystem));
+    CommandScheduler.getInstance().schedule(new ExtendBicepCommand(bicepArmSubsystem).andThen(new CloseClawCommand(clawSubsystem)));
 
-    //adding all of our autopaths as options
+    //adding our test autopaths as options
     autoCommand.addOption("Gyro engage", new GyroEngageCommand(driveSubsystem, engagementTab));
     autoCommand.addOption("Turn drive test", new GyroTurnCommand(driveSubsystem, 180, motorTab));
     autoCommand.addOption("Travel Distance Test", new TravelDistanceCommand(108, driveSubsystem, motorTab));
     autoCommand.addOption("Auto Pivot Test", new AutoPivotElbowCommand(0, elbowPivotSubsystem, armTab));
     autoCommand.addOption("Auto Scoring Test", new ArriveToGridCommand(Pipeline.APRIL_TAGS , GameConstants.kAprilTagHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab));
 
+    //adding official auto paths
+    autoCommand.addOption("Blue Alliance Left and Red Alliance Right (Engage)", dockEngageLeft());
+    autoCommand.addOption("Middle Both Alliances (Engage)", dockEngageMiddle());
+    autoCommand.addOption("Blue Alliance Right and Red Alliance Left (Engage)", dockEngageRight());
+    autoCommand.addOption("Blue Alliance Left and Red Alliance Right (Score)", scoringLeft());
+    autoCommand.addOption("Middle Both Alliances (Score", scoringMiddle());
+    autoCommand.addOption("Blue Alliance Right and Red Alliance Right (Score)", scoringRight());
+
     //adding the selectable chooser to shuffleboard
     preMatchTab.add("Auto Paths", autoCommand);
 
     //setting the default command during Tele-op to DriveCommand
-    driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, primaryJoystick));
+    driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, primaryLeftStick, primaryRightStick));
 
     //reseting the encoders and gyros during robot startup
     elbowPivotSubsystem.resetEncoders();
@@ -127,24 +129,21 @@ public class RobotContainer {
     // primary gamepads
     //===========================================================================
 
-    //gyro engage (B)
-    new JoystickButton(primaryJoystick, JoystickConstants.kBButtonPort).onTrue(new GyroEngageCommand(driveSubsystem, engagementTab));
-
-    //Align with april tags (left bumper)
-    new JoystickButton(primaryJoystick, JoystickConstants.kLeftBumperPort).onTrue(
+    //Align with april tags (Button 2 on the left primary joystick)
+    new JoystickButton(primaryLeftStick, JoystickConstants.kAttackButtonTwo).onTrue(
       new AlignmentCommand(
         Pipeline.APRIL_TAGS, driveSubsystem, limelightSubsystem, limelightTab
       ).until(
-        () -> primaryJoystick.getRawButton(JoystickConstants.kStartButtonPort)
+        () -> primaryRightStick.getRawButton(JoystickConstants.kAttackTriggerPort)
       )
     );
     
-    //Align with reflective tape (right bumper)
-    new JoystickButton(primaryJoystick, JoystickConstants.kRightBumperPort).onTrue(
+    //Align with reflective tape (Button 2 on the right primary joystick)
+    new JoystickButton(primaryRightStick, JoystickConstants.kAttackButtonTwo).onTrue(
       new AlignmentCommand(
         Pipeline.REFLECTIVE_TAPE, driveSubsystem, limelightSubsystem, limelightTab
       ).until(
-        () -> primaryJoystick.getRawButton(JoystickConstants.kStartButtonPort)
+        () -> primaryRightStick.getRawButton(JoystickConstants.kAttackTriggerPort)
       )
     );
     
@@ -154,7 +153,17 @@ public class RobotContainer {
 
     // **** need finalized angles 
     //auto pivot to low scoring position (A)
-    new JoystickButton(secondaryJoystick, JoystickConstants.kAButtonPort).onTrue(new AutoPivotElbowCommand(0, elbowPivotSubsystem, armTab));
+    new JoystickButton(secondaryJoystick, JoystickConstants.kAButtonPort)
+      .onTrue(
+        new ConditionalCommand(
+          new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab),
+          new SequentialCommandGroup(
+            new ExtendBicepCommand(bicepArmSubsystem),
+            new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+          ),
+          bicepArmSubsystem::outsideFrame
+        )
+      );
 
     //auto pivot to the medium cube position (B)
     // new JoystickButton(secondaryJoystick, JoystickConstants.kBButtonPort).onTrue(
@@ -176,18 +185,18 @@ public class RobotContainer {
     // new JoystickButton(secondaryJoystick, JoystickConstants.kXButtonPort).onTrue(
     //   new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab)
     //     .andThen(new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab)));
-    new JoystickButton(secondaryJoystick, JoystickConstants.kBButtonPort).onTrue(
-      new AutoPivotElbowCommand(PivotConstants.kConeAngle, elbowPivotSubsystem, armTab));
-
-    //auto pivots to the slider position (Y)
-    new JoystickButton(secondaryJoystick, JoystickConstants.kYButtonPort).onTrue(new AutoPivotElbowCommand(90, elbowPivotSubsystem, armTab));
-
-    //moves the bicep into the driving position (left trigger)
-    new Trigger(() -> secondaryJoystick.getRawAxis(JoystickConstants.kLeftTriggerPort) >= 0.5).onTrue(new ExtendBicepCommand(bicepArmSubsystem));
-
-    //moves the bicep into the intake position (right trigger)
-    new Trigger(() -> secondaryJoystick.getRawAxis(JoystickConstants.kRightTriggerPort) >= 0.5).onTrue(new IntakePositionCommand(bicepArmSubsystem, elbowPivotSubsystem, armTab));
-
+    new JoystickButton(secondaryJoystick, JoystickConstants.kXButtonPort)
+      .onTrue(
+        new ConditionalCommand(
+          new AutoPivotElbowCommand(PivotConstants.kConeAngle, elbowPivotSubsystem, armTab),
+          new SequentialCommandGroup(
+            new ExtendBicepCommand(bicepArmSubsystem),
+            new AutoPivotElbowCommand(PivotConstants.kConeAngle, elbowPivotSubsystem, armTab)
+          ),
+          bicepArmSubsystem::outsideFrame
+        )
+      );
+    
     //toggles the claw pistons (left bumper)
     new JoystickButton(secondaryJoystick, JoystickConstants.kLeftBumperPort).onTrue(new ToggleClawCommand(clawSubsystem, bicepArmSubsystem));
 
@@ -195,19 +204,44 @@ public class RobotContainer {
     new JoystickButton(secondaryJoystick, JoystickConstants.kRightBumperPort)
       .onTrue(
         new ConditionalCommand(
-          new ParallelCommandGroup(
+          new SequentialCommandGroup(
             new CloseClawCommand(clawSubsystem), 
-            new RetractBicepCommand(bicepArmSubsystem)
+            new AutoPivotElbowCommand(PivotConstants.kRetractAngle, elbowPivotSubsystem, armTab),
+            new RetractBicepCommand(bicepArmSubsystem),
+            new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
           ), 
-          new ExtendBicepCommand(bicepArmSubsystem), 
+          new ExtendBicepCommand(bicepArmSubsystem),
           bicepArmSubsystem::outsideFrame
         )
+        .unless(
+          bicepArmSubsystem::getSafety
+        )
+      );
+      
+    //pivots the forearm up and down (left joystick)
+    new Trigger(() -> Math.abs(secondaryJoystick.getRawAxis(JoystickConstants.kLeftYJoystickPort)) >= JoystickConstants.kDeadzone)
+      .onTrue(
+        new ManualPivotCommand(secondaryJoystick, elbowPivotSubsystem)
+          
       );
 
-    // new JoystickButton(secondaryJoystick, JoystickConstants.kRightBumperPort).onTrue(new BicepArmToggleCommand(bicepArmSubsystem, clawSubsystem));
+    //pivots the arm 2 degrees up (Dpad up)
+    new POVButton(secondaryJoystick, JoystickConstants.kDpadUp)
+      .onTrue(
+        new PivotDegreesCommand(PivotConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
+      );
 
-    //pivots the forearm up and down (left joystick)
-    new Trigger(() -> Math.abs(secondaryJoystick.getRawAxis(JoystickConstants.kLeftYJoystickPort)) >= 0.2).onTrue(new ManualPivotCommand(secondaryJoystick, elbowPivotSubsystem));
+    //pivots the arm 2 degrees down (Dpad down)
+    new POVButton(secondaryJoystick, JoystickConstants.kDpadDown)
+      .onTrue(
+        new PivotDegreesCommand(-PivotConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
+      );
+    
+    new JoystickButton(secondaryJoystick, JoystickConstants.kStartButtonPort)
+      .onTrue(
+        new InstantCommand(bicepArmSubsystem::toggleSafety, bicepArmSubsystem)
+      );
+
   }
 
   /**
@@ -239,7 +273,7 @@ public class RobotContainer {
    * Runs the auto path for the left side blue alliance and right side red alliance (engage)
    * @return The sequential command group that runs the auto path
    */
-  public Command dockEngageLeft() {
+  public CommandBase dockEngageLeft() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -265,7 +299,7 @@ public class RobotContainer {
    * Runs the auto path for the middle position for both alliances (engage)
    * @return The sequential command group that runs the auto path
    */
-  public Command dockEngageMiddle() {
+  public CommandBase dockEngageMiddle() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -283,7 +317,7 @@ public class RobotContainer {
    * Runs the auto path for the right side blue alliance and left side red alliance (engage)
    * @return The sequential command group that runs the auto path
    */
-  public Command dockEngageRight() {
+  public CommandBase dockEngageRight() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -309,7 +343,7 @@ public class RobotContainer {
    * Runs the auto path for the left side blue alliance and right side red alliance (scoring)
    * @return The sequential command group that runs the auto path
    */
-  public Command scoringLeft() {
+  public CommandBase scoringLeft() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -323,7 +357,10 @@ public class RobotContainer {
       //moves 3ft closer to the game pieces 
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //goes back to the intake position
-      new IntakePositionCommand(bicepArmSubsystem, elbowPivotSubsystem, armTab)
+      new ParallelCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+      )
     );
   }
 
@@ -331,7 +368,7 @@ public class RobotContainer {
    * Runs the auto path for the middle position for both alliances (scoring)
    * @return The sequential command group that runs the auto path
    */
-  public Command scoringMiddle() {
+  public CommandBase scoringMiddle() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -349,7 +386,10 @@ public class RobotContainer {
       //drives 5ft foward approaching game piece
       new TravelDistanceCommand(60, driveSubsystem, motorTab), 
       //goes back to the intake position
-      new IntakePositionCommand(bicepArmSubsystem, elbowPivotSubsystem, armTab)
+      new ParallelCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+      )
     );
   }
 
@@ -357,7 +397,7 @@ public class RobotContainer {
    * Runs the auto path for the right side blue alliance and left side red alliance (scoring)
    * @return The sequential command group that runs the auto path
    */
-  public Command scoringRight() {
+  public CommandBase scoringRight() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
       new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
@@ -371,7 +411,10 @@ public class RobotContainer {
       //moves 3ft closer to the game pieces 
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //goes back to the intake position
-      new IntakePositionCommand(bicepArmSubsystem, elbowPivotSubsystem, armTab)
+      new ParallelCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+      )
     );
   }
 }

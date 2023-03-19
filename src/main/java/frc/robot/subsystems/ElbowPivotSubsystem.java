@@ -54,6 +54,12 @@ public class ElbowPivotSubsystem extends SubsystemBase {
         rightEncoderWidget = armTab.add("Right Encoder Reading", 0).withSize(2, 1).getEntry();
     }
 
+    public boolean isAtStallPosition() {
+        return 
+            getLeftElbowEncoder() >= PivotConstants.kStallCounts && 
+            getRightElbowEncoder() >= PivotConstants.kStallCounts;
+    }
+    
     /**
      * Resets all of the pivot encoder values
     */
@@ -101,6 +107,15 @@ public class ElbowPivotSubsystem extends SubsystemBase {
      */
     public void shutdown() {
         elbowPivot.set(0);
+    }
+
+    public void setStallSpeed() {
+        if(isAtStallPosition()) {
+            setPivotSpeed(PivotConstants.kStallSpeed);
+        }
+        else {
+            shutdown();
+        }
     }
 
     /**

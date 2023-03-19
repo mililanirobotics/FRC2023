@@ -14,15 +14,17 @@ public class DriveCommand extends CommandBase {
     private DriveSubsystem m_driveSubsystem;
 
     //declaring the joystick used
-    private GenericHID joystick;
+    private GenericHID leftStick;
+    private GenericHID rightStick;
 
     private double leftPower;
     private double rightPower;
 
     //constructor
-    public DriveCommand(DriveSubsystem driveSubsystem, GenericHID joystick) {
+    public DriveCommand(DriveSubsystem driveSubsystem, GenericHID leftStick, GenericHID rightStick) {
         //initializing the joystick used
-        this.joystick = joystick;
+        this.leftStick = leftStick;
+        this.rightStick = rightStick;
         
         //initializing subsystems
         m_driveSubsystem = driveSubsystem;
@@ -31,24 +33,24 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(Math.abs(joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort))  >= 0.1) {
-            leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        //powers the left side if the joystick is pushed far enough (deadzone)
+        if(Math.abs(leftStick.getRawAxis(JoystickConstants.kAttackYAxisPort))  >= 0.1) {
+            leftPower = -leftStick.getRawAxis(JoystickConstants.kAttackYAxisPort) * m_driveSubsystem.getDriveSpeed();
         }   
         else {
             leftPower = 0;
         }
 
-        if(Math.abs(joystick.getRawAxis(JoystickConstants.kRightYJoystickPort)) >= 0.1) {
-            rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
+        //powers the right side if the joystick is pushed far enough (deadzone)
+        if(Math.abs(rightStick.getRawAxis(JoystickConstants.kAttackYAxisPort)) >= 0.1) {
+            rightPower = -rightStick.getRawAxis(JoystickConstants.kAttackYAxisPort) * m_driveSubsystem.getDriveSpeed();
         }
         else {
             rightPower = 0;
         }
 
-        // double leftPower = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * m_driveSubsystem.getDriveSpeed();
-        // double rightPower = -joystick.getRawAxis(JoystickConstants.kRightYJoystickPort) * m_driveSubsystem.getDriveSpeed();
-
-        if(joystick.getRawAxis(JoystickConstants.kLeftTriggerPort) >= 0.5) {
+        //half speed
+        if(leftStick.getRawButton(JoystickConstants.kAttackTriggerPort)) {
             leftPower *= 0.5;
             rightPower *= 0.5;
         }

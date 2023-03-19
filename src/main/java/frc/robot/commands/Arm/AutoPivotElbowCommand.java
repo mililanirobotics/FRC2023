@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.GameConstants;
+import frc.robot.Constants.PivotConstants;
 //constants
 import frc.robot.Constants.RobotConstants;
 
@@ -63,8 +64,13 @@ public class AutoPivotElbowCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        if(m_elbowPivotSubsystem.isAtStallPosition()) {
+            m_elbowPivotSubsystem.setPivotSpeed(PivotConstants.kStallSpeed);
+        }
+        else {
+            m_elbowPivotSubsystem.shutdown();
+        }
         System.out.println(angleInCounts);
-        m_elbowPivotSubsystem.shutdown();
     }
 
     @Override

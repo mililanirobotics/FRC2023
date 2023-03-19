@@ -23,7 +23,7 @@ public class ClawSubsystem extends SubsystemBase {
         claw.set(kForward);
     }
 
-     /**
+    /**
      * Tells whether the leftClaw and rightClaw pistons are on kForward or kReverse
      * @return The current state of the claw pistons
      */

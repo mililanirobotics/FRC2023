@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 //general imports
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.JoystickConstants;
+import frc.robot.Constants.PivotConstants;
 
 public class ManualPivotCommand extends CommandBase {
     //declaring subsystems
@@ -22,23 +23,41 @@ public class ManualPivotCommand extends CommandBase {
         addRequirements(m_elbowPivotSubsystem);
     }
 
+    private boolean atMaxLimit() {
+        return (
+            m_elbowPivotSubsystem.getLeftElbowEncoder() >= PivotConstants.kMaxPivot && 
+            m_elbowPivotSubsystem.getRightElbowEncoder() >= PivotConstants.kMaxPivot
+        );
+    }
+
+    private boolean atMinLimit() {
+        return (
+            m_elbowPivotSubsystem.getLeftElbowEncoder() <= PivotConstants.kMinimumPivot &&
+            m_elbowPivotSubsystem.getRightElbowEncoder() <= PivotConstants.kMinimumPivot
+        );
+    }
+    
     @Override
     public void execute() {
-        double speed = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort);
-        speed = Math.copySign(0.3, speed);
+        double speed = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * 0.3;
+    
+        // if((atMaxLimit() && speed > 0) || (atMinLimit() && speed <0)) {
+        //     speed = 0;
+        // }
+     
         m_elbowPivotSubsystem.setPivotSpeed(speed);
-
-        //manual reset for the encoders to set a start point
-        if(joystick.getRawButton(JoystickConstants.kBackButtonPort)) {
-            m_elbowPivotSubsystem.resetEncoders();
-        }
 
         m_elbowPivotSubsystem.printEncoders(m_elbowPivotSubsystem.getLeftElbowEncoder(), m_elbowPivotSubsystem.getRightElbowEncoder());
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_elbowPivotSubsystem.shutdown();
+        if(m_elbowPivotSubsystem.isAtStallPosition()) {
+            m_elbowPivotSubsystem.setPivotSpeed(PivotConstants.kStallSpeed);
+        }
+        else {
+            m_elbowPivotSubsystem.shutdown();
+        }
     }
 
     //in progress

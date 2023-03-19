@@ -12,11 +12,14 @@ import frc.robot.Constants.PivotConstants;
 public class BicepArmSubsystem extends SubsystemBase {
     //double solenoid that controls the bicep 
     private DoubleSolenoid bicepArm;
+    //safety
+    private static boolean safetyOn;
 
     //constructor
     public BicepArmSubsystem() {
         //initializing solenoid
         bicepArm = new DoubleSolenoid(PneumaticsModuleType.REVPH, PivotConstants.kArmForwardChannel, PivotConstants.kArmReverseChannel);
+        safetyOn = true;
     }
 
     /**
@@ -54,5 +57,17 @@ public class BicepArmSubsystem extends SubsystemBase {
      */
     public void toggleBicep() {
         bicepArm.toggle();
+    }
+
+    /**
+     * Toggles the safety on and off
+     */
+    public void toggleSafety() {
+        if(safetyOn) {
+            safetyOn = false;
+        }
+        else {
+            safetyOn = true;
+        }
     }
 }

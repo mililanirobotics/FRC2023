@@ -52,26 +52,32 @@ public final class Constants {
         public final static int kArmReverseChannel = 3; 
 
         //angles for auto pivot
-        public final static double kCubeAngle = 50;
-        public final static double kConeAngle = 80;
+        public final static double kStandardAngle = 0;
+        public final static double kRetractAngle = 0;
+        public final static double kCubeAngle = 80;
+        public final static double kConeAngle = 95;
 
+        //max and min pivoting angle in counts
+        public final static double kMaxPivot = 2500;
+        public final static double kMinimumPivot = 0;
+
+        //stalling speed and position
+        public final static double kStallSpeed = 0.02;
+        public final static double kStallCounts = 1300;
     }
     
     public final class ClawConstants {
         //pneumatics channels for the claw pistons
-        public final static int kClawForwardChannel = 0; 
-        public final static int kClawReverseChannel = 1;  
+        public final static int kClawForwardChannel = 1; 
+        public final static int kClawReverseChannel = 0;  
     }
 
     public static final class RobotConstants {
         //hardware specs used for auto
         public final static double kWheelDiameter = 5.875;
         public final static int kCountsPerRev = 42;
-        public final static double kDriveFreeSpeed = 5676; //Empirical free speed of drive motors (RPM)
         
         public final static double kGearRatio = 5; 
-        public final static double kWristGearRatio = 2; //Wrist Pivot's gear Ratio
-        public final static double kElbowGearRatio = 45; //Elbow Pivot's gear Ratio
         public final static double kArmGearRatio = 180; //Shoulder Pivot's Gear Ratio for one full rotation
        
         public final static double kWheelCircumference = Math.PI * kWheelDiameter;
@@ -100,15 +106,6 @@ public final class Constants {
         public final static double kTurnP = 0.005; //tbd
         public final static double kTurnI = 0;
         public final static double kTurnD = 0;
-
-        //PID and feedforward constants for drive
-        public final static double kDriveP = 0.0025;
-        public final static double kDriveI = 0.00001;
-        public final static double kDriveD = 0.00015;
-
-        public final static double kDriveS = 0.05;
-        public final static double kDriveV = 12 / kDriveFreeSpeed;
-        public final static double kDriveA = 0;
     }
 
     public static final class GameConstants {
@@ -119,21 +116,21 @@ public final class Constants {
         public final static double kAlignmentSlack = 2;
         public final static double kTurnSlack = 2;
 
-        //auto pivot
+        //amount of slack the pivot angle can be off by during pivoting
         public final static double kAutoPivotSlack = 3;
 
         //vision constants
         public final static double kAprilTagHeight = 18.25;
         public final static double kReflectiveTapeHeight = 24; 
-        public final static int kPoleSpace = 17; //space between the med and high poles in inches
     }
 
     public static final class JoystickConstants {
         //joystick port for the gamepad
-        public final static int kPrimaryPort = 0;
-        public final static int kSecondaryPort = 1;
+        public final static int kPrimaryLeftStickPort = 0;
+        public final static int kPrimaryRightStickPort = 1;
+        public final static int kSecondaryPort = 2;
 
-        //button ports
+        //Gamepad ports
         public final static int kAButtonPort = 1;
         public final static int kBButtonPort = 2;
         public final static int kXButtonPort = 3;
@@ -143,20 +140,21 @@ public final class Constants {
         public final static int kBackButtonPort = 7;
         public final static int kStartButtonPort = 8;
 
-        //axis ports
+        //Gamepad axis ports
         public final static int kLeftYJoystickPort = 1;
         public final static int kLeftTriggerPort = 2;
         public final static int kRightTriggerPort = 3;
         public final static int kRightYJoystickPort = 5;
-    }
 
-    public static final class AutonomousConstants {
-        public static final String kDockAndEngage1 = "Score then Dock and Engage Left";
-        public static final String kDockAndEngage2 = "Score then Dock and Engage Middle";
-        public static final String kDockAndEngage3 = "Score then Dock and Engage Right";
-        public static final String kScoring1 = "Scoring only Left";
-        public static final String kScoring2 = "Scoring only Middle";
-        public static final String kScoring3 = "Scoring only Right";
-    }
+        //Dpad values
+        public final static int kDpadUp = 0;
+        public final static int kDpadDown = 180;
 
+        //Attack3 button ports
+        public final static int kAttackTriggerPort = 1;
+        public final static int kAttackButtonTwo = 2;
+
+        //Attack3
+        public final static int kAttackYAxisPort = 1;
+    }
 }

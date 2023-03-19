@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.GenericEntry;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
@@ -34,9 +33,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder leftFrontEncoder;
     private final RelativeEncoder leftBackEncoder;
 
-    //feedforward and general drive PID
-    private SimpleMotorFeedforward feedforward;
-    private PIDController drivePID;
+    //encoder drive PID
     private PIDController encoderDrivePID;
 
     //declaring the gyro
@@ -100,8 +97,6 @@ public class DriveSubsystem extends SubsystemBase {
         //initializing differential drive (tank drive) object
     
         //initializing the PID and feedforward used for the drive (in the subsystem because it's used in multiple classes)
-        drivePID = new PIDController(RobotConstants.kDriveP, RobotConstants.kDriveI, RobotConstants.kDriveD);
-        feedforward = new SimpleMotorFeedforward(RobotConstants.kDriveS, RobotConstants.kDriveV , RobotConstants.kDriveA);
         encoderDrivePID = new PIDController(RobotConstants.kEncoderDriveP, RobotConstants.kEncoderDriveI, RobotConstants.kEncoderDriveD);
 
         //adding shuffleboard widgets to the "motor tab"
@@ -131,27 +126,6 @@ public class DriveSubsystem extends SubsystemBase {
     public void drive(double leftPercentPower, double rightPercentPower) {
         leftDrive.setVoltage(leftPercentPower * 12);
         rightDrive.setVoltage(rightPercentPower * 12);
-        // leftDrive.set(speedGod.calculate(leftPercentPower));
-        // rightDrive.set(speedRamper2.calculate(rightPercentPower));
-        // leftDrive.set(leftPercentPower);
-        // rightDrive.set(rightPercentPower);
-    }
-
-    /**
-     * Drives the robot using tank drive controls (maintains a constant speed no matter the voltage)
-     * Uses feedforward along with a PID controller in order to maintain a constant velocity
-     * @param leftVelocity
-     * @param rightVelocity
-     */
-    public void drivePID(double leftVelocity, double rightVelocity) {
-        double calculatedLeftSpeed = feedforward.calculate(leftVelocity) 
-            + drivePID.calculate(leftFrontEncoder.getVelocity(), leftVelocity);
-
-        double calculatedRightSpeed = feedforward.calculate(rightVelocity) 
-            + drivePID.calculate(rightFrontEncoder.getVelocity(), rightVelocity);
-
-        leftDrive.setVoltage(Math.pow(calculatedLeftSpeed, 2));
-        rightDrive.setVoltage(Math.pow(calculatedRightSpeed, 2));
     }
 
     /**
