@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 //general imports
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.JoystickConstants;
-import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ArmConstants;
 
 public class ManualPivotCommand extends CommandBase {
     //declaring subsystems
@@ -25,15 +25,15 @@ public class ManualPivotCommand extends CommandBase {
 
     private boolean atMaxLimit() {
         return (
-            m_elbowPivotSubsystem.getLeftElbowEncoder() >= PivotConstants.kMaxPivot && 
-            m_elbowPivotSubsystem.getRightElbowEncoder() >= PivotConstants.kMaxPivot
+            m_elbowPivotSubsystem.getLeftElbowEncoder() >= ArmConstants.kMaxPivot && 
+            m_elbowPivotSubsystem.getRightElbowEncoder() >= ArmConstants.kMaxPivot
         );
     }
 
     private boolean atMinLimit() {
         return (
-            m_elbowPivotSubsystem.getLeftElbowEncoder() <= PivotConstants.kMinimumPivot &&
-            m_elbowPivotSubsystem.getRightElbowEncoder() <= PivotConstants.kMinimumPivot
+            m_elbowPivotSubsystem.getLeftElbowEncoder() <= ArmConstants.kMinimumPivot &&
+            m_elbowPivotSubsystem.getRightElbowEncoder() <= ArmConstants.kMinimumPivot
         );
     }
     
@@ -41,9 +41,9 @@ public class ManualPivotCommand extends CommandBase {
     public void execute() {
         double speed = -joystick.getRawAxis(JoystickConstants.kLeftYJoystickPort) * 0.3;
     
-        // if((atMaxLimit() && speed > 0) || (atMinLimit() && speed <0)) {
-        //     speed = 0;
-        // }
+        if((atMaxLimit() && speed > 0) || (atMinLimit() && speed <0)) {
+            speed = 0;
+        }
      
         m_elbowPivotSubsystem.setPivotSpeed(speed);
 
@@ -52,12 +52,7 @@ public class ManualPivotCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(m_elbowPivotSubsystem.isAtStallPosition()) {
-            m_elbowPivotSubsystem.setPivotSpeed(PivotConstants.kStallSpeed);
-        }
-        else {
-            m_elbowPivotSubsystem.shutdown();
-        }
+        m_elbowPivotSubsystem.setStallSpeed();
     }
 
     //in progress

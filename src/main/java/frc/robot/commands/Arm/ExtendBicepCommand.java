@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class ExtendBicepCommand extends CommandBase {
     //declaring subsystems
     private BicepArmSubsystem m_BicepArmSubsystem;
+    //timer
+    private int iteration;
 
     //constructor
     public ExtendBicepCommand(BicepArmSubsystem bicepArmSubsystem) {
@@ -18,15 +20,23 @@ public class ExtendBicepCommand extends CommandBase {
     @Override
     public void initialize() {
         m_BicepArmSubsystem.extendBicep();
+        m_BicepArmSubsystem.updateState();
+        
+        iteration = 0;
+    }
+
+    @Override
+    public void execute() {
+        iteration++;
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Bicep retracted into the frame");
+        System.out.println("Bicep extended outside the frame");
     }
 
     @Override
     public boolean isFinished() {
-        return m_BicepArmSubsystem.bicepState() == Value.kForward;
+        return m_BicepArmSubsystem.bicepState() == Value.kForward && iteration > 80;
     }
 }

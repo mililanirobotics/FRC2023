@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //general imports
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
@@ -33,9 +32,6 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder leftFrontEncoder;
     private final RelativeEncoder leftBackEncoder;
 
-    //encoder drive PID
-    private PIDController encoderDrivePID;
-
     //declaring the gyro
     private final AHRS navx;
 
@@ -46,9 +42,6 @@ public class DriveSubsystem extends SubsystemBase {
     //widgets to track the current encoder readings of the drive
     private GenericEntry leftEncoderWidget;
     private GenericEntry rightEncoderWidget;
-    //widget to track the current power of the motors
-    private GenericEntry leftDrivePower;
-    private GenericEntry rightDrivePower;
 
     //constructor
     //initializes all motors, motor controllers, drive trains, and dashboard options
@@ -65,16 +58,15 @@ public class DriveSubsystem extends SubsystemBase {
         rightFront.setInverted(DriveConstants.kRightFrontReverse);
         rightBack.setInverted(DriveConstants.kRightBackReverse);
 
-        leftFront.setSmartCurrentLimit(70, 20);
-        leftBack.setSmartCurrentLimit(70, 20);
-        rightFront.setSmartCurrentLimit(70, 20);
-        rightBack.setSmartCurrentLimit(70, 20);
+        leftFront.setSmartCurrentLimit(65, 20);
+        leftBack.setSmartCurrentLimit(65, 20);
+        rightFront.setSmartCurrentLimit(65, 20);
+        rightBack.setSmartCurrentLimit(65, 20);
 
         //creating two motor controller groups, one for each side
         leftDrive = new MotorControllerGroup(leftFront, leftBack);
         rightDrive = new MotorControllerGroup(rightFront, rightBack);
         
-
         //initializing encoders
         leftFrontEncoder = leftFront.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, RobotConstants.kCountsPerRev);
         leftBackEncoder = leftBack.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, RobotConstants.kCountsPerRev);
@@ -94,17 +86,10 @@ public class DriveSubsystem extends SubsystemBase {
         navx = new AHRS(I2C.Port.kMXP);
         navx.enableLogging(true);
 
-        //initializing differential drive (tank drive) object
-    
-        //initializing the PID and feedforward used for the drive (in the subsystem because it's used in multiple classes)
-        encoderDrivePID = new PIDController(RobotConstants.kEncoderDriveP, RobotConstants.kEncoderDriveI, RobotConstants.kEncoderDriveD);
-
         //adding shuffleboard widgets to the "motor tab"
         leftEncoderWidget = motorTab.add("Left Encoder", 0).withSize(2, 1).getEntry();
         rightEncoderWidget = motorTab.add("Right Encoder", 0).withSize(2, 1).getEntry(); 
-        leftDrivePower = motorTab.add("Left Drive Power", 0).withSize(2, 1).getEntry();
-        rightDrivePower = motorTab.add("Right Drive Power", 0).withSize(2, 1).getEntry();
-
+        
         //adding the various drive speed multiplyers to shuffleboard
         driveSpeeds = new SendableChooser<Double>();
 
@@ -126,34 +111,6 @@ public class DriveSubsystem extends SubsystemBase {
     public void drive(double leftPercentPower, double rightPercentPower) {
         leftDrive.setVoltage(leftPercentPower * 12);
         rightDrive.setVoltage(rightPercentPower * 12);
-    }
-
-    /**
-     * Returns the calculate speed of your drive motors during encoder drive
-     * Based on the error from your setpoint (in counts)
-     * The PID controller is inside the drive subsystem because it's used in all encoder drive applications
-     * @param currentValue The current value of your encoder
-     * @param setpoint The value your encoder is trying to approach
-     * @return The adjusted speed from the PID controller
-     */
-    public double encoderPIDSpeed(double currentValue, double setpoint) {
-        return encoderDrivePID.calculate(currentValue, setpoint);
-    }
-
-    /**
-     * Returns the position error of the PID controller
-     * @return The current error from the setpoint (position)
-     */
-    public double getPositionError() {
-        return encoderDrivePID.getPositionError();
-    }
-
-    /**
-     * Returns the velocity error of the PID controller
-     * @return The current error from the setpoint (velocity)
-     */
-    public double getVelocityError() {
-        return encoderDrivePID.getVelocityError();
     }
 
     /**
@@ -285,22 +242,6 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void printRightEncoder(double rightEncoderReading) {
         rightEncoderWidget.setDouble(rightEncoderReading);
-    }
-
-    /**
-     * Updates the value of the left drive power widget on shuffleboard
-     * @param power The current percent power of the left drive motor
-     */
-    public void printLeftPower(double power) {
-        leftDrivePower.setDouble(power);
-    }
-
-    /**
-     * Updates the value of the right drive power widget on shuffleboard
-     * @param power The current percent power of the right drive motor
-     */
-    public void printRightPower(double power) {
-        rightDrivePower.setDouble(power);
     }
 
     //=========================================================================== 

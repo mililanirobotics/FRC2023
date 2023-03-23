@@ -18,11 +18,12 @@ public class RetractBicepCommand extends CommandBase {
     @Override
     public void initialize() {
         m_BicepArmSubsystem.retractBicep();
+        m_BicepArmSubsystem.updateState();
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Bicep extended outside the frame");
+        System.out.println("Bicep retracted outside the frame");
     }
     
     @Override 

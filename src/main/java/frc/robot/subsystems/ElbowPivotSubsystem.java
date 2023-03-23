@@ -11,7 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder;
 //constants
-import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.RobotConstants; 
 
 public class ElbowPivotSubsystem extends SubsystemBase {
@@ -29,12 +29,12 @@ public class ElbowPivotSubsystem extends SubsystemBase {
 
     public ElbowPivotSubsystem(ShuffleboardTab armTab) {
         //initializing pivot motors
-        leftElbowPivot = new CANSparkMax(PivotConstants.kleftPivot, MotorType.kBrushless);
-        rightElbowPivot = new CANSparkMax(PivotConstants.kRightPivot, MotorType.kBrushless);
+        leftElbowPivot = new CANSparkMax(ArmConstants.kleftPivot, MotorType.kBrushless);
+        rightElbowPivot = new CANSparkMax(ArmConstants.kRightPivot, MotorType.kBrushless);
 
         //reversing the pivot motors if necessary 
-        leftElbowPivot.setInverted(PivotConstants.kLeftPivotReverse);
-        rightElbowPivot.setInverted(PivotConstants.kRightPivotReverse);
+        leftElbowPivot.setInverted(ArmConstants.kLeftPivotReverse);
+        rightElbowPivot.setInverted(ArmConstants.kRightPivotReverse);
 
         //initializes a motor controller group that controls the entire pivot
         elbowPivot = new MotorControllerGroup(leftElbowPivot, rightElbowPivot);
@@ -54,10 +54,14 @@ public class ElbowPivotSubsystem extends SubsystemBase {
         rightEncoderWidget = armTab.add("Right Encoder Reading", 0).withSize(2, 1).getEntry();
     }
 
+    /**
+     * Returns whether or not the pivot motors are at the stalling position
+     * @return True if it is at the stalling position, false otherwise
+     */
     public boolean isAtStallPosition() {
         return 
-            getLeftElbowEncoder() >= PivotConstants.kStallCounts && 
-            getRightElbowEncoder() >= PivotConstants.kStallCounts;
+            getLeftElbowEncoder() >= ArmConstants.kStallCounts && 
+            getRightElbowEncoder() >= ArmConstants.kStallCounts;
     }
     
     /**
@@ -109,9 +113,12 @@ public class ElbowPivotSubsystem extends SubsystemBase {
         elbowPivot.set(0);
     }
 
+    /**
+     * Sets the stalling speed of the pivot motors depending on whether it's at the stalling position
+     */
     public void setStallSpeed() {
         if(isAtStallPosition()) {
-            setPivotSpeed(PivotConstants.kStallSpeed);
+            setPivotSpeed(ArmConstants.kStallSpeed);
         }
         else {
             shutdown();

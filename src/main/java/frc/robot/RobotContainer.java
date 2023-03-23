@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Claw.CloseClawCommand;
+import frc.robot.commands.Claw.OpenClawCommand;
 import frc.robot.commands.Claw.ToggleClawCommand;
 import frc.robot.commands.Alignment.AlignmentCommand;
 import frc.robot.commands.Arm.AutoPivotElbowCommand;
@@ -28,11 +29,15 @@ import frc.robot.commands.Arm.ManualPivotCommand;
 import frc.robot.commands.Arm.PivotDegreesCommand;
 import frc.robot.commands.Arm.RetractBicepCommand;
 import frc.robot.commands.Drive.DriveCommand;
+import frc.robot.commands.Drive.GyroTurnCommand;
+import frc.robot.commands.Drive.LimelightTravelDistanceCommand;
 import frc.robot.commands.Drive.TravelDistanceCommand;
 import frc.robot.commands.Engage.GyroEngageCommand;
-import frc.robot.commands.Misc.ArriveToGridCommand;
-import frc.robot.commands.Misc.GyroTurnCommand;
-import frc.robot.commands.Misc.NodeScoringCommand;
+
+import java.util.Map;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 //general imports
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -44,11 +49,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.RobotContainer; 
 //constants
 import frc.robot.Constants.GameConstants;
 import frc.robot.Constants.JoystickConstants;
-import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ArmConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -67,17 +71,19 @@ public class RobotContainer {
 
   //initializing all of our testing tabs on shuffleboard
   private final ShuffleboardTab motorTab = Shuffleboard.getTab("Motors");
+  private final ShuffleboardTab turnTab = Shuffleboard.getTab("Turning");
   private final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-match");
   private final ShuffleboardTab engagementTab = Shuffleboard.getTab("Engage");
   private final ShuffleboardTab limelightTab = Shuffleboard.getTab("Limelight");
   private final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
+  private final ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
 
   //initializing all of our subsystems
   private final DriveSubsystem driveSubsystem = new DriveSubsystem(motorTab, preMatchTab);
   private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
-  private final ClawSubsystem clawSubsystem = new ClawSubsystem();
+  private final ClawSubsystem clawSubsystem = new ClawSubsystem(driverTab);
   private final ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem(armTab);
-  private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem(armTab);
+  private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem(driverTab);
   
   //constructor
   public RobotContainer() {
@@ -85,14 +91,17 @@ public class RobotContainer {
     configureButtonBindings();
 
     //closes the claw and pulls the arm into the frame upon initialization (starting position)
-    CommandScheduler.getInstance().schedule(new ExtendBicepCommand(bicepArmSubsystem).andThen(new CloseClawCommand(clawSubsystem)));
+    CommandScheduler.getInstance().schedule(new RetractBicepCommand(bicepArmSubsystem).andThen(new CloseClawCommand(clawSubsystem)));
 
     //adding our test autopaths as options
     autoCommand.addOption("Gyro engage", new GyroEngageCommand(driveSubsystem, engagementTab));
-    autoCommand.addOption("Turn drive test", new GyroTurnCommand(driveSubsystem, 180, motorTab));
+    autoCommand.addOption("Turn drive test (90)", new GyroTurnCommand(driveSubsystem, 90, turnTab));
+    autoCommand.addOption("Turn drive test (180)", new GyroTurnCommand(driveSubsystem, 180, turnTab));
     autoCommand.addOption("Travel Distance Test", new TravelDistanceCommand(108, driveSubsystem, motorTab));
+    autoCommand.addOption("Limelight Travel Distance Test (cube)", new LimelightTravelDistanceCommand(Pipeline.APRIL_TAGS, GameConstants.kAprilTagHeight, limelightSubsystem, driveSubsystem, limelightTab));
+    autoCommand.addOption("Limelight Travel Distance Test (cone", new LimelightTravelDistanceCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab));
     autoCommand.addOption("Auto Pivot Test", new AutoPivotElbowCommand(0, elbowPivotSubsystem, armTab));
-    autoCommand.addOption("Auto Scoring Test", new ArriveToGridCommand(Pipeline.APRIL_TAGS , GameConstants.kAprilTagHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab));
+    autoCommand.addOption("Auto Scoring Test (cone)", autoScoreCone());
 
     //adding official auto paths
     autoCommand.addOption("Blue Alliance Left and Red Alliance Right (Engage)", dockEngageLeft());
@@ -114,8 +123,13 @@ public class RobotContainer {
     driveSubsystem.zeroOutGyro();
     driveSubsystem.calibrateGyro();
 
+    //objects displayed in widgets
     PowerDistribution pdp = new PowerDistribution();
-    motorTab.add("PDP", pdp).withWidget(BuiltInWidgets.kPowerDistribution).withPosition(0, 0).withSize(6, 3);
+    HttpCamera limelightFeed = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
+    CameraServer.addCamera(limelightFeed);
+
+    motorTab.add("PDP", pdp).withWidget(BuiltInWidgets.kPowerDistribution).withPosition(5, 5).withSize(6, 3);
+    driverTab.add("limelight", limelightFeed).withWidget(BuiltInWidgets.kCameraStream).withProperties(Map.of("Show Crosshair", true, "Show Controls", false)) .withSize(6, 3);
   }
 
   /**
@@ -133,7 +147,8 @@ public class RobotContainer {
     new JoystickButton(primaryLeftStick, JoystickConstants.kAttackButtonTwo).onTrue(
       new AlignmentCommand(
         Pipeline.APRIL_TAGS, driveSubsystem, limelightSubsystem, limelightTab
-      ).until(
+      )
+      .until(
         () -> primaryRightStick.getRawButton(JoystickConstants.kAttackTriggerPort)
       )
     );
@@ -151,97 +166,56 @@ public class RobotContainer {
     // secondary gamepads
     //===========================================================================
 
-    // **** need finalized angles 
     //auto pivot to low scoring position (A)
     new JoystickButton(secondaryJoystick, JoystickConstants.kAButtonPort)
       .onTrue(
-        new ConditionalCommand(
-          new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab),
-          new SequentialCommandGroup(
-            new ExtendBicepCommand(bicepArmSubsystem),
-            new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
-          ),
-          bicepArmSubsystem::outsideFrame
-        )
+        autoPivotStandard()
       );
 
     //auto pivot to the medium cube position (B)
-    // new JoystickButton(secondaryJoystick, JoystickConstants.kBButtonPort).onTrue(
-    //     new ArriveToGridCommand(Pipeline.APRIL_TAGS, GameConstants.kAprilTagHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab)
-    //       .andThen(new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab)));
     new JoystickButton(secondaryJoystick, JoystickConstants.kBButtonPort)
       .onTrue(
-        new ConditionalCommand(
-          new AutoPivotElbowCommand(PivotConstants.kCubeAngle, elbowPivotSubsystem, armTab),
-          new SequentialCommandGroup(
-            new ExtendBicepCommand(bicepArmSubsystem),
-            new AutoPivotElbowCommand(PivotConstants.kCubeAngle, elbowPivotSubsystem, armTab)
-          ),
-          bicepArmSubsystem::outsideFrame
-        )
+        autoPivotCube()
       );
 
     //auto pivots to the medium cone position (X)
-    // new JoystickButton(secondaryJoystick, JoystickConstants.kXButtonPort).onTrue(
-    //   new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab)
-    //     .andThen(new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab)));
     new JoystickButton(secondaryJoystick, JoystickConstants.kXButtonPort)
       .onTrue(
-        new ConditionalCommand(
-          new AutoPivotElbowCommand(PivotConstants.kConeAngle, elbowPivotSubsystem, armTab),
-          new SequentialCommandGroup(
-            new ExtendBicepCommand(bicepArmSubsystem),
-            new AutoPivotElbowCommand(PivotConstants.kConeAngle, elbowPivotSubsystem, armTab)
-          ),
-          bicepArmSubsystem::outsideFrame
-        )
+        autoPivotCone()
       );
     
     //toggles the claw pistons (left bumper)
-    new JoystickButton(secondaryJoystick, JoystickConstants.kLeftBumperPort).onTrue(new ToggleClawCommand(clawSubsystem, bicepArmSubsystem));
+    new JoystickButton(secondaryJoystick, JoystickConstants.kLeftBumperPort)
+      .onTrue(new ToggleClawCommand(clawSubsystem, bicepArmSubsystem));
 
     //toggles the bicep piston (right bumper)
     new JoystickButton(secondaryJoystick, JoystickConstants.kRightBumperPort)
       .onTrue(
-        new ConditionalCommand(
-          new SequentialCommandGroup(
-            new CloseClawCommand(clawSubsystem), 
-            new AutoPivotElbowCommand(PivotConstants.kRetractAngle, elbowPivotSubsystem, armTab),
-            new RetractBicepCommand(bicepArmSubsystem),
-            new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
-          ), 
-          new ExtendBicepCommand(bicepArmSubsystem),
-          bicepArmSubsystem::outsideFrame
-        )
-        .unless(
-          bicepArmSubsystem::getSafety
-        )
+        toggleBicep()
       );
       
     //pivots the forearm up and down (left joystick)
     new Trigger(() -> Math.abs(secondaryJoystick.getRawAxis(JoystickConstants.kLeftYJoystickPort)) >= JoystickConstants.kDeadzone)
       .onTrue(
         new ManualPivotCommand(secondaryJoystick, elbowPivotSubsystem)
-          
       );
 
     //pivots the arm 2 degrees up (Dpad up)
     new POVButton(secondaryJoystick, JoystickConstants.kDpadUp)
       .onTrue(
-        new PivotDegreesCommand(PivotConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
+        new PivotDegreesCommand(ArmConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
       );
 
     //pivots the arm 2 degrees down (Dpad down)
     new POVButton(secondaryJoystick, JoystickConstants.kDpadDown)
       .onTrue(
-        new PivotDegreesCommand(-PivotConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
+        new PivotDegreesCommand(-ArmConstants.kAdjustmentAngle, elbowPivotSubsystem, armTab)
       );
     
     new JoystickButton(secondaryJoystick, JoystickConstants.kStartButtonPort)
       .onTrue(
         new InstantCommand(bicepArmSubsystem::toggleSafety, bicepArmSubsystem)
       );
-
   }
 
   /**
@@ -262,7 +236,120 @@ public class RobotContainer {
    * @return The adjusted speed that is between the lower and upper limits
    */
   public static double limitSpeed(double currentSpeed, double lowerLimit, double upperLimit) {
-    return Math.copySign(Math.max(lowerLimit, Math.min(Math.abs(currentSpeed), upperLimit)), currentSpeed);
+    return 
+    Math.copySign(
+      Math.max(
+        lowerLimit, 
+        Math.min(Math.abs(currentSpeed), upperLimit)
+      ), 
+      currentSpeed
+    );
+  }
+
+  //=========================================================================== 
+  // Command sequences
+  //===========================================================================
+
+  /**
+   * Toggles the position of the bicep piston if the bicep safety is turned off
+   * If the bicep is outside the frame, retracts the arm into the frame in standard position
+   * If the bicep is inside the frame, it extends the arm outside of the frame
+   * @return The conditional command to toggle the bicep's position
+   */
+  public CommandBase toggleBicep() {
+    return 
+    new ConditionalCommand(
+      new SequentialCommandGroup(
+        new CloseClawCommand(clawSubsystem), 
+        new RetractBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+      ), 
+      new ExtendBicepCommand(bicepArmSubsystem),
+      bicepArmSubsystem::outsideFrame
+    )
+    .unless(
+      bicepArmSubsystem::getSafety
+    );
+  }
+
+  /**
+   * Auto pivots the arm to the cone scoring position
+   * If the arm is inside of the frame, it will automatically deploy it outside of the frame while pivoting, unless the bicep safety is on
+   * @return The conditional command to pivot to the cone scoring position
+   */
+  public CommandBase autoPivotCone() {
+    return 
+    new ConditionalCommand(
+      new AutoPivotElbowCommand(ArmConstants.kConeAngle, elbowPivotSubsystem, armTab),
+      new SequentialCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(ArmConstants.kConeAngle, elbowPivotSubsystem, armTab)
+      ).unless(
+        bicepArmSubsystem::getSafety
+      ),
+      bicepArmSubsystem::outsideFrame
+    );
+  }
+
+  /**
+   * Auto pivots the arm to the cube scoring position
+   * If the arm is inside of the frame, it will automatically deploy it outside of the frame while pivoting, unless the bicep safety is on
+   * @return The conditional command to pivot to the cone scoring position
+   */
+  public CommandBase autoPivotCube() {
+    return
+    new ConditionalCommand(
+      new AutoPivotElbowCommand(ArmConstants.kCubeAngle, elbowPivotSubsystem, armTab),
+      new SequentialCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(ArmConstants.kCubeAngle, elbowPivotSubsystem, armTab)
+      ).unless(
+        bicepArmSubsystem::getSafety
+      ),
+      bicepArmSubsystem::outsideFrame
+    );
+  }
+
+  /**
+   * Auto pivots the arm to the standard position
+   * If the arm is inside of the frame, it will automatically deploy it outside of the frame while pivoting, unless the bicep safety is on
+   * @return The conditional command to pivot to the cone scoring position
+   */
+  public CommandBase autoPivotStandard() {
+    return
+    new ConditionalCommand(
+      new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab),
+      new SequentialCommandGroup(
+        new ExtendBicepCommand(bicepArmSubsystem),
+        new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+      ).unless(
+        bicepArmSubsystem::getSafety
+      ),
+      bicepArmSubsystem::outsideFrame
+    );
+  }
+
+  public CommandBase autoScoreCone() {
+    return 
+    new SequentialCommandGroup(
+      new AlignmentCommand(Pipeline.REFLECTIVE_TAPE, driveSubsystem, limelightSubsystem, limelightTab),
+      new LimelightTravelDistanceCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, limelightTab),
+      new AlignmentCommand(Pipeline.REFLECTIVE_TAPE, driveSubsystem, limelightSubsystem, limelightTab),
+      new InstantCommand(driveSubsystem::shutdown, driveSubsystem),
+      autoPivotCone(),
+      new OpenClawCommand(clawSubsystem)
+    );
+  }
+
+  public CommandBase autoScoreCube() {
+    return 
+    new SequentialCommandGroup(
+      new AlignmentCommand(Pipeline.APRIL_TAGS, driveSubsystem, limelightSubsystem, limelightTab),
+      new LimelightTravelDistanceCommand(Pipeline.APRIL_TAGS, GameConstants.kAprilTagHeight, limelightSubsystem, driveSubsystem, limelightTab),
+      autoPivotCone(),
+      new AlignmentCommand(Pipeline.APRIL_TAGS, driveSubsystem, limelightSubsystem, limelightTab),
+      new OpenClawCommand(clawSubsystem)
+    );
   }
 
   //=========================================================================== 
@@ -276,18 +363,17 @@ public class RobotContainer {
   public CommandBase dockEngageLeft() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //retracts the bicep back into the frame
       new ExtendBicepCommand(bicepArmSubsystem), 
       //travels outside of the community to earn mobility points
       new TravelDistanceCommand(-200, driveSubsystem, motorTab),
       //turns the robot right 90 degrees (relative to starting position)
-      new GyroTurnCommand(driveSubsystem, -90, motorTab),
+      new GyroTurnCommand(driveSubsystem, -90, turnTab),
       //drives foward 5ft
       new TravelDistanceCommand(60, driveSubsystem, motorTab),
       //turns the robot left 90 degrees
-      new GyroTurnCommand(driveSubsystem, 90, motorTab),
+      new GyroTurnCommand(driveSubsystem, 90, turnTab),
       //drives foward 3 ft to get onto the charge station
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //starts engagement command
@@ -302,8 +388,7 @@ public class RobotContainer {
   public CommandBase dockEngageMiddle() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //retracts the bicep back into the frame
       new ExtendBicepCommand(bicepArmSubsystem), 
       //travels outside of the community for mobility
@@ -320,18 +405,17 @@ public class RobotContainer {
   public CommandBase dockEngageRight() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //retracts the bicep back into the frame
       new ExtendBicepCommand(bicepArmSubsystem), 
       //travels outside of the community to earn mobility points
       new TravelDistanceCommand(-200, driveSubsystem, motorTab),
       //turns the robot left 90 degrees (relative to starting position)
-      new GyroTurnCommand(driveSubsystem, 90, motorTab),
+      new GyroTurnCommand(driveSubsystem, 90, turnTab),
       //drives foward 5ft
       new TravelDistanceCommand(60, driveSubsystem, motorTab),
       //turns the robot right 90 degrees
-      new GyroTurnCommand(driveSubsystem, -90, motorTab),
+      new GyroTurnCommand(driveSubsystem, -90, turnTab),
       //drives foward 3 ft to get onto the charge station
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //starts engagement command
@@ -346,20 +430,19 @@ public class RobotContainer {
   public CommandBase scoringLeft() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //brings the arm back into the frame
       new ExtendBicepCommand(bicepArmSubsystem),
       //travels outside of the community for mobility
       new TravelDistanceCommand(-200, driveSubsystem, motorTab),
       //turns 180 degrees to face the game pieces on the field
-      new GyroTurnCommand(driveSubsystem, 180, motorTab),
+      new GyroTurnCommand(driveSubsystem, 180, turnTab),
       //moves 3ft closer to the game pieces 
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //goes back to the intake position
       new ParallelCommandGroup(
         new ExtendBicepCommand(bicepArmSubsystem),
-        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+        new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
       )
     );
   }
@@ -371,24 +454,23 @@ public class RobotContainer {
   public CommandBase scoringMiddle() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //brings the arm back into the frame
       new ExtendBicepCommand(bicepArmSubsystem),
       //travels outside of the community for mobility
       new TravelDistanceCommand(-200, driveSubsystem, motorTab),
       //turns 90 degree left (relative to starting position)t 
-      new GyroTurnCommand(driveSubsystem, -90, motorTab),
+      new GyroTurnCommand(driveSubsystem, -90, turnTab),
       //drives foward 30 inches 
       new TravelDistanceCommand(30, driveSubsystem, motorTab),
       //turns 90 degree left (relative to starting position)t 
-      new GyroTurnCommand(driveSubsystem, -90, motorTab),
+      new GyroTurnCommand(driveSubsystem, -90, turnTab),
       //drives 5ft foward approaching game piece
       new TravelDistanceCommand(60, driveSubsystem, motorTab), 
       //goes back to the intake position
       new ParallelCommandGroup(
         new ExtendBicepCommand(bicepArmSubsystem),
-        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+        new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
       )
     );
   }
@@ -400,20 +482,19 @@ public class RobotContainer {
   public CommandBase scoringRight() {
     return Commands.sequence(
       //auto scores the cone at the beginning of the match
-      new ArriveToGridCommand(Pipeline.REFLECTIVE_TAPE, GameConstants.kReflectiveTapeHeight, limelightSubsystem, driveSubsystem, motorTab, limelightTab),
-      new NodeScoringCommand(0, bicepArmSubsystem, clawSubsystem, elbowPivotSubsystem, armTab),
+      autoScoreCone(),
       //brings the arm back into the frame
       new ExtendBicepCommand(bicepArmSubsystem),
       //travels outside of the community for mobility
       new TravelDistanceCommand(-200, driveSubsystem, motorTab),
       //turns 180 degrees to face the game pieces on the field
-      new GyroTurnCommand(driveSubsystem, 180, motorTab),
+      new GyroTurnCommand(driveSubsystem, 180, turnTab),
       //moves 3ft closer to the game pieces 
       new TravelDistanceCommand(36, driveSubsystem, motorTab),
       //goes back to the intake position
       new ParallelCommandGroup(
         new ExtendBicepCommand(bicepArmSubsystem),
-        new AutoPivotElbowCommand(PivotConstants.kStandardAngle, elbowPivotSubsystem, armTab)
+        new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
       )
     );
   }

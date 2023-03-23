@@ -1,15 +1,11 @@
 package frc.robot.commands.Arm;
 
+import frc.robot.Constants.ArmConstants;
 //subsystems and commands
 import frc.robot.subsystems.ElbowPivotSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 //general imports
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.GameConstants;
-import frc.robot.Constants.PivotConstants;
 
 public class PivotDegreesCommand extends CommandBase {
     //declaring subsystems
@@ -34,7 +30,7 @@ public class PivotDegreesCommand extends CommandBase {
         initialLeftCounts = m_elbowPivotSubsystem.getLeftElbowEncoder();
         initialRightCounts = m_elbowPivotSubsystem.getRightElbowEncoder();
 
-        m_elbowPivotSubsystem.setPivotSpeed(Math.copySign(0.1, initialLeftCounts));
+        m_elbowPivotSubsystem.setPivotSpeed(Math.copySign(0.1, angleInCounts));
     }
 
     @Override
@@ -44,18 +40,12 @@ public class PivotDegreesCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(m_elbowPivotSubsystem.isAtStallPosition()) {
-            m_elbowPivotSubsystem.setPivotSpeed(PivotConstants.kStallSpeed);
-        }
-        else {
-            m_elbowPivotSubsystem.shutdown();
-        }
-        System.out.println(angleInCounts);
+        m_elbowPivotSubsystem.setStallSpeed();
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_elbowPivotSubsystem.getLeftElbowEncoder - (initialLeftCounts + angleInCounts) < 5) &&
-            Math.abs(m_elbowPivotSubsystem.getRightElbowEncoder - (initialLeftCounts + angleInCounts) < 5);
+        return Math.abs(m_elbowPivotSubsystem.getLeftElbowEncoder() - (initialLeftCounts + angleInCounts)) < ArmConstants.kAdjustmentSlackCounts &&
+            Math.abs(m_elbowPivotSubsystem.getRightElbowEncoder() - (initialRightCounts + angleInCounts)) < ArmConstants.kAdjustmentSlackCounts;
     }
 }

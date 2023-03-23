@@ -6,21 +6,28 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+import edu.wpi.first.networktables.GenericEntry;
 //constants
 import frc.robot.Constants.ClawConstants;
 
 public class ClawSubsystem extends SubsystemBase {
     //double solenoids that control the claw
     private DoubleSolenoid claw;
+    //widgets
+    private GenericEntry clawOpenWidget;
 
     //constructor
-    public ClawSubsystem() {
+    public ClawSubsystem(ShuffleboardTab driverTab) {
         //intializing solenoids
         claw = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawForwardChannel, ClawConstants.kClawReverseChannel);
 
         //setting default solenoid state to kForward (claw open)
         claw.set(kForward);
+
+        //initializing widget
+        clawOpenWidget = driverTab.add("Claw Open", true).withSize(2, 1).getEntry();
     }
 
     /**
@@ -28,8 +35,7 @@ public class ClawSubsystem extends SubsystemBase {
      * @return The current state of the claw pistons
      */
     public DoubleSolenoid.Value getClawState() {
-        Value clawState = claw.get();
-        return clawState;
+        return claw.get();
     }
 
     /**
@@ -51,5 +57,6 @@ public class ClawSubsystem extends SubsystemBase {
      */
     public void toggleClaw() {
         claw.toggle();
+        clawOpenWidget.setBoolean(getClawState() == Value.kForward);
     }
 }

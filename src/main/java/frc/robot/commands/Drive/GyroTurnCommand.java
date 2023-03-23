@@ -1,4 +1,4 @@
-package frc.robot.commands.Misc;
+package frc.robot.commands.Drive;
 
 //subsystems and commands
 import frc.robot.subsystems.DriveSubsystem;
@@ -9,8 +9,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.RobotContainer;
 //constants
-import frc.robot.Constants.GameConstants;
-import frc.robot.Constants.RobotConstants;
+import frc.robot.Constants.DriveConstants;
 
 public class GyroTurnCommand extends CommandBase {
     //declaring subsystems
@@ -27,12 +26,12 @@ public class GyroTurnCommand extends CommandBase {
     private static GenericEntry powerWidget;
     private static GenericEntry yawWidget;
 
-    public GyroTurnCommand(DriveSubsystem driveSubsystem, double turnDegrees, ShuffleboardTab motorTab) {
+    public GyroTurnCommand(DriveSubsystem driveSubsystem, double turnDegrees, ShuffleboardTab turnTab) {
         //initializing measured values
         this.turnDegrees = turnDegrees;
 
         //initializing PID controller
-        turnDrivePID = new PIDController(RobotConstants.kTurnDriveP, RobotConstants.kTurnDriveI, RobotConstants.kTurnDriveD);
+        turnDrivePID = new PIDController(DriveConstants.kTurnDriveP, DriveConstants.kTurnDriveI, DriveConstants.kTurnDriveD);
         turnDrivePID.enableContinuousInput(-180, 180);
 
         //initializing subsystems
@@ -41,9 +40,9 @@ public class GyroTurnCommand extends CommandBase {
 
         if(yawWidget == null) {
             //initializing widgets
-            powerWidget = motorTab.add("Power", 0).withSize(2, 1).getEntry();
-            yawWidget = motorTab.add("Yaw", 0).withSize(2, 1).getEntry();
-            motorTab.add("Target Yaw", turnDegrees).withSize(2, 1).getEntry();
+            powerWidget = turnTab.add("Power", 0).withSize(2, 1).getEntry();
+            yawWidget = turnTab.add("Yaw", 0).withSize(2, 1).getEntry();
+            turnTab.add("Target Yaw", turnDegrees).withSize(2, 1).getEntry();
         }
     }
 
@@ -60,7 +59,7 @@ public class GyroTurnCommand extends CommandBase {
         double percentPower = turnDrivePID.calculate(currentYaw, turnDegrees);
 
         //limits the speed of the motors
-        percentPower = RobotContainer.limitSpeed(percentPower, 0.35, 0.6);
+        percentPower = RobotContainer.limitSpeed(percentPower, 0.2, 0.5);
     
         //if error is +, left speed + and right speed - (turns clockwise)
         //if error is -, left speed - and right speed + (turns counterclockwise)
@@ -81,7 +80,7 @@ public class GyroTurnCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         //ends the command if the error is within the desired range
-        return Math.abs(turnDegrees - currentYaw) < GameConstants.kTurnSlack;
+        return Math.abs(turnDegrees - currentYaw) < DriveConstants.kTurnSlack;
     }
 
 }

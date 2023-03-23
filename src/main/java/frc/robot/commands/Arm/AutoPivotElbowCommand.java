@@ -8,10 +8,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.GameConstants;
-import frc.robot.Constants.PivotConstants;
 //constants
-import frc.robot.Constants.RobotConstants;
+import frc.robot.Constants.ArmConstants;
 
 public class AutoPivotElbowCommand extends CommandBase {
     //declaring subsystems
@@ -29,7 +27,7 @@ public class AutoPivotElbowCommand extends CommandBase {
         //initializing subsystems, PID controller, and angle of rotation
         m_elbowPivotSubsystem = elbowPivotSubsystem;
         angleInCounts = m_elbowPivotSubsystem.convertAngle(angleRotation);
-        pivotPID = new PIDController(RobotConstants.kPivotP, RobotConstants.kPivotI, RobotConstants.kPivotD);
+        pivotPID = new PIDController(ArmConstants.kPivotP, ArmConstants.kPivotI, ArmConstants.kPivotD);
         
         addRequirements(m_elbowPivotSubsystem);
 
@@ -64,18 +62,12 @@ public class AutoPivotElbowCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(m_elbowPivotSubsystem.isAtStallPosition()) {
-            m_elbowPivotSubsystem.setPivotSpeed(PivotConstants.kStallSpeed);
-        }
-        else {
-            m_elbowPivotSubsystem.shutdown();
-        }
-        System.out.println(angleInCounts);
+        m_elbowPivotSubsystem.setStallSpeed();
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(angleInCounts - m_elbowPivotSubsystem.getLeftElbowEncoder()) < m_elbowPivotSubsystem.convertAngle(GameConstants.kAutoPivotSlack) &&
-            Math.abs(angleInCounts - m_elbowPivotSubsystem.getRightElbowEncoder()) < m_elbowPivotSubsystem.convertAngle(GameConstants.kAutoPivotSlack);
+        return Math.abs(angleInCounts - m_elbowPivotSubsystem.getLeftElbowEncoder()) < m_elbowPivotSubsystem.convertAngle(ArmConstants.kAutoPivotSlack) &&
+            Math.abs(angleInCounts - m_elbowPivotSubsystem.getRightElbowEncoder()) < m_elbowPivotSubsystem.convertAngle(ArmConstants.kAutoPivotSlack);
     }
 }

@@ -7,8 +7,6 @@ import edu.wpi.first.networktables.NetworkTable;
 //constants
 import frc.robot.Constants.LimelightConstants; 
 
-
-
 public class LimelightSubsystem extends SubsystemBase {
     private NetworkTable table;
 
@@ -22,7 +20,6 @@ public class LimelightSubsystem extends SubsystemBase {
         private int PipelineID;
     }
     
-
     public LimelightSubsystem() {
         this.table = NetworkTableInstance.getDefault().getTable("limelight");
         setPipeline(Pipeline.DRIVER_VIEW);
@@ -67,9 +64,9 @@ public class LimelightSubsystem extends SubsystemBase {
      * @return distance from the target in inches
      */
     public double getDepth(double targetHeight) {
-        double verticalAngle = (LimelightConstants.kMountAngle + getVerticalOffset()) * Math.PI / 180.0;
+        double verticalAngle = (LimelightConstants.kMountAngle + getVerticalOffset()) * (Math.PI / 180.0);
         double height = Math.abs(LimelightConstants.kMountHeight - targetHeight); 
-        double depth = height * Math.tan(verticalAngle);
+        double depth = height / Math.tan(verticalAngle);
 
         return depth;
     }

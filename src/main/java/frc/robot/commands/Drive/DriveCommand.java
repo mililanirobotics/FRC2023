@@ -34,7 +34,7 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         //powers the left side if the joystick is pushed far enough (deadzone)
-        if(Math.abs(leftStick.getRawAxis(JoystickConstants.kAttackYAxisPort))  >= 0.1) {
+        if(Math.abs(leftStick.getRawAxis(JoystickConstants.kAttackYAxisPort))  >= JoystickConstants.kDeadzone) {
             leftPower = -leftStick.getRawAxis(JoystickConstants.kAttackYAxisPort) * m_driveSubsystem.getDriveSpeed();
         }   
         else {
@@ -42,7 +42,7 @@ public class DriveCommand extends CommandBase {
         }
 
         //powers the right side if the joystick is pushed far enough (deadzone)
-        if(Math.abs(rightStick.getRawAxis(JoystickConstants.kAttackYAxisPort)) >= 0.1) {
+        if(Math.abs(rightStick.getRawAxis(JoystickConstants.kAttackYAxisPort)) >= JoystickConstants.kDeadzone) {
             rightPower = -rightStick.getRawAxis(JoystickConstants.kAttackYAxisPort) * m_driveSubsystem.getDriveSpeed();
         }
         else {
