@@ -117,8 +117,8 @@ public class DriveSubsystem extends SubsystemBase {
      * Sets all of the drive motors to 0 power
      */
     public void shutdown() {
-        leftBack.setVoltage(0);
-        rightBack.setVoltage(0);
+        leftDrive.setVoltage(0);
+        rightDrive.setVoltage(0);
     }
 
     /**

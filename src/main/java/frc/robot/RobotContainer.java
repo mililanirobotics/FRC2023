@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Claw.CloseClawCommand;
 import frc.robot.commands.Claw.OpenClawCommand;
 import frc.robot.commands.Claw.ToggleClawCommand;
@@ -32,6 +33,7 @@ import frc.robot.commands.Drive.DriveCommand;
 import frc.robot.commands.Drive.GyroTurnCommand;
 import frc.robot.commands.Drive.LimelightTravelDistanceCommand;
 import frc.robot.commands.Drive.TravelDistanceCommand;
+import frc.robot.commands.Engage.EngageDriveCommand;
 import frc.robot.commands.Engage.GyroEngageCommand;
 
 import java.util.Map;
@@ -90,11 +92,8 @@ public class RobotContainer {
     //configure the buttonbindings 
     configureButtonBindings();
 
-    //closes the claw and pulls the arm into the frame upon initialization (starting position)
-    CommandScheduler.getInstance().schedule(new RetractBicepCommand(bicepArmSubsystem).andThen(new CloseClawCommand(clawSubsystem)));
-
     //adding our test autopaths as options
-    autoCommand.addOption("Gyro engage", new GyroEngageCommand(driveSubsystem, engagementTab));
+    autoCommand.addOption("Gyro engage", new SequentialCommandGroup(new EngageDriveCommand(driveSubsystem, motorTab), new GyroEngageCommand(driveSubsystem, engagementTab)));
     autoCommand.addOption("Turn drive test (90)", new GyroTurnCommand(driveSubsystem, 90, turnTab));
     autoCommand.addOption("Turn drive test (180)", new GyroTurnCommand(driveSubsystem, 180, turnTab));
     autoCommand.addOption("Travel Distance Test", new TravelDistanceCommand(108, driveSubsystem, motorTab));
@@ -122,6 +121,10 @@ public class RobotContainer {
     driveSubsystem.resetEncoders();
     driveSubsystem.zeroOutGyro();
     driveSubsystem.calibrateGyro();
+
+    //setting arm to default position
+    bicepArmSubsystem.retractBicep();
+    clawSubsystem.closeClaw();
 
     //objects displayed in widgets
     PowerDistribution pdp = new PowerDistribution();
@@ -154,11 +157,11 @@ public class RobotContainer {
     );
     
     //Align with reflective tape (Button 2 on the right primary joystick)
-    new JoystickButton(primaryRightStick, JoystickConstants.kAttackButtonTwo).onTrue(
+    new JoystickButton(primaryRightStick, JoystickConstants.kAttackTriggerPort).onTrue(
       new AlignmentCommand(
         Pipeline.REFLECTIVE_TAPE, driveSubsystem, limelightSubsystem, limelightTab
       ).until(
-        () -> primaryRightStick.getRawButton(JoystickConstants.kAttackTriggerPort)
+        () -> primaryRightStick.getRawButton(JoystickConstants.kAttackButtonTwo)
       )
     );
     
@@ -260,8 +263,8 @@ public class RobotContainer {
     return 
     new ConditionalCommand(
       new SequentialCommandGroup(
-        new CloseClawCommand(clawSubsystem), 
         new RetractBicepCommand(bicepArmSubsystem),
+        new WaitCommand(0.5),
         new AutoPivotElbowCommand(ArmConstants.kStandardAngle, elbowPivotSubsystem, armTab)
       ), 
       new ExtendBicepCommand(bicepArmSubsystem),
@@ -281,11 +284,9 @@ public class RobotContainer {
     return 
     new ConditionalCommand(
       new AutoPivotElbowCommand(ArmConstants.kConeAngle, elbowPivotSubsystem, armTab),
-      new SequentialCommandGroup(
-        new ExtendBicepCommand(bicepArmSubsystem),
-        new AutoPivotElbowCommand(ArmConstants.kConeAngle, elbowPivotSubsystem, armTab)
-      ).unless(
-        bicepArmSubsystem::getSafety
+      new ParallelCommandGroup(
+        new AutoPivotElbowCommand(ArmConstants.kConeAngle, elbowPivotSubsystem, armTab),
+        new ExtendBicepCommand(bicepArmSubsystem)
       ),
       bicepArmSubsystem::outsideFrame
     );
@@ -300,11 +301,9 @@ public class RobotContainer {
     return
     new ConditionalCommand(
       new AutoPivotElbowCommand(ArmConstants.kCubeAngle, elbowPivotSubsystem, armTab),
-      new SequentialCommandGroup(
-        new ExtendBicepCommand(bicepArmSubsystem),
-        new AutoPivotElbowCommand(ArmConstants.kCubeAngle, elbowPivotSubsystem, armTab)
-      ).unless(
-        bicepArmSubsystem::getSafety
+      new ParallelCommandGroup(
+        new AutoPivotElbowCommand(ArmConstants.kCubeAngle, elbowPivotSubsystem, armTab),
+        new ExtendBicepCommand(bicepArmSubsystem)
       ),
       bicepArmSubsystem::outsideFrame
     );
@@ -337,7 +336,8 @@ public class RobotContainer {
       new AlignmentCommand(Pipeline.REFLECTIVE_TAPE, driveSubsystem, limelightSubsystem, limelightTab),
       new InstantCommand(driveSubsystem::shutdown, driveSubsystem),
       autoPivotCone(),
-      new OpenClawCommand(clawSubsystem)
+      new OpenClawCommand(clawSubsystem),
+      toggleBicep()
     );
   }
 

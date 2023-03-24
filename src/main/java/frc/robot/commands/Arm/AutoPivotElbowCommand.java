@@ -48,7 +48,7 @@ public class AutoPivotElbowCommand extends CommandBase {
     public void execute() {
         //calculating speed based on the error from the target encoder value 
         double speed = pivotPID.calculate(m_elbowPivotSubsystem.getLeftElbowEncoder(), angleInCounts);
-        speed = RobotContainer.limitSpeed(speed, 0.3, 0.5);
+        speed = RobotContainer.limitSpeed(speed, 0.35, 0.55);
 
         //setting the elbow pivot speed 
         m_elbowPivotSubsystem.setPivotSpeed(speed);

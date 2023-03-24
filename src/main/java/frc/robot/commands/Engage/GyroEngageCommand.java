@@ -50,9 +50,9 @@ public class GyroEngageCommand extends CommandBase {
 
     @Override
     public void initialize() {  
-        System.out.println("Yes");
         iteration = 0; //acts as a timer
         initialAngle = m_driveSubsystem.getPitch() + RobotConstants.kPitchOffset;
+        System.out.println("Initial Angle: "+initialAngle);
     }
 
     @Override

@@ -79,7 +79,7 @@ public final class Constants {
         public final static int kArmReverseChannel = 3; 
 
         //how far the arm can reach when in scoring position (placeholder value)
-        public final static double kArmReach = 29; 
+        public final static double kArmReach = 35; 
 
         //angles for auto pivot
         public final static double kStandardAngle = 0;

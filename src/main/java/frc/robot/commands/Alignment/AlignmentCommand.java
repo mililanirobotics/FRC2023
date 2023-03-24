@@ -63,8 +63,8 @@ public class AlignmentCommand extends CommandBase {
             double speed = alignmentPID.calculate(offsetAngle, 0);
 
             //minimum speed is 0.3 and the maximum is 0.45
-            // speed = RobotContainer.limitSpeed(speed, 0.2, 0.45);
-            speed = Math.copySign(0.2, speed);
+            speed = RobotContainer.limitSpeed(speed, 0.2, 0.45);
+            
             //setting the power
             m_driveSubsystem.drive(-speed, speed);  
 

@@ -26,10 +26,8 @@ public class ToggleClawCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        if(m_bicepSubsystem.bicepState() == Value.kForward) {
-            intialClawState = m_clawSubsystem.getClawState();
-            m_clawSubsystem.toggleClaw();
-        }
+        intialClawState = m_clawSubsystem.getClawState();
+        m_clawSubsystem.toggleClaw();
     }
 
     @Override
@@ -40,6 +38,6 @@ public class ToggleClawCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_clawSubsystem.getClawState() != intialClawState || m_bicepSubsystem.bicepState() == Value.kForward;
+        return m_clawSubsystem.getClawState() != intialClawState;
     }
 }

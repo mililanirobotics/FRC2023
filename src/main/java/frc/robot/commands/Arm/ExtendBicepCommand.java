@@ -37,6 +37,6 @@ public class ExtendBicepCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_BicepArmSubsystem.bicepState() == Value.kForward && iteration > 80;
+        return m_BicepArmSubsystem.bicepState() == Value.kForward && iteration > 50;
     }
 }
