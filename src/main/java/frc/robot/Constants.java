@@ -65,6 +65,14 @@ public final class Constants {
         public final static double kMinimumTime = 10;
     }
 
+    public final class LEDConstants {
+        //number of leds on the strip
+        public final static int kLEDCount = 10;
+
+        //PWM port the led data cables are connected to
+        public final static int kLED = 0;
+    }
+
     public final class ArmConstants {
         //pivot motor ports
         public final static int kleftPivot = 17; 

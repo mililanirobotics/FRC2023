@@ -9,7 +9,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.BicepArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ElbowPivotSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LEDSubsystem.AnimationTypes;
 import frc.robot.subsystems.LimelightSubsystem.Pipeline;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,6 +22,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.LEDs.Signal1Command;
+import frc.robot.commands.LEDs.ShowcaseLEDCommand;
+import frc.robot.commands.LEDs.DefaultLEDCommand;
 import frc.robot.commands.Claw.CloseClawCommand;
 import frc.robot.commands.Claw.OpenClawCommand;
 import frc.robot.commands.Claw.ToggleClawCommand;
@@ -86,6 +91,7 @@ public class RobotContainer {
   private final ClawSubsystem clawSubsystem = new ClawSubsystem(driverTab);
   private final ElbowPivotSubsystem elbowPivotSubsystem = new ElbowPivotSubsystem(armTab);
   private final BicepArmSubsystem bicepArmSubsystem = new BicepArmSubsystem(driverTab);
+  private final LEDSubsystem ledSubsystem = new LEDSubsystem();
   
   //constructor
   public RobotContainer() {
@@ -126,6 +132,10 @@ public class RobotContainer {
     bicepArmSubsystem.retractBicep();
     clawSubsystem.closeClaw();
 
+    //setting LEDs to desired color
+    ledSubsystem.setHSV(0, 0, 0);
+    ledSubsystem.setLEDAnimation(AnimationTypes.SetAll);
+
     //objects displayed in widgets
     PowerDistribution pdp = new PowerDistribution();
     HttpCamera limelightFeed = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
@@ -164,7 +174,19 @@ public class RobotContainer {
         () -> primaryRightStick.getRawButton(JoystickConstants.kAttackButtonTwo)
       )
     );
+
+    //toggles LED display to either show the signal or default lights (Y)
+    new JoystickButton(secondaryJoystick, JoystickConstants.kYButtonPort)
+      .onTrue(
+        toggleLEDState()
+        );
     
+    //sets LED display to showcase animations/color (X)
+    new JoystickButton(secondaryJoystick, JoystickConstants.kXButtonPort)
+    .onTrue(
+      showcaseLEDStates()
+      );
+
     //=========================================================================== 
     // secondary gamepads
     //===========================================================================
@@ -229,6 +251,20 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return autoCommand.getSelected();
+  }
+
+  /**
+   * Use this to set the LED state when the Robot is disabled.
+   * Use HSV to set the LED colors.
+   * 
+   * @param hue The desired hue of the LEDs.
+   * @param saturation The desired saturation of the LEDs.
+   * @param value The desired value of the LEDs.
+   * @param animation The desired animation type to be played.
+   */
+  public void setDisabledLEDState(int hue, int saturation, int value, AnimationTypes animation) {
+    ledSubsystem.setHSV(hue, saturation, value);
+    ledSubsystem.setLEDAnimation(animation);
   }
 
   /**
@@ -350,6 +386,19 @@ public class RobotContainer {
       new AlignmentCommand(Pipeline.APRIL_TAGS, driveSubsystem, limelightSubsystem, limelightTab),
       new OpenClawCommand(clawSubsystem)
     );
+  }
+
+  public CommandBase toggleLEDState() {
+    return
+    new ConditionalCommand(
+      new DefaultLEDCommand(ledSubsystem), 
+      new Signal1Command(ledSubsystem), 
+      ledSubsystem::getSignalLED);
+  }
+
+  public CommandBase showcaseLEDStates() {
+    return
+    new ShowcaseLEDCommand(ledSubsystem);
   }
 
   //=========================================================================== 
